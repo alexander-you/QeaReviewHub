@@ -1,0 +1,3853 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agent Review Session</title>
+<style>
+/* ════════════════════════════════════════════════════════════════════════════════
+   AGENT REVIEW SESSION — V2
+   Design principles:
+     • Base background (#F1F5F9) clearly separated from elevated card surfaces (#FFF)
+     • Soft two-layer shadows for depth instead of solid borders everywhere
+     • Semantic, high-contrast colour pills (WCAG AA ≥ 4.5:1) instead of coloured text
+     • CSS Logical Properties throughout to flip cleanly for RTL languages
+     • Line-height ≥ 1.55 for AI-generated prose blocks (readability)
+   ════════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* Surfaces */
+    --bg-page:        #F1F5F9;
+    --bg-surface:     #FFFFFF;
+    --bg-raised:      #F8FAFC;
+    --bg-sunken:      #EDF2F7;
+    --bg-hover:       #F1F5F9;
+    --bg-accent-soft: #EEF2FF;
+    /* Borders */
+    --border:         #E2E8F0;
+    --border-strong:  #CBD5E1;
+    --border-focus:   #6366F1;
+    /* Text */
+    --c-text:         #0F172A;
+    --c-text-2:       #334155;
+    --c-text-3:       #64748B;
+    --c-text-inverse: #FFFFFF;
+    /* Brand / semantic */
+    --c-accent:       #6366F1;
+    --c-accent-600:   #4F46E5;
+    --c-accent-700:   #4338CA;
+    --c-success:      #10B981;
+    --c-warning:      #F59E0B;
+    --c-danger:       #EF4444;
+    /* Semantic pill fills (AA contrast on their matching text) */
+    --pill-hi-bg:     #D1FAE5;  --pill-hi-fg:  #065F46;
+    --pill-md-bg:     #FEF3C7;  --pill-md-fg:  #92400E;
+    --pill-lo-bg:     #FEE2E2;  --pill-lo-fg:  #991B1B;
+    --pill-info-bg:  #DBEAFE;  --pill-info-fg:#1E40AF;
+    --pill-neutral-bg:#E2E8F0; --pill-neutral-fg:#334155;
+    --pill-chat-bg:   #EEF2FF;  --pill-chat-fg:#4338CA;
+    --pill-case-bg:   #FEF3C7;  --pill-case-fg:#92400E;
+    --pill-email-bg:  #DCFCE7;  --pill-email-fg:#166534;
+    --pill-call-bg:   #FCE7F3;  --pill-call-fg:#9D174D;
+    /* Elevation */
+    --shadow-1: 0 1px 2px rgba(15,23,42,.04), 0 1px 3px rgba(15,23,42,.05);
+    --shadow-2: 0 4px 6px -2px rgba(15,23,42,.05), 0 12px 24px -8px rgba(15,23,42,.10);
+    --shadow-3: 0 8px 12px -4px rgba(15,23,42,.08), 0 24px 48px -12px rgba(15,23,42,.18);
+    --shadow-focus: 0 0 0 3px rgba(99,102,241,.25);
+    /* Shape */
+    --radius-s:  8px;
+    --radius-m:  12px;
+    --radius-l:  16px;
+    --radius-pill: 999px;
+    /* Motion */
+    --ease: cubic-bezier(.4,0,.2,1);
+    --dur-s: 150ms;
+    --dur-m: 250ms;
+    --dur-l: 350ms;
+    /* Typography */
+    --font-main: 'Segoe UI', 'Segoe UI Web', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'Segoe UI Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    --lh-body: 1.55;
+    --lh-ai:   1.65;
+}
+
+[data-theme="dark"] {
+    --bg-page:        #0B1220;
+    --bg-surface:     #111827;
+    --bg-raised:      #1F2937;
+    --bg-sunken:      #0F172A;
+    --bg-hover:       #1E293B;
+    --bg-accent-soft: #1E1B4B;
+    --border:         #1F2937;
+    --border-strong:  #334155;
+    --c-text:         #F1F5F9;
+    --c-text-2:       #CBD5E1;
+    --c-text-3:       #94A3B8;
+    --pill-hi-bg:     rgba(16,185,129,.18);  --pill-hi-fg:  #6EE7B7;
+    --pill-md-bg:     rgba(245,158,11,.18);  --pill-md-fg:  #FCD34D;
+    --pill-lo-bg:     rgba(239,68,68,.18);   --pill-lo-fg:  #FCA5A5;
+    --pill-info-bg:   rgba(59,130,246,.18);  --pill-info-fg:#93C5FD;
+    --pill-neutral-bg:rgba(148,163,184,.18); --pill-neutral-fg:#CBD5E1;
+    --pill-chat-bg:   rgba(99,102,241,.18);  --pill-chat-fg:#A5B4FC;
+    --pill-case-bg:   rgba(245,158,11,.18);  --pill-case-fg:#FCD34D;
+    --pill-email-bg:  rgba(16,185,129,.18);  --pill-email-fg:#6EE7B7;
+    --pill-call-bg:   rgba(236,72,153,.18);  --pill-call-fg:#F9A8D4;
+    --shadow-1: 0 1px 2px rgba(0,0,0,.4);
+    --shadow-2: 0 4px 6px -2px rgba(0,0,0,.35), 0 12px 24px -8px rgba(0,0,0,.55);
+    --shadow-3: 0 8px 12px -4px rgba(0,0,0,.5), 0 24px 48px -12px rgba(0,0,0,.7);
+}
+
+/* ═══ Reset / base ═══ */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+    font-family: var(--font-main);
+    font-size: 14px;
+    line-height: var(--lh-body);
+    color: var(--c-text);
+    background: var(--bg-page);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+}
+button { font-family: inherit; }
+textarea, input, select { font-family: inherit; font-size: 14px; line-height: var(--lh-body); color: var(--c-text); }
+
+/* ═══ Header ═══ */
+.header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-block: 14px;
+    padding-inline: 24px;
+    background: var(--bg-surface);
+    border-block-end: 1px solid var(--border);
+    position: sticky; inset-block-start: 0; z-index: 50;
+    box-shadow: var(--shadow-1);
+}
+.header-brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-700) 100%);
+    color: #fff; font-weight: 700; font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-1);
+}
+.brand-text { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+.brand-sub  { font-size: 12px; color: var(--c-text-3); margin-block-start: 2px; }
+
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.mode-badge {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.5px;
+    padding-block: 4px; padding-inline: 10px;
+    border-radius: var(--radius-pill);
+    text-transform: uppercase;
+}
+.mode-live  { background: var(--pill-hi-bg); color: var(--pill-hi-fg); }
+.mode-mock  { background: var(--pill-md-bg); color: var(--pill-md-fg); }
+
+.icon-btn {
+    width: 36px; height: 36px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--bg-surface);
+    color: var(--c-text-2); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all var(--dur-s) var(--ease);
+}
+.icon-btn:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+.icon-btn:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+/* ═══ Stepper ═══ */
+.stepper-bar {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding-block: 14px;
+    padding-inline: 24px;
+    background: var(--bg-surface);
+    border-block-end: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.stp {
+    display: flex; align-items: center; gap: 8px;
+    padding-block: 8px; padding-inline: 14px;
+    border-radius: var(--radius-pill);
+    font-size: 13px; font-weight: 500;
+    color: var(--c-text-3);
+    cursor: pointer; white-space: nowrap;
+    transition: all var(--dur-s) var(--ease);
+    user-select: none;
+}
+.stp:hover { background: var(--bg-hover); color: var(--c-text-2); }
+.stp.active { background: var(--c-accent); color: #fff; box-shadow: var(--shadow-1); }
+.stp.done   { color: var(--c-text-2); }
+.stp.done .stp-n { background: var(--pill-hi-bg); color: var(--pill-hi-fg); }
+.stp-n {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--bg-raised);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11.5px; font-weight: 700;
+    color: var(--c-text-3);
+    transition: all var(--dur-s) var(--ease);
+}
+.stp.active .stp-n { background: rgba(255,255,255,.25); color: #fff; }
+.stp-line {
+    flex: 0 0 18px; height: 2px; background: var(--border);
+    border-radius: 2px;
+}
+
+/* ═══ Content container ═══ */
+.content {
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-block: 28px 60px;
+    padding-inline: 28px;
+}
+.phase { display: none; }
+.phase.on { display: block; animation: fadeIn var(--dur-m) var(--ease); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══ Card ═══ */
+.card {
+    background: var(--bg-surface);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-1);
+    padding: 24px;
+    margin-block-end: 20px;
+    border: 1px solid var(--border);
+}
+.card:hover { box-shadow: var(--shadow-2); }
+.card-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px;
+    margin-block-end: 16px;
+    flex-wrap: wrap;
+}
+.card-title { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--c-text); }
+.card-desc  { font-size: 13px; color: var(--c-text-3); margin-block-start: 4px; line-height: 1.5; }
+
+/* ═══ Guidance banner ═══ */
+.guide {
+    background: linear-gradient(135deg, rgba(99,102,241,.06) 0%, rgba(99,102,241,.02) 100%);
+    border: 1px solid rgba(99,102,241,.18);
+    border-radius: var(--radius-l);
+    padding: 16px 20px;
+    margin-block-end: 20px;
+}
+[data-theme="dark"] .guide { background: rgba(99,102,241,.08); }
+.guide-tag {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.4px;
+    color: var(--c-accent); text-transform: uppercase;
+    margin-block-end: 6px;
+}
+.guide-body { font-size: 13.5px; color: var(--c-text-2); line-height: var(--lh-ai); }
+
+/* ═══ Buttons ═══ */
+.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px;
+    padding-block: 10px; padding-inline: 20px;
+    border-radius: var(--radius-s);
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; border: 1px solid transparent;
+    transition: all var(--dur-s) var(--ease);
+    white-space: nowrap;
+    line-height: 1.2;
+}
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-p { background: var(--c-accent); color: #fff; }
+.btn-p:hover:not(:disabled) { background: var(--c-accent-600); box-shadow: var(--shadow-1); }
+.btn-s {
+    background: var(--bg-surface); color: var(--c-text-2);
+    border-color: var(--border-strong);
+}
+.btn-s:hover:not(:disabled) { background: var(--bg-hover); color: var(--c-text); }
+.btn-ok { background: var(--c-success); color: #fff; }
+.btn-ok:hover:not(:disabled) { filter: brightness(0.93); }
+.btn-load { padding-inline: 16px; padding-block: 8px; font-size: 13.5px; }
+.btn:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+.btn-grp { display: flex; gap: 12px; justify-content: flex-end; margin-block-start: 24px; flex-wrap: wrap; }
+
+/* ═══ Form fields ═══ */
+.field { margin-block-end: 14px; }
+.field-lbl {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12.5px; font-weight: 600;
+    color: var(--c-text-2);
+    margin-block-end: 6px;
+    text-transform: uppercase; letter-spacing: 0.3px;
+}
+textarea, input[type="text"], input[type="date"], input[type="number"] {
+    width: 100%;
+    padding-block: 10px; padding-inline: 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-s);
+    background: var(--bg-surface);
+    color: var(--c-text);
+    transition: all var(--dur-s) var(--ease);
+}
+textarea { resize: vertical; min-height: 70px; line-height: var(--lh-body); }
+textarea:focus, input:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: var(--shadow-focus);
+}
+textarea::placeholder, input::placeholder { color: var(--c-text-3); }
+
+/* ═══ Search bar ═══ */
+.search-box {
+    position: relative;
+    margin-block-end: 16px;
+}
+.search-box input { padding-inline-start: 40px; padding-block: 12px; font-size: 14px; }
+.s-icon {
+    position: absolute;
+    inset-inline-start: 14px; inset-block-start: 50%;
+    transform: translateY(-50%);
+    color: var(--c-text-3); pointer-events: none;
+}
+
+/* ═══ Agent grid ═══ */
+.a-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+}
+.a-card {
+    display: flex; gap: 12px; align-items: center;
+    padding: 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    cursor: pointer;
+    transition: all var(--dur-s) var(--ease);
+}
+.a-card:hover { border-color: var(--c-accent); box-shadow: var(--shadow-2); transform: translateY(-1px); }
+.a-card.picked {
+    border-color: var(--c-accent);
+    background: var(--bg-accent-soft);
+    box-shadow: var(--shadow-2);
+}
+.a-av {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 14px;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-1);
+}
+.a-name  { font-size: 14.5px; font-weight: 600; color: var(--c-text); }
+.a-role  { font-size: 12px; color: var(--c-text-2); margin-block-start: 2px; }
+.a-queue { font-size: 11.5px; color: var(--c-text-3); margin-block-start: 2px; }
+
+/* ═══ Period presets ═══ */
+.period-presets {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-block-end: 14px;
+}
+.period-btn {
+    padding-block: 8px; padding-inline: 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-pill);
+    background: var(--bg-surface);
+    color: var(--c-text-2);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    transition: all var(--dur-s) var(--ease);
+}
+.period-btn:hover { border-color: var(--c-accent); color: var(--c-accent); }
+.period-btn.active {
+    background: var(--c-accent); color: #fff; border-color: var(--c-accent);
+    box-shadow: var(--shadow-1);
+}
+.period-custom { margin-block-end: 14px; }
+.period-dates { display: flex; gap: 12px; }
+.period-selected {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+    padding: 12px 16px;
+    background: var(--bg-accent-soft);
+    border-radius: var(--radius-m);
+    font-size: 13.5px; font-weight: 600;
+    color: var(--c-accent-700);
+}
+[data-theme="dark"] .period-selected { color: #C7D2FE; }
+
+/* ═══ Score pills (semantic badges) ═══ */
+.pill {
+    display: inline-flex; align-items: center;
+    padding-block: 3px; padding-inline: 10px;
+    border-radius: var(--radius-pill);
+    font-size: 12px; font-weight: 700;
+    font-family: var(--font-mono);
+    letter-spacing: 0.2px;
+    line-height: 1.3;
+}
+.pill-hi      { background: var(--pill-hi-bg);      color: var(--pill-hi-fg); }
+.pill-md      { background: var(--pill-md-bg);      color: var(--pill-md-fg); }
+.pill-lo      { background: var(--pill-lo-bg);      color: var(--pill-lo-fg); }
+.pill-info    { background: var(--pill-info-bg);    color: var(--pill-info-fg); }
+.pill-neutral { background: var(--pill-neutral-bg); color: var(--pill-neutral-fg); }
+.pill-chat    { background: var(--pill-chat-bg);    color: var(--pill-chat-fg); text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; }
+.pill-case    { background: var(--pill-case-bg);    color: var(--pill-case-fg); text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; }
+.pill-email   { background: var(--pill-email-bg);   color: var(--pill-email-fg);text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; }
+.pill-call    { background: var(--pill-call-bg);    color: var(--pill-call-fg); text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.5px; }
+.pill-lg { font-size: 13px; padding-block: 5px; padding-inline: 14px; }
+
+/* Status badges (compat — old names map to new pills) */
+.badge { display: inline-flex; padding-block: 4px; padding-inline: 10px; border-radius: var(--radius-pill); font-size: 11.5px; font-weight: 600; }
+.badge-draft { background: var(--pill-neutral-bg); color: var(--pill-neutral-fg); }
+.badge-live  { background: var(--pill-hi-bg); color: var(--pill-hi-fg); }
+
+/* ═══ Dashboard table ═══ */
+.dash-table-wrap {
+    background: var(--bg-surface);
+    border-radius: var(--radius-m);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    overflow-x: auto;
+}
+.dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+}
+.dash-table thead th {
+    text-align: start;
+    padding-block: 12px; padding-inline: 16px;
+    background: var(--bg-sunken);
+    color: var(--c-text-3);
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-block-end: 1px solid var(--border);
+    white-space: nowrap;
+}
+.dash-table tbody td {
+    padding-block: 14px; padding-inline: 16px;
+    border-block-end: 1px solid var(--border);
+    vertical-align: middle;
+}
+.dash-table tbody tr:last-child td { border-block-end: none; }
+.dash-table tbody tr {
+    transition: background var(--dur-s) var(--ease);
+}
+.dash-table tbody tr:hover { background: var(--bg-hover); }
+.dash-q-name { font-weight: 600; color: var(--c-text); }
+.dash-num    { font-family: var(--font-mono); font-weight: 600; color: var(--c-text-2); }
+.dash-range  { font-family: var(--font-mono); color: var(--c-text-3); font-size: 12.5px; }
+.dash-source {
+    font-size: 11px; font-weight: 700;
+    padding-block: 3px; padding-inline: 8px;
+    border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+}
+.dash-source.configured { background: var(--pill-info-bg); color: var(--pill-info-fg); }
+.dash-source.auto       { background: var(--pill-neutral-bg); color: var(--pill-neutral-fg); }
+
+.btn-view {
+    padding-block: 6px; padding-inline: 14px;
+    font-size: 12.5px; font-weight: 600;
+    background: var(--bg-surface); color: var(--c-accent);
+    border: 1px solid var(--c-accent);
+    border-radius: var(--radius-s);
+    cursor: pointer;
+    transition: all var(--dur-s) var(--ease);
+}
+.btn-view:hover { background: var(--c-accent); color: #fff; box-shadow: var(--shadow-1); }
+
+/* ═══ Hero stats ═══ */
+.hero-stats {
+    display: flex; align-items: center; gap: 32px;
+    flex-wrap: wrap;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, var(--bg-accent-soft) 0%, var(--bg-raised) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    margin-block-end: 20px;
+}
+.hero-score {
+    display: flex; flex-direction: column; align-items: center;
+    padding-inline-end: 32px;
+    border-inline-end: 1px solid var(--border);
+}
+.hero-score-val {
+    font-size: 56px; font-weight: 700; line-height: 1;
+    font-family: var(--font-mono);
+    letter-spacing: -0.02em;
+}
+.hero-score-val.hi { color: var(--c-success); }
+.hero-score-val.md { color: var(--c-warning); }
+.hero-score-val.lo { color: var(--c-danger); }
+.hero-score-lbl {
+    font-size: 11.5px; font-weight: 700;
+    color: var(--c-text-3);
+    text-transform: uppercase; letter-spacing: 0.6px;
+    margin-block-start: 8px;
+}
+.hero-meta { display: flex; gap: 28px; flex-wrap: wrap; }
+.hero-meta-item { text-align: center; }
+.hero-meta-val {
+    font-size: 22px; font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--c-text);
+}
+.hero-meta-lbl {
+    font-size: 11px; color: var(--c-text-3);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-block-start: 4px;
+}
+
+/* ═══ Loading / error states ═══ */
+.loading {
+    padding-block: 40px; padding-inline: 20px;
+    text-align: center;
+    color: var(--c-text-3); font-size: 13.5px;
+}
+.loading-spin {
+    display: inline-block; width: 28px; height: 28px;
+    border: 2.5px solid var(--border);
+    border-inline-start-color: var(--c-accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-block-end: 10px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-msg {
+    padding-block: 12px; padding-inline: 16px;
+    background: var(--pill-lo-bg); color: var(--pill-lo-fg);
+    border-radius: var(--radius-s);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* ═══ Side panel ═══ */
+.side-panel {
+    position: fixed; inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    visibility: hidden;
+}
+.side-panel.open { pointer-events: auto; visibility: visible; }
+.sp-backdrop {
+    position: absolute; inset: 0;
+    background: rgba(15,23,42,.45);
+    opacity: 0;
+    transition: opacity var(--dur-m) var(--ease);
+}
+.side-panel.open .sp-backdrop { opacity: 1; }
+.sp-surface {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: min(540px, 100vw);
+    background: var(--bg-surface);
+    box-shadow: var(--shadow-3);
+    display: flex; flex-direction: column;
+    transform: translateX(100%);
+    transition: transform var(--dur-l) var(--ease);
+    overflow: hidden;
+}
+[dir="rtl"] .sp-surface { transform: translateX(-100%); }
+.side-panel.open .sp-surface { transform: translateX(0); }
+.sp-header {
+    display: flex; align-items: center; gap: 12px;
+    padding-block: 14px; padding-inline: 20px;
+    border-block-end: 1px solid var(--border);
+    background: var(--bg-surface);
+    flex-shrink: 0;
+}
+.sp-header-text { flex: 1; min-width: 0; }
+.sp-title { font-size: 15.5px; font-weight: 700; color: var(--c-text); line-height: 1.3; }
+.sp-subtitle { font-size: 12.5px; color: var(--c-text-3); margin-block-start: 2px; line-height: 1.4; }
+.sp-back {
+    background: transparent; border: none; color: var(--c-accent);
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    padding-block: 6px; padding-inline: 8px; border-radius: 6px;
+    display: none;
+}
+.sp-back:hover { background: var(--bg-hover); }
+.sp-back.visible { display: inline-flex; }
+.sp-close {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-surface); color: var(--c-text-2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    transition: all var(--dur-s) var(--ease);
+}
+.sp-close:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+
+/* Side-panel toolbar (sort, filters, etc.) */
+.sp-toolbar {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 8px;
+    padding-block: 12px;
+    padding-inline: 24px;
+    background: var(--bg-raised);
+    border-block-end: 1px solid var(--border);
+}
+.sp-toolbar.hidden { display: none !important; }
+.sp-sort-btn {
+    display: inline-flex !important;
+    align-items: center; gap: 8px;
+    padding-block: 9px; padding-inline: 16px;
+    min-height: 36px;
+    background: #EEF2FF;                 /* soft indigo tint — visibly distinct from toolbar bg */
+    color: #4338CA;                      /* indigo-700 — strong contrast on tint */
+    border: 1px solid #C7D2FE;           /* indigo-200 */
+    border-radius: var(--radius-m);
+    font: inherit; font-size: 13px; font-weight: 600;
+    letter-spacing: 0.1px;
+    cursor: pointer;
+    transition: all var(--dur-s) var(--ease);
+    box-shadow: var(--shadow-1);
+    white-space: nowrap;
+    visibility: visible;
+    opacity: 1;
+}
+.sp-sort-btn:hover {
+    background: #E0E7FF;
+    border-color: #A5B4FC;
+    color: #3730A3;
+    box-shadow: var(--shadow-2);
+    transform: translateY(-1px);
+}
+.sp-sort-btn:active { transform: translateY(0); box-shadow: var(--shadow-1); }
+.sp-sort-btn.active {
+    background: var(--c-primary);
+    color: #fff;
+    border-color: var(--c-primary);
+}
+.sp-sort-btn.active:hover {
+    background: var(--c-primary-strong);
+    border-color: var(--c-primary-strong);
+    color: #fff;
+}
+[data-theme="dark"] .sp-sort-btn {
+    background: rgba(99,102,241,0.18);
+    color: #C7D2FE;
+    border-color: rgba(99,102,241,0.45);
+}
+[data-theme="dark"] .sp-sort-btn:hover {
+    background: rgba(99,102,241,0.28);
+    color: #E0E7FF;
+}
+.sp-sort-icon { width: 15px; height: 15px; flex-shrink: 0; color: currentColor; }
+.sp-sort-label { white-space: nowrap; }
+.sp-sort-dir {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 14px; font-size: 15px; font-weight: 700;
+    opacity: 0.9;
+}
+
+.sp-body {
+    flex: 1; overflow-y: auto;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Side-panel consolidated AI-summary slot (above the eval list) */
+.sp-insight-slot { margin-block-end: 16px; }
+.sp-insight-slot:empty { display: none; }
+.prep-insight-slot { margin-block-start: 10px; }
+.prep-insight-slot:empty { display: none; }
+
+/* Sort-button label span — never let it collapse to zero width */
+.sp-sort-label { white-space: nowrap; }
+
+/* Side-panel eval card (list) */
+.sp-eval-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 14px;
+    margin-block-end: 10px;
+    background: var(--bg-surface);
+    cursor: pointer;
+    transition: all var(--dur-s) var(--ease);
+}
+.sp-eval-card:hover {
+    border-color: var(--c-accent);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-2);
+}
+.sp-eval-row {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    margin-block-end: 8px;
+    flex-wrap: wrap;
+}
+.sp-eval-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; flex-wrap: wrap; }
+.sp-eval-name { font-size: 13.5px; font-weight: 600; color: var(--c-text); }
+.sp-eval-date { font-size: 12px; color: var(--c-text-3); font-family: var(--font-mono); }
+.sp-eval-preview {
+    font-size: 12.5px;
+    line-height: var(--lh-ai);
+    color: var(--c-text-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.sp-eval-nodata { font-size: 12px; color: var(--c-text-3); font-style: italic; }
+
+/* Side-panel detail view */
+.sp-detail-meta {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding-block-end: 14px;
+    margin-block-end: 16px;
+    border-block-end: 1px solid var(--border);
+}
+.sp-section { margin-block-end: 18px; }
+.sp-section-title {
+    font-size: 11px; font-weight: 700;
+    color: var(--c-text-3); text-transform: uppercase; letter-spacing: 0.5px;
+    margin-block-end: 8px;
+    display: flex; align-items: center; gap: 6px;
+}
+.sp-ai-block {
+    background: var(--bg-raised);
+    border-inline-start: 3px solid var(--c-accent);
+    border-radius: var(--radius-s);
+    padding-block: 12px; padding-inline: 14px;
+    font-size: 13px;
+    line-height: var(--lh-ai);
+    color: var(--c-text-2);
+}
+.sp-question {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    padding: 14px;
+    margin-block-end: 10px;
+}
+.sp-q-cat {
+    font-size: 10.5px; font-weight: 700;
+    color: var(--c-text-3); text-transform: uppercase; letter-spacing: 0.5px;
+    margin-block-end: 4px;
+}
+.sp-q-text {
+    font-size: 13.5px; font-weight: 600; color: var(--c-text);
+    margin-block-end: 10px; line-height: 1.5;
+}
+.sp-answer {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-block-end: 8px;
+}
+.sp-answer-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding-block: 3px; padding-inline: 8px;
+    border-radius: 6px;
+    background: var(--bg-accent-soft);
+    color: var(--c-accent-700);
+    font-size: 12px; font-weight: 500;
+}
+[data-theme="dark"] .sp-answer-pill { color: #C7D2FE; }
+.sp-reason {
+    font-size: 12.5px; color: var(--c-text-2);
+    line-height: var(--lh-ai);
+    font-style: italic;
+    padding-inline-start: 10px;
+    border-inline-start: 2px solid var(--border-strong);
+    margin-block-start: 6px;
+}
+.sp-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--c-accent); text-decoration: none;
+    font-size: 12.5px; font-weight: 600;
+}
+.sp-link:hover { text-decoration: underline; }
+.sp-link-row { display: flex; gap: 14px; flex-wrap: wrap; margin-block-start: 10px; }
+
+/* ═══ Preparation (Phase 1) ═══ */
+.consol-table-wrap { /* legacy alias */
+    background: var(--bg-surface);
+    border-radius: var(--radius-m);
+    border: 1px solid var(--border);
+    overflow: hidden; overflow-x: auto;
+}
+.weight-table-wrap { background: var(--bg-surface); border-radius: var(--radius-m); border: 1px solid var(--border); overflow-x: auto; }
+.consol-table { width: 100%; border-collapse: collapse; font-size: 14px !important; }
+.consol-table thead th {
+    text-align: start; padding-block: 8px; padding-inline: 14px;
+    background: var(--bg-sunken); color: var(--c-text-3);
+    font-size: 12px !important; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    border-block-end: 1px solid var(--border); white-space: nowrap;
+}
+.consol-table thead th.th-center { text-align: center; }
+.consol-table tbody td, .consol-table tfoot td {
+    padding-block: 8px; padding-inline: 14px;
+    font-size: 14px !important;
+    border-block-end: 1px solid var(--border); vertical-align: middle;
+}
+.consol-table tbody tr:nth-child(even) { background: rgba(241,245,249,0.45); }
+.consol-table tbody tr:hover { background: var(--bg-hover); }
+/* Weight table column typography — !important beats D365 global td/th rules */
+.wt-q-name    { font-size: 14px !important; font-weight: 500; color: var(--c-text); }
+.wt-num       { font-size: 13px !important; font-family: var(--font-mono); font-weight: 400; color: var(--c-text-2); text-align: center; }
+.wt-score-txt { font-size: 13px !important; font-family: var(--font-mono); font-weight: 600; text-align: center; }
+.wt-weight-cell { text-align: center; white-space: nowrap; }
+/* Tfoot total row */
+.consol-table tfoot tr { background: var(--bg-sunken) !important; }
+.consol-table tfoot td { font-weight: 600; border-block-end: none; }
+/* Sort button (inline-style active state used to avoid CSS cache glitch) */
+.wt-sort-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding-block: 5px; padding-inline: 10px;
+    font-size: 12px; font-weight: 600;
+    border-radius: var(--radius-s); cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-surface); color: var(--c-text-2);
+    transition: background 0.15s, color 0.15s; white-space: nowrap;
+}
+.wt-sort-btn:hover { background: var(--bg-hover); color: var(--c-text); }
+/* Slim weight input */
+.weight-input {
+    width: 50px; padding-block: 4px; padding-inline: 6px;
+    text-align: end; font-size: 13px !important; font-weight: 500;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: var(--bg-surface); color: var(--c-text);
+    transition: border-color 0.15s;
+}
+.weight-input:focus { border-color: var(--c-accent); box-shadow: var(--shadow-focus); outline: none; }
+.weight-pct { color: var(--c-text-3); font-size: 13px !important; margin-inline-start: 3px; }
+.weight-warn-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px;
+    padding-block: 10px; padding-inline: 14px;
+    background: var(--pill-md-bg); color: var(--pill-md-fg);
+    border-radius: var(--radius-s);
+    font-size: 12.5px; font-weight: 600;
+    margin-block-start: 10px;
+}
+.weight-warn-bar.over { background: var(--pill-lo-bg); color: var(--pill-lo-fg); }
+.weight-warn-bar:empty { display: none; }
+.normalize-btn {
+    padding-block: 5px; padding-inline: 12px;
+    background: var(--c-warning); color: #fff;
+    border: none; border-radius: 6px;
+    font-weight: 600; font-size: 12px;
+    cursor: pointer;
+}
+.weight-warn-bar.over .normalize-btn { background: var(--c-danger); }
+
+/* Preparation questionnaire cards */
+.prep-q-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    margin-block-end: 12px;
+}
+.prep-q-head {
+    display: flex; align-items: center; gap: 10px;
+    padding-block: 14px; padding-inline: 16px;
+    cursor: pointer; user-select: none;
+    transition: background var(--dur-s) var(--ease);
+}
+.prep-q-head:hover { background: var(--bg-hover); }
+.prep-q-title { flex: 1; min-width: 0; font-size: 14.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.prep-view-btn { flex-shrink: 0; white-space: nowrap; }
+/* Score distribution fallback rows (when no CRITERIA_MAP category data) */
+.score-dist-row { display: flex; align-items: center; gap: 10px; margin-block-end: 8px; }
+.sdr-label { font-size: 12px; font-weight: 600; min-width: 80px; }
+.sdr-track { flex: 1; height: 8px; background: var(--bg-sunken); border-radius: var(--radius-pill); overflow: hidden; }
+.sdr-fill  { height: 100%; border-radius: var(--radius-pill); transition: width var(--dur-m) var(--ease); }
+.sdr-count { min-width: 52px; text-align: end; font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--c-text-2); }
+.cat-weight-tag {
+    font-size: 10.5px; font-weight: 700;
+    background: var(--bg-accent-soft); color: var(--c-accent-700);
+    padding-block: 2px; padding-inline: 8px;
+    border-radius: var(--radius-pill);
+}
+[data-theme="dark"] .cat-weight-tag { color: #C7D2FE; }
+.cat-chev { color: var(--c-text-3); transition: transform var(--dur-s) var(--ease); }
+.prep-q-card.open .cat-chev { transform: rotate(180deg); }
+.prep-q-body {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height var(--dur-l) var(--ease), padding var(--dur-l) var(--ease);
+}
+.prep-q-card.open .prep-q-body { padding: 18px 20px; max-height: 6000px; }
+
+/* Bars */
+.bar-row { display: flex; align-items: center; gap: 16px; margin-block-end: 12px; }
+.bar-label { font-size: 13px; color: var(--c-text-2); min-width: 160px; flex-shrink: 0; line-height: 1.4; }
+.bar-track {
+    flex: 1; height: 10px;
+    background: var(--bg-sunken);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+.bar-fill { height: 100%; border-radius: var(--radius-pill); transition: width var(--dur-m) var(--ease); }
+.bar-val  { min-width: 44px; text-align: end; font-family: var(--font-mono); font-size: 13px; font-weight: 700; }
+/* Score distribution fallback row — match bar-row spacing */
+.score-dist-row { gap: 16px; margin-block-end: 12px; }
+.sdr-label { font-size: 13px; min-width: 90px; }
+.sdr-track { height: 10px; }
+.sdr-count { min-width: 60px; font-size: 13px; }
+
+/* AI tag / icon */
+.ai-field-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10.5px; font-weight: 600;
+    color: var(--c-accent-700);
+    padding-block: 2px; padding-inline: 7px;
+    background: var(--pill-chat-bg);
+    border-radius: var(--radius-pill);
+    margin-inline-start: 6px; vertical-align: middle;
+}
+[data-theme="dark"] .ai-field-tag { color: #A5B4FC; }
+.copilot-icon {
+    width: 20px; height: 20px;
+    display: inline-block;
+    vertical-align: -5px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+.copilot-bounce {
+    width: 28px; height: 28px;
+    display: inline-block;
+    vertical-align: -8px;
+    object-fit: contain;
+    flex-shrink: 0;
+    animation: bounce 1.2s var(--ease) infinite;
+}
+/* Scale up further inside prominent section titles and card labels */
+.sp-section-title .copilot-icon,
+.ai-field-tag      .copilot-icon,
+.insight-label     .copilot-icon { width: 22px; height: 22px; vertical-align: -6px; }
+.insight-label     .copilot-icon { width: 24px; height: 24px; vertical-align: -6px; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+
+.insight-spinner {
+    display: flex; align-items: center; gap: 10px;
+    padding-block: 10px; padding-inline: 14px;
+    background: var(--bg-raised);
+    border-radius: var(--radius-s);
+    font-size: 13px; color: var(--c-text-2);
+}
+.insight-card {
+    background: linear-gradient(135deg, var(--bg-accent-soft) 0%, var(--bg-raised) 100%);
+    border: 1px solid rgba(99,102,241,.2);
+    border-radius: var(--radius-m);
+    padding: 14px 16px;
+    margin-block-end: 14px;
+}
+.insight-header { display: flex; align-items: center; gap: 8px; margin-block-end: 8px; }
+.insight-label { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--c-accent-700); display: inline-flex; align-items: center; gap: 6px; }
+[data-theme="dark"] .insight-label { color: #A5B4FC; }
+.insight-text { font-size: 13.5px; line-height: var(--lh-ai); color: var(--c-text-2); }
+.insight-text ul { margin: 4px 0; padding-inline-start: 18px; }
+.insight-text li { margin-block-end: 4px; }
+.insight-text p  { margin: 0 0 6px; }
+.insight-gen-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding-block: 8px; padding-inline: 14px;
+    background: var(--bg-surface); color: var(--c-accent);
+    border: 1px dashed var(--c-accent); border-radius: var(--radius-s);
+    font-size: 12.5px; font-weight: 600; cursor: pointer;
+}
+.insight-gen-btn:hover { background: var(--bg-accent-soft); }
+
+/* ═══ Questionnaire tabs (Phase 3) ═══ */
+.q-tab-bar {
+    display: flex; overflow-x: auto; gap: 4px;
+    padding: 4px;
+    background: var(--bg-raised);
+    border-radius: var(--radius-m);
+    margin-block-end: 16px;
+    -webkit-overflow-scrolling: touch;
+}
+.q-tab {
+    padding-block: 10px; padding-inline: 18px;
+    border-radius: var(--radius-s);
+    font-size: 13.5px; font-weight: 500; cursor: pointer;
+    white-space: nowrap; border: none; background: transparent;
+    color: var(--c-text-2); font-family: var(--font-main);
+    display: flex; align-items: center; gap: 10px;
+    transition: all var(--dur-s) var(--ease);
+}
+.q-tab:hover { background: var(--bg-hover); color: var(--c-text); }
+.q-tab.active { background: var(--c-accent); color: #fff; font-weight: 600; box-shadow: var(--shadow-1); }
+.q-tab-score { font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; padding-block: 1px; padding-inline: 6px; border-radius: 4px; }
+.q-tab:not(.active) .q-tab-score { background: var(--bg-surface); color: var(--c-text-2); }
+.q-tab.active .q-tab-score { background: rgba(255,255,255,.22); color: #fff; }
+.q-tab-panel { display: none; }
+.q-tab-panel.active { display: block; }
+
+.qr-header { display: flex; align-items: center; justify-content: space-between; margin-block-end: 14px; flex-wrap: wrap; gap: 10px; }
+.qr-title { font-size: 17px; font-weight: 700; }
+.qr-meta { display: flex; gap: 16px; font-size: 13px; color: var(--c-text-3); flex-wrap: wrap; }
+.qr-cat-card { border: 1px solid var(--border); border-radius: var(--radius-m); margin-block-end: 10px; overflow: hidden; background: var(--bg-surface); }
+.qr-cat-head { display: flex; align-items: center; justify-content: space-between; padding-block: 12px; padding-inline: 16px; cursor: pointer; user-select: none; transition: background var(--dur-s) var(--ease); }
+.qr-cat-head:hover { background: var(--bg-hover); }
+.qr-cat-title { font-size: 14.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.qr-cat-body { padding: 0; max-height: 0; overflow: hidden; transition: max-height var(--dur-l) var(--ease), padding var(--dur-l) var(--ease); }
+.qr-cat-card.open .qr-cat-body { padding: 14px 16px; max-height: 6000px; }
+.qr-cat-card.open .cat-chev { transform: rotate(180deg); }
+.qr-flag-row { display: flex; align-items: flex-start; gap: 8px; margin-block-end: 6px; font-size: 13.5px; line-height: 1.5; }
+.qr-flag-count {
+    min-width: 22px; height: 22px; border-radius: 50%;
+    background: var(--bg-accent-soft); color: var(--c-accent-700);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+[data-theme="dark"] .qr-flag-count { color: #C7D2FE; }
+.qr-flag-detail { font-size: 12px; color: var(--c-text-3); margin-inline-start: 30px; margin-block-end: 8px; line-height: 1.5; }
+.qr-no-flags { font-size: 13px; color: var(--c-text-3); font-style: italic; padding-block: 6px; }
+.qr-responses { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-block-start: 12px; }
+@media (max-width: 640px) { .qr-responses { grid-template-columns: 1fr; } }
+
+/* ═══ Action items ═══ */
+.act-item {
+    display: flex; align-items: center; gap: 10px;
+    padding-block: 10px; padding-inline: 12px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-s);
+    margin-block-end: 8px;
+}
+.act-n {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--c-accent); color: #fff;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.act-inp { flex: 1; border: none; background: transparent; padding: 6px 0; font-size: 14px; }
+.act-inp:focus { outline: none; }
+.act-del {
+    width: 28px; height: 28px; border-radius: 6px;
+    background: transparent; border: none; color: var(--c-text-3);
+    cursor: pointer; font-size: 13px; flex-shrink: 0;
+    transition: all var(--dur-s) var(--ease);
+}
+.act-del:hover { background: var(--pill-lo-bg); color: var(--pill-lo-fg); }
+
+/* ═══ Complete screen ═══ */
+.complete-hero { text-align: center; padding-block: 32px; }
+.complete-check {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--pill-hi-bg); color: var(--pill-hi-fg);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-block-end: 16px;
+}
+.complete-title { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
+.complete-subtitle { font-size: 14px; color: var(--c-text-3); margin-block-start: 6px; }
+.recap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+}
+.recap-item {
+    padding: 14px;
+    background: var(--bg-raised);
+    border-radius: var(--radius-m);
+    border: 1px solid var(--border);
+}
+.recap-label { font-size: 11px; font-weight: 700; color: var(--c-text-3); text-transform: uppercase; letter-spacing: 0.5px; }
+.recap-value { font-size: 15px; font-weight: 600; margin-block-start: 4px; color: var(--c-text); }
+.recap-value.num { font-family: var(--font-mono); font-size: 22px; }
+.action-pill {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-raised);
+    border-radius: var(--radius-s);
+    margin-block-end: 6px;
+    font-size: 13.5px;
+}
+.action-pill-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--c-accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+
+/* ═══ Read-only viewer (Phase 6) ═══ */
+.rv-header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+    margin-block-end: 24px;
+    padding-block-end: 16px;
+    border-block-end: 1px solid var(--border);
+}
+.rv-title { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+.rv-subtitle { font-size: 13.5px; color: var(--c-text-3); margin-block-start: 4px; }
+.rv-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.rv-section {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-l);
+    padding: 20px 24px;
+    margin-block-end: 16px;
+    box-shadow: var(--shadow-1);
+}
+.rv-section-title {
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--c-text-3);
+    margin-block-end: 14px;
+    padding-block-end: 10px;
+    border-block-end: 1px solid var(--border);
+}
+.rv-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+}
+.rv-meta-item {}
+.rv-meta-label { font-size: 11px; color: var(--c-text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+.rv-meta-value { font-size: 15px; font-weight: 600; margin-block-start: 3px; }
+.rv-meta-value.hi { color: var(--c-success); }
+.rv-meta-value.md { color: var(--c-warning); }
+.rv-meta-value.lo { color: var(--c-danger); }
+.rv-field { margin-block-end: 12px; }
+.rv-field-label { font-size: 11.5px; font-weight: 700; color: var(--c-text-3); text-transform: uppercase; letter-spacing: 0.4px; margin-block-end: 6px; }
+.rv-field-value { font-size: 13.5px; line-height: var(--lh-ai); color: var(--c-text); background: var(--bg-raised); padding: 12px; border-radius: var(--radius-s); white-space: pre-wrap; }
+.rv-field-value.empty { color: var(--c-text-3); font-style: italic; }
+.rv-cat { border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px; margin-block-end: 10px; background: var(--bg-raised); }
+.rv-cat-header { display: flex; align-items: center; justify-content: space-between; margin-block-end: 10px; }
+.rv-cat-name { font-size: 14px; font-weight: 600; }
+.rv-cat-score { padding-block: 3px; padding-inline: 10px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; font-family: var(--font-mono); }
+.rv-question { padding: 10px; background: var(--bg-surface); border-radius: var(--radius-s); margin-block-end: 10px; }
+.rv-question-text { font-size: 13px; font-weight: 600; margin-block-end: 6px; line-height: 1.5; }
+.rv-layer-row { display: flex; align-items: center; gap: 6px; margin-block-end: 4px; font-size: 12.5px; line-height: 1.5; }
+.rv-layer-content { color: var(--c-text-2); }
+.rv-layer-reason { font-size: 12px; color: var(--c-text-3); font-style: italic; margin-inline-start: 30px; margin-block-end: 6px; line-height: 1.5; }
+.layer-tag { font-size: 10px; font-weight: 700; padding-block: 2px; padding-inline: 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+.layer-ai { background: var(--pill-chat-bg); color: var(--pill-chat-fg); }
+.layer-ev { background: var(--pill-info-bg); color: var(--pill-info-fg); }
+.layer-tag-delta { background: var(--pill-md-bg); color: var(--pill-md-fg); }
+.rv-cat-responses { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-block-start: 10px; }
+@media (max-width: 640px) { .rv-cat-responses { grid-template-columns: 1fr; } }
+.rv-cat-response-box { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 10px; }
+.rv-cat-response-label { font-size: 11px; color: var(--c-text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-block-end: 4px; }
+.rv-cat-response-value { font-size: 13px; line-height: 1.5; white-space: pre-wrap; }
+.rv-cat-response-value.empty { color: var(--c-text-3); font-style: italic; }
+.rv-action { display: flex; gap: 12px; padding: 10px; background: var(--bg-raised); border-radius: var(--radius-s); margin-block-end: 6px; }
+.rv-action-n { width: 24px; height: 24px; border-radius: 50%; background: var(--c-accent); color: #fff; font-size: 11.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rv-action-desc { font-size: 13.5px; line-height: 1.5; }
+.rv-action-meta { font-size: 11.5px; color: var(--c-text-3); margin-block-start: 4px; display: flex; gap: 8px; align-items: center; }
+.rv-action-status { font-size: 10.5px; font-weight: 700; padding-block: 2px; padding-inline: 8px; border-radius: 4px; }
+.sc-bg-hi { background: var(--pill-hi-bg); color: var(--pill-hi-fg); }
+.sc-bg-md { background: var(--pill-md-bg); color: var(--pill-md-fg); }
+.sc-bg-lo { background: var(--pill-lo-bg); color: var(--pill-lo-fg); }
+.sc-hi { color: var(--c-success); }
+.sc-md { color: var(--c-warning); }
+.sc-lo { color: var(--c-danger); }
+
+/* ═══ Responsive ═══ */
+@media (max-width: 960px) {
+    .content { padding-inline: 16px; padding-block: 20px 60px; }
+    .header { padding-inline: 16px; }
+    .stepper-bar { padding-inline: 16px; }
+}
+@media (max-width: 640px) {
+    .hero-stats { gap: 16px; padding: 16px; }
+    .hero-score { padding-inline-end: 0; border-inline-end: none; padding-block-end: 16px; border-block-end: 1px solid var(--border); }
+    .card { padding: 18px; }
+    .dash-table thead { display: none; }
+    .dash-table tbody tr { display: block; padding: 12px; border-block-end: 1px solid var(--border); }
+    .dash-table tbody tr:last-child { border-block-end: none; }
+    .dash-table tbody td { display: flex; justify-content: space-between; padding-block: 6px; padding-inline: 0; border: none; }
+    .dash-table tbody td::before { content: attr(data-label); font-size: 11px; font-weight: 700; color: var(--c-text-3); text-transform: uppercase; letter-spacing: 0.4px; }
+}
+
+/* ═══ Print ═══ */
+@media print {
+    .header, .stepper-bar, .btn-grp, .side-panel, .rv-actions { display: none !important; }
+    body { background: #fff; }
+    .card, .rv-section { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Header ═══ -->
+<div class="header">
+    <div class="header-brand">
+        <div class="brand-mark">RS</div>
+        <div>
+            <div class="brand-text" data-l10n="ReviewSession_Header_Title">Agent Review Session</div>
+            <div class="brand-sub" data-l10n="ReviewSession_Header_Subtitle">Quality Evaluation Feedback Tool</div>
+        </div>
+    </div>
+    <div class="header-actions">
+        <span class="mode-badge" id="modeBadge"></span>
+        <button class="icon-btn" onclick="toggleTheme()" id="themeBtn"
+                data-l10n-title="ReviewSession_Theme_Toggle" title="Toggle theme">☀️</button>
+    </div>
+</div>
+
+<!-- ═══ Stepper ═══ -->
+<div class="stepper-bar" id="stepperBar">
+    <div class="stp active" onclick="goTo(0)"><span class="stp-n">1</span> <span data-l10n="ReviewSession_Stepper_SelectAgent">Select Agent</span></div>
+    <div class="stp-line"></div>
+    <div class="stp" onclick="goTo(1)"><span class="stp-n">2</span> <span data-l10n="ReviewSession_Stepper_Preparation">Preparation</span></div>
+    <div class="stp-line"></div>
+    <div class="stp" onclick="goTo(2)"><span class="stp-n">3</span> <span data-l10n="ReviewSession_Stepper_Opening">Opening</span></div>
+    <div class="stp-line"></div>
+    <div class="stp" onclick="goTo(3)"><span class="stp-n">4</span> <span data-l10n="ReviewSession_Stepper_CategoryReview">Category Review</span></div>
+    <div class="stp-line"></div>
+    <div class="stp" onclick="goTo(4)"><span class="stp-n">5</span> <span data-l10n="ReviewSession_Stepper_Summary">Summary</span></div>
+    <div class="stp-line"></div>
+    <div class="stp" id="stpComplete"><span class="stp-n">✓</span> <span data-l10n="ReviewSession_Stepper_Complete">Complete</span></div>
+</div>
+
+<!-- ═══ Content ═══ -->
+<div class="content">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 0 — AGENT SELECTION + CONSOLIDATED DASHBOARD               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase on" id="ph0">
+    <!-- Step 1: Agent Selection -->
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase0_SelectAgentTitle">Select Agent</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase0_SelectAgentDesc">Choose the agent for this review session</div>
+            </div>
+        </div>
+        <div class="search-box">
+            <span class="s-icon" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            </span>
+            <input type="text" id="agentQ"
+                   data-l10n-placeholder="ReviewSession_Phase0_AgentSearchPlaceholder"
+                   placeholder="Search by name, role, or queue..."
+                   oninput="filterAgents()">
+        </div>
+        <div id="agentGrid"></div>
+    </div>
+
+    <!-- Step 2: Date Range -->
+    <div class="card" id="dateRangeCard" style="display:none">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase0_PeriodTitle">Review Period</div>
+                <div class="card-desc" id="dateRangeDesc" data-l10n="ReviewSession_Phase0_PeriodDesc_Default">Select the evaluation period to review</div>
+            </div>
+        </div>
+        <div class="period-presets">
+            <button class="period-btn" data-preset="thisMonth"    onclick="setPeriod('thisMonth', this)"    data-l10n="ReviewSession_Phase0_Period_ThisMonth">This Month</button>
+            <button class="period-btn" data-preset="lastMonth"    onclick="setPeriod('lastMonth', this)"    data-l10n="ReviewSession_Phase0_Period_LastMonth">Last Month</button>
+            <button class="period-btn" data-preset="thisQuarter"  onclick="setPeriod('thisQuarter', this)"  data-l10n="ReviewSession_Phase0_Period_ThisQuarter">This Quarter</button>
+            <button class="period-btn" data-preset="lastQuarter"  onclick="setPeriod('lastQuarter', this)"  data-l10n="ReviewSession_Phase0_Period_LastQuarter">Last Quarter</button>
+            <button class="period-btn" data-preset="last6Months"  onclick="setPeriod('last6Months', this)"  data-l10n="ReviewSession_Phase0_Period_Last6Months">Last 6 Months</button>
+            <button class="period-btn" data-preset="custom"       onclick="setPeriod('custom', this)"       data-l10n="ReviewSession_Phase0_Period_Custom">Custom Range</button>
+        </div>
+        <div class="period-custom" id="periodCustom" style="display:none">
+            <div class="period-dates">
+                <div class="field" style="flex:1;margin-block-end:0">
+                    <label class="field-lbl" data-l10n="ReviewSession_Phase0_Field_From">From</label>
+                    <input type="date" id="dateFrom" onchange="onDateChange()">
+                </div>
+                <div class="field" style="flex:1;margin-block-end:0">
+                    <label class="field-lbl" data-l10n="ReviewSession_Phase0_Field_To">To</label>
+                    <input type="date" id="dateTo" onchange="onDateChange()">
+                </div>
+            </div>
+        </div>
+        <div class="period-selected" id="periodSelected" style="display:none">
+            <span id="periodLabel"></span>
+            <button class="btn btn-p btn-load" id="loadEvalsBtn" onclick="loadConsolidated()"
+                    data-l10n="ReviewSession_Phase0_Button_LoadEvaluations">Load Evaluations</button>
+        </div>
+    </div>
+
+    <!-- Step 3: Consolidated Dashboard (no accordions — just hero + table) -->
+    <div class="card" id="consolidatedCard" style="display:none">
+        <div class="card-head">
+            <div>
+                <div class="card-title" id="consolidatedTitle" data-l10n="ReviewSession_Phase0_OverviewTitle">Evaluation Overview</div>
+                <div class="card-desc" id="consolidatedDesc"></div>
+            </div>
+        </div>
+        <div class="hero-stats" id="consolHero"></div>
+        <div class="dash-table-wrap">
+            <table class="dash-table" id="consolTable">
+                <thead>
+                    <tr>
+                        <th data-l10n="ReviewSession_Phase0_Table_Questionnaire">Questionnaire</th>
+                        <th data-l10n="ReviewSession_Phase0_Table_Evaluations">Evaluations</th>
+                        <th data-l10n="ReviewSession_Phase0_Table_AvgScore">Avg Score</th>
+                        <th data-l10n="ReviewSession_Phase0_Table_Range">Range</th>
+                        <th data-l10n="ReviewSession_Phase0_Table_Weight">Weight</th>
+                        <th data-l10n="ReviewSession_Phase0_Table_Source">Source</th>
+                        <th data-l10n="ReviewSession_Phase0_Table_Actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="consolTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="btn-grp" id="ph0Next" style="display:none">
+        <button class="btn btn-p" onclick="startPreparation()"
+                data-l10n="ReviewSession_Phase0_Button_ContinueToPrep">Continue to Preparation →</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 1 — CONSOLIDATED PREPARATION                               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase" id="ph1">
+    <div class="guide">
+        <div class="guide-tag" data-l10n="ReviewSession_Phase1_Guide_Tag">💡 Manager Guidance — Preparation</div>
+        <div class="guide-body" data-l10n-html="ReviewSession_Phase1_Guide_Body">
+            This is your <strong>preparation phase</strong> — before meeting with the agent.<br>
+            Review the consolidated evaluation results across all questionnaires. Adjust weights if needed for this session. Identify patterns, strengths, and improvement areas.
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase1_Title">Consolidated Performance</div>
+                <div class="card-desc" id="prepTitle"></div>
+            </div>
+            <span class="badge badge-draft" id="prepBadge" data-l10n="ReviewSession_Phase1_Badge_Draft">Draft</span>
+        </div>
+        <div class="hero-stats" id="prepHero"></div>
+    </div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase1_Weights_Title">Questionnaire Weights</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase1_Weights_Desc">Adjust weights for this session. Changes are session-specific and don't affect default configuration.</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+                <button id="wtSortBtn" class="wt-sort-btn" onclick="toggleWeightSort()" type="button">↕ Sort by Score</button>
+                <button class="btn btn-s" style="font-size:12.5px;padding-block:6px;padding-inline:12px" onclick="resetWeights()"
+                        data-l10n="ReviewSession_Phase1_Weights_Reset">Reset to Default</button>
+            </div>
+        </div>
+        <div class="weight-table-wrap">
+            <table class="consol-table" id="weightTable">
+                <thead>
+                    <tr>
+                        <th style="font-size:16px !important" data-l10n="ReviewSession_Phase0_Table_Questionnaire">Questionnaire</th>
+                        <th class="th-center" style="font-size:16px !important" data-l10n="ReviewSession_Phase0_Table_Evaluations">Evals</th>
+                        <th class="th-center" style="font-size:16px !important" data-l10n="ReviewSession_Phase0_Table_AvgScore">Avg Score</th>
+                        <th class="th-center" style="font-size:16px !important" data-l10n="ReviewSession_Phase0_Table_Weight">Weight</th>
+                        <th class="th-center" style="font-size:16px !important" data-l10n="ReviewSession_Phase1_Weights_Contribution">Contribution</th>
+                        <th style="font-size:16px !important" data-l10n="ReviewSession_Phase0_Table_Source">Source</th>
+                    </tr>
+                </thead>
+                <tbody id="weightTableBody"></tbody>
+                <tfoot>
+                    <tr>
+                        <td style="font-size:18px !important;font-weight:600" data-l10n="ReviewSession_Phase1_Weights_Total">Total</td>
+                        <td id="wtTotalEvals" class="wt-num" style="font-size:18px !important;text-align:center"></td>
+                        <td></td>
+                        <td id="wtTotalWeight" class="wt-num" style="font-size:18px !important;text-align:center"></td>
+                        <td id="wtTotalScore"  class="wt-num wt-score-txt" style="font-size:18px !important;text-align:center;font-weight:600"></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div id="prepQuestionnaires"></div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase1_PrivateNotes_Title">🔒 Private Notes</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase1_PrivateNotes_Desc">AI-generated coaching suggestions — edit freely to make them yours</div>
+            </div>
+        </div>
+        <div id="coachingPlanSpinner" class="insight-spinner" style="display:none;margin-block-end:14px;">
+            <span id="coachingPlanSpinnerBody"></span>
+        </div>
+        <div class="field">
+            <label class="field-lbl">
+                <span data-l10n="ReviewSession_Phase1_Strengths_Label">Strengths Identified</span>
+                <span id="prepStrAiTag" class="ai-field-tag" style="display:none"></span>
+            </label>
+            <textarea rows="3" id="prepStr"
+                      data-l10n-placeholder="ReviewSession_Phase1_Strengths_Placeholder"
+                      placeholder="What did the agent do well? Note specific examples across evaluations..."></textarea>
+        </div>
+        <div class="field">
+            <label class="field-lbl">
+                <span data-l10n="ReviewSession_Phase1_Improvements_Label">Areas for Improvement</span>
+                <span id="prepImpAiTag" class="ai-field-tag" style="display:none"></span>
+            </label>
+            <textarea rows="3" id="prepImp"
+                      data-l10n-placeholder="ReviewSession_Phase1_Improvements_Placeholder"
+                      placeholder="Which areas need attention? Note patterns you've observed..."></textarea>
+        </div>
+        <div class="field">
+            <label class="field-lbl">
+                <span data-l10n="ReviewSession_Phase1_TalkingPoints_Label">Talking Points</span>
+                <span id="prepTalkAiTag" class="ai-field-tag" style="display:none"></span>
+            </label>
+            <textarea rows="2" id="prepTalk"
+                      data-l10n-placeholder="ReviewSession_Phase1_TalkingPoints_Placeholder"
+                      placeholder="Key topics to raise during the session..."></textarea>
+        </div>
+    </div>
+    <div class="btn-grp">
+        <button class="btn btn-s" onclick="goTo(0)" data-l10n="Common_Back">← Back</button>
+        <button class="btn btn-p" onclick="savePrepAndContinue()" data-l10n="ReviewSession_Phase1_Button_StartSession">Start Session with Agent →</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 2 — OPENING                                                -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase" id="ph2">
+    <div class="guide">
+        <div class="guide-tag" data-l10n="ReviewSession_Phase2_Guide_Tag">💡 Manager Guidance — Opening</div>
+        <div class="guide-body" data-l10n-html="ReviewSession_Phase2_Guide_Body">
+            Start the conversation positively. Share the <strong>overall weighted score</strong> and highlight the strongest questionnaire results first.<br>
+            <strong>Example:</strong> <em>"Thanks for joining. I wanted to go through your evaluations from this period. You had some really strong results in [top area]..."</em>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" id="openTitle" data-l10n="ReviewSession_Phase2_Title">Performance Highlights</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase2_Desc">Share these highlights with the agent</div>
+            </div>
+            <span class="badge badge-live" data-l10n="ReviewSession_Phase2_Badge_InSession">In Session</span>
+        </div>
+        <div id="openHighlights"></div>
+    </div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase2_AgentResponse_Title">Agent Response</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase2_AgentResponse_Desc">Document the agent's initial reaction</div>
+            </div>
+        </div>
+        <div class="field"><textarea rows="3" id="openResp"
+            data-l10n-placeholder="ReviewSession_Phase2_AgentResponse_Placeholder"
+            placeholder="How did the agent respond to the initial overview?"></textarea></div>
+    </div>
+    <div class="btn-grp">
+        <button class="btn btn-s" onclick="goTo(1)" data-l10n="Common_Back">← Back</button>
+        <button class="btn btn-p" onclick="saveOpeningAndContinue()"
+                data-l10n="ReviewSession_Phase2_Button_Continue">Continue to Questionnaire Review →</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 3 — QUESTIONNAIRE REVIEW                                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase" id="ph3">
+    <div class="guide">
+        <div class="guide-tag" data-l10n="ReviewSession_Phase3_Guide_Tag">💡 Manager Guidance — Detailed Review</div>
+        <div class="guide-body" data-l10n="ReviewSession_Phase3_Guide_Body">Review each questionnaire with the agent. Discuss the AI assessment, walk through flagged categories, and document the agent's perspective.</div>
+    </div>
+    <div id="qTabBar" class="q-tab-bar"></div>
+    <div id="qTabContent"></div>
+    <div class="btn-grp">
+        <button class="btn btn-s" onclick="goTo(2)" data-l10n="Common_Back">← Back</button>
+        <button class="btn btn-p" onclick="saveCategoryReviewAndContinue()"
+                data-l10n="ReviewSession_Phase3_Button_Continue">Continue to Summary →</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 4 — SUMMARY                                                -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase" id="ph4">
+    <div class="guide">
+        <div class="guide-tag" data-l10n="ReviewSession_Phase4_Guide_Tag">💡 Manager Guidance — Closing</div>
+        <div class="guide-body" data-l10n-html="ReviewSession_Phase4_Guide_Body">
+            Define <strong>concrete, measurable action items</strong> together with the agent. Ask how they feel about the review.
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase4_ActionItems_Title">Agreed Action Items</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase4_ActionItems_Desc">Goals and actions agreed upon with the agent</div>
+            </div>
+        </div>
+        <div id="actItems"></div>
+        <button class="btn btn-s" style="margin-block-start:10px" onclick="addAct()"
+                data-l10n="ReviewSession_Phase4_Button_AddAction">+ Add Action</button>
+    </div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase4_AgentComments_Title">Agent Comments</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase4_AgentComments_Desc">Agent's overall feedback on the review</div>
+            </div>
+        </div>
+        <div class="field"><textarea rows="4" id="agentComments"
+            data-l10n-placeholder="ReviewSession_Phase4_AgentComments_Placeholder"
+            placeholder="How does the agent feel about the review? Additional comments..."></textarea></div>
+    </div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase4_ManagerSummary_Title">Manager Summary</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase4_ManagerSummary_Desc">Your overall assessment and recommendations</div>
+            </div>
+        </div>
+        <div class="field"><textarea rows="4" id="mgrSummary"
+            data-l10n-placeholder="ReviewSession_Phase4_ManagerSummary_Placeholder"
+            placeholder="Overall evaluation summary, key takeaways, and recommendations..."></textarea></div>
+    </div>
+    <div class="btn-grp">
+        <button class="btn btn-s" onclick="goTo(3)" data-l10n="Common_Back">← Back</button>
+        <button class="btn btn-ok" id="saveBtn" onclick="saveSession()"
+                data-l10n="ReviewSession_Phase4_Button_Save">💾 Save Review Session</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 5 — COMPLETION                                             -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase" id="ph5">
+    <div class="complete-hero">
+        <div class="complete-check">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        <div class="complete-title" data-l10n="ReviewSession_Phase5_Complete_Title">Review Session Complete</div>
+        <div class="complete-subtitle" id="completeSubtitle"></div>
+    </div>
+    <div class="card">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase5_Recap_Title">Session Recap</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase5_Recap_Desc">A snapshot of what you captured during this session</div>
+            </div>
+        </div>
+        <div class="recap-grid" id="completeRecap"></div>
+    </div>
+    <div class="card" id="completeActionsCard" style="display:none;">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase5_Actions_Title">Action Items</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase5_Actions_Desc">Commitments agreed with the agent</div>
+            </div>
+        </div>
+        <div id="completeActions"></div>
+    </div>
+    <div class="btn-grp" style="justify-content:center;margin-block-start:28px;">
+        <button class="btn btn-p" onclick="viewCompletedReview()"
+                data-l10n="ReviewSession_Phase5_Button_ViewReview">📄 View This Review</button>
+        <button class="btn btn-s" onclick="finishSession()"
+                data-l10n="ReviewSession_Phase5_Button_Done">Done</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- PHASE 6 — READ-ONLY VIEWER                                       -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="phase" id="ph6">
+    <div class="rv-header">
+        <div>
+            <div class="rv-title" data-l10n="ReviewSession_Phase6_Title">Review Summary</div>
+            <div class="rv-subtitle" id="rvSubtitle"></div>
+        </div>
+        <div class="rv-actions">
+            <span class="badge" id="rvStatusBadge"></span>
+            <button class="btn btn-s" onclick="window.print()" data-l10n="Common_Print">🖨 Print</button>
+            <button class="btn btn-s" onclick="closeViewer()" data-l10n="Common_Back">← Back</button>
+        </div>
+    </div>
+    <div id="rvContent"></div>
+</div>
+
+</div><!-- end .content -->
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- OFF-CANVAS SIDE PANEL                                            -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="side-panel" id="sidePanel" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="spTitle">
+    <div class="sp-backdrop" onclick="closeSidePanel()"></div>
+    <div class="sp-surface">
+        <div class="sp-header">
+            <button class="sp-back" id="spBack" onclick="sidePanelBackToList()">
+                <span data-l10n="ReviewSession_SidePanel_BackToList">← All evaluations</span>
+            </button>
+            <div class="sp-header-text">
+                <div class="sp-title" id="spTitle"></div>
+                <div class="sp-subtitle" id="spSubtitle"></div>
+            </div>
+            <button class="sp-close" onclick="closeSidePanel()"
+                    data-l10n-title="ReviewSession_SidePanel_Close" title="Close">✕</button>
+        </div>
+        <!-- Toolbar is built dynamically by renderSidePanelToolbar() on every
+             list render — this guarantees the sort button is always present,
+             no matter the open/close history of the panel. -->
+        <div class="sp-toolbar" id="spToolbar"></div>
+        <div class="sp-body" id="spBody"></div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SCRIPT                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// LOCALIZATION & RTL
+// ═══════════════════════════════════════════════════════════════════════════════
+// RESX web resource base name (solution prefix + logical name, minus the .xxxx.resx suffix).
+// Dynamics 365 resolves the correct LCID-suffixed file based on userSettings.languageId
+// as long as all language variants have been uploaded and added as dependencies.
+const RESX_NAME = 'alex_ReviewStrings';
+
+// RTL LCIDs. Source: MS LCID registry (Arabic variants + Hebrew + Persian + Dari + Urdu).
+const RTL_LCIDS = new Set([
+    1025, 5121, 15361, 3073, 2049, 11265, 13313, 12289, 4097, 6145,
+    8193, 16385, 10241, 7169, 14337, 9217,    // Arabic variants
+    1037,                                      // Hebrew
+    1065,                                      // Farsi (Persian)
+    1164,                                      // Dari
+    1056                                       // Urdu
+]);
+
+function getGlobalXrmContext() {
+    try {
+        if (typeof Xrm !== 'undefined' && Xrm.Utility && Xrm.Utility.getGlobalContext)
+            return Xrm.Utility.getGlobalContext();
+        if (typeof parent !== 'undefined' && parent.Xrm && parent.Xrm.Utility && parent.Xrm.Utility.getGlobalContext)
+            return parent.Xrm.Utility.getGlobalContext();
+    } catch (e) { /* fall through */ }
+    return null;
+}
+
+function getResourceString(key) {
+    try {
+        if (typeof Xrm !== 'undefined' && Xrm.Utility && typeof Xrm.Utility.getResourceString === 'function') {
+            const s = Xrm.Utility.getResourceString(RESX_NAME, key);
+            if (s) return s;
+        }
+        if (typeof parent !== 'undefined' && parent.Xrm && parent.Xrm.Utility && typeof parent.Xrm.Utility.getResourceString === 'function') {
+            const s = parent.Xrm.Utility.getResourceString(RESX_NAME, key);
+            if (s) return s;
+        }
+    } catch (e) { /* not in D365 — fall through to fallback */ }
+    return null;
+}
+
+// Localized string helper. `fallback` is the English text baked into the markup;
+// we always fall back to it if the RESX lookup returns nothing (dev mode / resource not deployed).
+function L(key, fallback) {
+    const s = getResourceString(key);
+    return s != null ? s : (fallback != null ? fallback : key);
+}
+
+// String.Format-style placeholder substitution ({0}, {1}, ...)
+function Lf(key, fallback, ...args) {
+    const s = L(key, fallback);
+    return s.replace(/\{(\d+)\}/g, (_, i) => {
+        const v = args[Number(i)];
+        return v == null ? '' : String(v);
+    });
+}
+
+// Wire up declarative data-l10n-* attributes on static markup.
+function applyStaticLabels(root) {
+    root = root || document;
+    root.querySelectorAll('[data-l10n]').forEach(el => {
+        const key = el.getAttribute('data-l10n');
+        const fallback = el.textContent;
+        el.textContent = L(key, fallback);
+    });
+    root.querySelectorAll('[data-l10n-html]').forEach(el => {
+        const key = el.getAttribute('data-l10n-html');
+        const fallback = el.innerHTML;
+        el.innerHTML = L(key, fallback);
+    });
+    root.querySelectorAll('[data-l10n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-l10n-placeholder');
+        const fallback = el.getAttribute('placeholder') || '';
+        el.setAttribute('placeholder', L(key, fallback));
+    });
+    root.querySelectorAll('[data-l10n-title]').forEach(el => {
+        const key = el.getAttribute('data-l10n-title');
+        const fallback = el.getAttribute('title') || '';
+        el.setAttribute('title', L(key, fallback));
+    });
+    root.querySelectorAll('[data-l10n-aria-label]').forEach(el => {
+        const key = el.getAttribute('data-l10n-aria-label');
+        const fallback = el.getAttribute('aria-label') || '';
+        el.setAttribute('aria-label', L(key, fallback));
+    });
+}
+
+// Detect the user's LCID and apply dir="rtl" to <html> for Hebrew / Arabic / Farsi etc.
+// Must run as early as possible to avoid a visible LTR flash.
+function applyDirectionality() {
+    const ctx = getGlobalXrmContext();
+    let lcid = 1033;
+    try { if (ctx && ctx.userSettings && ctx.userSettings.languageId) lcid = ctx.userSettings.languageId; }
+    catch (e) { /* fallback */ }
+    const isRtl = RTL_LCIDS.has(lcid);
+    document.documentElement.setAttribute('dir', isRtl ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', mapLcidToLang(lcid));
+    return { lcid, isRtl };
+}
+
+function mapLcidToLang(lcid) {
+    // Minimal mapping — extend as more languages ship.
+    const map = {
+        1033: 'en', 1037: 'he', 1025: 'ar', 1041: 'ja', 1036: 'fr',
+        1031: 'de', 3082: 'es', 1040: 'it', 1046: 'pt', 1049: 'ru',
+        1042: 'ko', 2052: 'zh-CN', 1028: 'zh-TW', 1065: 'fa'
+    };
+    return map[lcid] || 'en';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// API SERVICE LAYER — preserved wire-compatible with V1
+// ═══════════════════════════════════════════════════════════════════════════════
+const API = (() => {
+    const getClientUrl = () => {
+        try {
+            if (typeof Xrm !== 'undefined' && Xrm.Utility && Xrm.Utility.getGlobalContext)
+                return Xrm.Utility.getGlobalContext().getClientUrl();
+            if (typeof parent !== 'undefined' && parent.Xrm && parent.Xrm.Utility && parent.Xrm.Utility.getGlobalContext)
+                return parent.Xrm.Utility.getGlobalContext().getClientUrl();
+            if (typeof GetGlobalContext !== 'undefined')
+                return GetGlobalContext().getClientUrl();
+        } catch (e) { /* not in D365 */ }
+        return null;
+    };
+    const clientUrl = getClientUrl();
+    const isLive = !!clientUrl;
+    const baseUrl = clientUrl ? `${clientUrl}/api/data/v9.2` : null;
+    console.log(isLive ? `🟢 LIVE MODE — ${baseUrl}` : '🟡 MOCK MODE — no D365 context detected');
+
+    async function callWebApi(method, url, body = null) {
+        const headers = {
+            'Accept': 'application/json',
+            'OData-MaxVersion': '4.0',
+            'OData-Version': '4.0',
+            'Content-Type': 'application/json'
+        };
+        const opts = { method, headers };
+        if (body) opts.body = JSON.stringify(body);
+        const resp = await fetch(url, opts);
+        if (!resp.ok) {
+            const errText = await resp.text();
+            throw new Error(`API ${resp.status}: ${errText}`);
+        }
+        return resp.status === 204 ? null : resp.json();
+    }
+
+    async function getMyAgents() {
+        if (!isLive) return MOCK.agents();
+        const data = await callWebApi('GET', `${baseUrl}/alex_GetMyAgents`);
+        return JSON.parse(data.AgentsJson || '[]');
+    }
+    async function getAgentEvaluations(agentId) {
+        if (!isLive) return MOCK.evaluations(agentId);
+        const data = await callWebApi('POST', `${baseUrl}/alex_GetAgentEvaluations`, { AgentId: agentId });
+        return JSON.parse(data.EvaluationsJson || '[]');
+    }
+    async function getCriteria() {
+        if (!isLive) return MOCK.criteria();
+        return getCriteriaById('3EF9FD99-70B6-4114-B317-2FE8CA78FCA9');
+    }
+    async function getCriteriaById(criteriaId) {
+        if (!isLive) return MOCK.criteria();
+        const data = await callWebApi('POST', `${baseUrl}/msdyn_RetrieveEvaluationCriteria`, {
+            msydn_RetrieveEvaluationCriteriaPayload: JSON.stringify({
+                CriteriaId: criteriaId.toUpperCase(),
+                Locale: 'en-US'
+            })
+        });
+        const responseStr = data.msydn_RetrieveEvaluationCriteriaResponse;
+        if (responseStr) return JSON.parse(responseStr);
+        return data;
+    }
+    async function saveManagerReview(payload) {
+        if (!isLive) {
+            console.log('📋 [MOCK] SaveManagerReview:', payload);
+            return { ReviewId: 'mock-' + Date.now(), Success: true, ErrorMessage: '' };
+        }
+        return await callWebApi('POST', `${baseUrl}/alex_SaveManagerReview`, {
+            ReviewPayloadJson: JSON.stringify(payload)
+        });
+    }
+    async function getManagerReview(reviewId) {
+        if (!isLive) return null;
+        const data = await callWebApi('POST', `${baseUrl}/alex_GetManagerReview`, { ReviewId: reviewId });
+        return JSON.parse(data.ReviewJson || '{}');
+    }
+    async function getConsolidatedEvaluations(agentId, dateFrom, dateTo) {
+        if (!isLive) {
+            return { totalEvaluations: 0, questionnaires: [], questionnaireCount: 0, weightedOverallScore: 0, dateFrom, dateTo };
+        }
+        const data = await callWebApi('POST', `${baseUrl}/alex_GetConsolidatedEvaluations`, {
+            AgentId: agentId, DateFrom: dateFrom, DateTo: dateTo
+        });
+        return JSON.parse(data.ConsolidatedJson || '{}');
+    }
+
+    return {
+        isLive, clientUrl,
+        getMyAgents, getAgentEvaluations,
+        getCriteria, getCriteriaById,
+        saveManagerReview, getManagerReview,
+        getConsolidatedEvaluations
+    };
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MOCK DATA — used when running outside D365 (dev preview)
+// ═══════════════════════════════════════════════════════════════════════════════
+const MOCK = {
+    agents: () => [
+        { id:'a1', name:'Sarah Chen',      initials:'SC', role:'Senior Support Engineer', queue:'VIP Queue',       email:'sarah@contoso.com' },
+        { id:'a2', name:'David Miller',    initials:'DM', role:'Support Engineer',        queue:'General Queue',   email:'david@contoso.com' },
+        { id:'a3', name:'Priya Sharma',    initials:'PS', role:'Support Engineer',        queue:'Technical Queue', email:'priya@contoso.com' },
+        { id:'a4', name:'James Wilson',    initials:'JW', role:'Support Engineer',        queue:'General Queue',   email:'james@contoso.com' },
+        { id:'a5', name:'Emily Rodriguez', initials:'ER', role:'Senior Support Engineer', queue:'VIP Queue',       email:'emily@contoso.com' },
+        { id:'a6', name:'Michael Park',    initials:'MP', role:'Support Engineer',        queue:'Technical Queue', email:'michael@contoso.com' }
+    ],
+    evaluations: () => [],
+    criteria: () => CRITERIA_CACHE,
+    // Mock consolidated dataset — so the V2 dashboard renders without D365.
+    consolidated: (agentId) => ({
+        totalEvaluations: 4, questionnaireCount: 2,
+        weightedOverallScore: 72.4,
+        dateFrom: '2026-04-01', dateTo: '2026-04-20',
+        questionnaires: [
+            {
+                criteriaId: '3ef9fd99-70b6-4114-b317-2fe8ca78fca9',
+                criteriaName: 'Support Quality — Scoring',
+                evaluationCount: 3, avgScore: 68, minScore: 30, maxScore: 89,
+                effectiveWeight: 70, configuredWeight: 70,
+                evaluations: [
+                    { evaluationId:'e1', name:'EVAL-00042', date:'2026-04-18', score:89, recordType:'Conversation',
+                      regardingId:'c1', regardingEntity:'msdyn_ocliveworkitem', regardingName:'Conversation #14523',
+                      aiSummary:'Conversation was highly effective — clear communication and strong empathy throughout.',
+                      aiActionPlan:'Maintain the approach; share as a coaching example in team huddles.',
+                      qeaResponse:{ responses:[
+                        { questionId:'9ec716ca-b093-442b-80ba-1e9ba7af4a26', responseValue:[6], reason:'Clear and professional communication.' },
+                        { questionId:'419fa585-d1eb-4c07-a588-b114b049e349', responseValue:[5], reason:'Met all accountability requirements.' }
+                      ]},
+                      evaluatorResponse:null
+                    },
+                    { evaluationId:'e2', name:'EVAL-00038', date:'2026-04-12', score:71, recordType:'Case',
+                      regardingId:'c2', regardingEntity:'incident', regardingName:'CAS-00817',
+                      aiSummary:'Adequate performance with room for improvement on probing questions.',
+                      aiActionPlan:'Review the probing-questions playbook before next month.',
+                      qeaResponse:{ responses:[
+                        { questionId:'9ec716ca-b093-442b-80ba-1e9ba7af4a26', responseValue:[6], reason:'On track.' },
+                        { questionId:'419fa585-d1eb-4c07-a588-b114b049e349', responseValue:[2], reason:'Probing questions missing.' }
+                      ]},
+                      evaluatorResponse:null
+                    },
+                    { evaluationId:'e3', name:'EVAL-00031', date:'2026-04-05', score:30, recordType:'Case',
+                      regardingId:'c3', regardingEntity:'incident', regardingName:'CAS-00803',
+                      aiSummary:'Significant gaps in root-cause identification and customer expectation management.',
+                      aiActionPlan:'Pair with a senior on next similar case. Refresh on RCA template.',
+                      qeaResponse:{ responses:[
+                        { questionId:'419fa585-d1eb-4c07-a588-b114b049e349', responseValue:[1,3], reason:"Didn't identify root cause; didn't manage customer expectations." }
+                      ]},
+                      evaluatorResponse:null
+                    }
+                ]
+            },
+            {
+                criteriaId: 'aaaa0001-0000-0000-0000-000000000001',
+                criteriaName: 'Customer Empathy & Tone',
+                evaluationCount: 1, avgScore: 84, minScore: 84, maxScore: 84,
+                effectiveWeight: 30, configuredWeight: -1,
+                evaluations: [
+                    { evaluationId:'e4', name:'EVAL-00045', date:'2026-04-19', score:84, recordType:'Conversation',
+                      aiSummary:'Empathetic, personalised communication throughout the interaction.',
+                      aiActionPlan:'Keep using the acknowledgement phrases observed here.',
+                      qeaResponse:null, evaluatorResponse:null
+                    }
+                ]
+            }
+        ]
+    })
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CRITERIA CACHE (embedded for mock; overwritten by API in live mode)
+// ═══════════════════════════════════════════════════════════════════════════════
+let CRITERIA_CACHE = {"CriteriaId":"3ef9fd99-70b6-4114-b317-2fe8ca78fca9","CriteriaName":"Support quality - scoring","CriteriaJson":{"Categories":[{"CategoryId":"b3ff0045-0405-41d3-a45b-80891ed2dbed","CategoryName":"Communicate effectively","CategoryWeight":30,"Questions":[{"QuestionId":"9ec716ca-b093-442b-80ba-1e9ba7af4a26","QuestionText":"Did the customer service representative communicate effectively?","QuestionInstructions":"","QuestionType":700610001,"Options":[{"OptionId":"7325e0d0-94fe-418c-a196-8e79aee26a03","Value":0,"Label":"Contact attempts made outside customer hours","Score":12},{"OptionId":"b8e9959b-376b-4b3a-bd09-6d469a9cd099","Value":1,"Label":"Confusing and/or lengthy","Score":12},{"OptionId":"20970d41-79bc-4c45-a909-b978919cc71a","Value":2,"Label":"Didn't follow requirements when asking for feedback","Score":12},{"OptionId":"2235306e-a1dd-445d-8686-06c12f36bb74","Value":3,"Label":"Didn't paraphrase to confirm understanding","Score":12},{"OptionId":"79d372b1-3d67-4720-afed-e1af3e66be42","Value":4,"Label":"Didn't follow communication guidelines","Score":12},{"OptionId":"76dc20ef-028a-4c7a-b43e-175294b2b6f1","Value":5,"Label":"Incorrect spelling or grammar","Score":12},{"OptionId":"72fb6274-c804-4678-9161-5cdd3695e8c8","Value":6,"Label":"On track","Score":12},{"OptionId":"0038a9ea-64a4-4b51-8f9a-2b897acad055","Value":7,"Label":"Other","Score":11}]}]},{"CategoryId":"e8112d4a-80aa-463a-bd6f-9b1e5c3020ce","CategoryName":"Accountable","CategoryWeight":37,"Questions":[{"QuestionId":"419fa585-d1eb-4c07-a588-b114b049e349","QuestionText":"Was the representative accountable?","QuestionInstructions":"","QuestionType":700610001,"Options":[{"OptionId":"812e70bc-215e-48c5-97cf-bdd80d344f1f","Value":0,"Label":"Didn't ask for help","Score":14},{"OptionId":"838f2d13-f8e0-47d6-ab34-061365c00c6e","Value":1,"Label":"Didn't identify root cause","Score":14},{"OptionId":"2459ee6f-f4f4-424e-9aa2-89c78e425119","Value":2,"Label":"Probing questions were not asked","Score":14},{"OptionId":"f5399a79-64db-49e1-a519-cf8a97043410","Value":3,"Label":"Didn't manage customer's expectations","Score":14},{"OptionId":"bfd197a5-4477-4860-a58f-18f082e37a14","Value":4,"Label":"Didn't solve or recommend correct solution","Score":14},{"OptionId":"487f50aa-56e2-48e8-b2bb-38aa2e6f2f5f","Value":5,"Label":"On track","Score":15},{"OptionId":"8eba18b5-04f1-47ed-97fa-5a8f667cf5a0","Value":6,"Label":"Other","Score":11}]}]},{"CategoryId":"c1cb7b15-5455-451e-98a7-6ffb2f28e3f7","CategoryName":"Resourceful","CategoryWeight":28,"Questions":[{"QuestionId":"61b30097-dc84-4426-bc73-ee70f958972a","QuestionText":"Was the representative resourceful?","QuestionInstructions":"","QuestionType":700610001,"Options":[{"OptionId":"d1733fe8-d470-4b25-ad26-e50c1cd3888e","Value":0,"Label":"Technical action plan not clear or correct","Score":14},{"OptionId":"0c91c290-565b-4453-a615-8eb195c86475","Value":5,"Label":"On track","Score":14},{"OptionId":"74fb6e58-a1a4-4466-994e-bc03e43dfa24","Value":6,"Label":"Other","Score":14}]}]},{"CategoryId":"f1ecb168-da3f-411e-9b21-48844fa76086","CategoryName":"Empathy","CategoryWeight":5,"Questions":[{"QuestionId":"d5778011-3959-4388-a822-198daf591325","QuestionText":"Did the representative show empathy?","QuestionInstructions":"","QuestionType":700610001,"Options":[{"OptionId":"21f47581-8ac6-4d35-a236-683a0dbdee95","Value":4,"Label":"On track","Score":15},{"OptionId":"10121d54-c04a-4fc5-8a7e-9d81fe5dc961","Value":5,"Label":"Other","Score":16}]}]}]}};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+let phase = 0;
+let agent = null;
+let allAgents = [];
+let eval_ = null;
+let consolidatedData = null;
+let selectedPeriod = null;
+let draftReviewId = null;
+let coachingInsightId = null;
+let coachingPoller = null;
+let CRITERIA_MAP = {};           // criteriaId (lower) -> criteria object
+let sessionWeights = {};         // criteriaId -> weight override for this session
+let weightSortMode = 'none';     // 'none' | 'score-desc'
+let lastSavedSession = null;
+let actCount = 0;
+const insightPollers = {};       // evaluationId -> pollHandle
+const sidePanelState = { questionnaireIndex: null, evaluationIndex: null, sortMode: 'date-desc' };
+// sortMode: 'date-desc' (default) | 'score-desc' | 'score-asc'
+
+const INSIGHT_STATUS = {
+    PENDING:    416780001,
+    PROCESSING: 416780002,
+    COMPLETED:  416780003,
+    FAILED:     416780004
+};
+const INSIGHT_TYPE_EVAL_SUMMARY  = 1;
+const INSIGHT_TYPE_COACHING_PLAN = 2;
+
+const AGENT_COLORS = ['#6366F1','#8B5CF6','#EC4899','#F59E0B','#10B981','#06B6D4','#3B82F6','#EF4444'];
+
+// Copilot logo — served from a D365 Web Resource (image/png, logical name: alex_copilot_logo).
+// In live mode we use a relative path off the org client URL so it works across environments.
+// In mock/dev mode we fall back to the absolute URL supplied by the product owner.
+const COPILOT_LOGO_URL = (API.clientUrl
+    ? API.clientUrl + '/WebResources/alex_copilot_logo'
+    : 'https://demo-contact-center-en.crm4.dynamics.com/WebResources/alex_copilot_logo');
+const COPILOT_ICON    = '<img class="copilot-icon"   src="' + COPILOT_LOGO_URL + '" alt="Copilot" />';
+const COPILOT_BOUNCE  = '<img class="copilot-bounce" src="' + COPILOT_LOGO_URL + '" alt="Copilot" />';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════════════
+function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function formatAiText(s) {
+    if (!s) return '';
+    // 1. Escape HTML so model/user content can never inject markup.
+    // 2. Convert **bold** → <strong> GLOBALLY (before line-splitting), so it
+    //    applies to bullet items as well as paragraphs. The Claude-backed
+    //    Copilot model often emits markdown like "- **Topic**: detail".
+    // 3. Split into lines; convert "-", "•", or lone "*" bullets to <ul><li>.
+    const esc    = escapeHtml(s);
+    const bolded = esc.replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
+    const lines  = bolded.split(/\r?\n/);
+
+    let html   = '';
+    let inList = false;
+    // Bullet line detector: leading "-", "•", or a single "*" (not "**",
+    // which we've already converted). Look-ahead avoids treating stray "**"
+    // as a bullet.
+    const bulletRe = /^(?:[-•]|\*(?!\*))\s+/;
+
+    for (const ln of lines) {
+        const trimmed = ln.trim();
+        if (bulletRe.test(trimmed)) {
+            if (!inList) { html += '<ul>'; inList = true; }
+            html += '<li>' + trimmed.replace(bulletRe, '') + '</li>';
+        } else if (trimmed === '') {
+            if (inList) { html += '</ul>'; inList = false; }
+        } else {
+            if (inList) { html += '</ul>'; inList = false; }
+            html += '<p>' + trimmed + '</p>';
+        }
+    }
+    if (inList) html += '</ul>';
+    return html;
+}
+function scCls(score) {
+    if (score == null || isNaN(score)) return '';
+    if (score >= 80) return 'sc-hi';
+    if (score >= 60) return 'sc-md';
+    return 'sc-lo';
+}
+function scBgCls(score) {
+    if (score == null || isNaN(score)) return '';
+    if (score >= 80) return 'sc-bg-hi';
+    if (score >= 60) return 'sc-bg-md';
+    return 'sc-bg-lo';
+}
+function pillCls(score) {
+    if (score == null || isNaN(score)) return 'pill-neutral';
+    if (score >= 80) return 'pill-hi';
+    if (score >= 60) return 'pill-md';
+    return 'pill-lo';
+}
+function formatScore(score) {
+    if (score == null || isNaN(score)) return '—';
+    return Math.round(score);
+}
+function formatDateShort(d) {
+    if (!d) return '';
+    try {
+        const dt = (d instanceof Date) ? d : new Date(d);
+        if (isNaN(dt.getTime())) return String(d);
+        return dt.toISOString().slice(0,10);
+    } catch (e) { return String(d); }
+}
+function formatDateTime(d) {
+    if (!d) return '';
+    try {
+        const dt = (d instanceof Date) ? d : new Date(d);
+        if (isNaN(dt.getTime())) return String(d);
+        return dt.toLocaleString();
+    } catch (e) { return String(d); }
+}
+
+// Record-type → pill class / localized label
+function recordTypePillCls(rt) {
+    const k = String(rt || '').toLowerCase();
+    if (k.includes('chat') || k.includes('conversation') || k.includes('ocliveworkitem')) return 'pill-chat';
+    if (k.includes('case') || k.includes('incident')) return 'pill-case';
+    if (k.includes('email')) return 'pill-email';
+    if (k.includes('call') || k.includes('phone')) return 'pill-call';
+    return 'pill-neutral';
+}
+function recordTypeLabel(rt) {
+    const k = String(rt || '').toLowerCase();
+    if (k.includes('chat') || k.includes('conversation') || k.includes('ocliveworkitem')) return L('ReviewSession_RecordType_Chat','Chat');
+    if (k.includes('case') || k.includes('incident')) return L('ReviewSession_RecordType_Case','Case');
+    if (k.includes('email')) return L('ReviewSession_RecordType_Email','Email');
+    if (k.includes('call') || k.includes('phone')) return L('ReviewSession_RecordType_Call','Call');
+    return L('ReviewSession_RecordType_Unknown','Record');
+}
+function agentColor(idx) { return AGENT_COLORS[idx % AGENT_COLORS.length]; }
+function initialsFromName(name) {
+    if (!name) return '?';
+    const parts = String(name).trim().split(/\s+/);
+    return ((parts[0]||'')[0] || '') + ((parts[1]||'')[0] || '');
+}
+
+function showLoadingIn(el, msg) {
+    if (!el) return;
+    el.innerHTML =
+        '<div class="loading"><div class="loading-spin"></div><div>' +
+        escapeHtml(msg || L('Common_Loading','Loading…')) + '</div></div>';
+}
+function showErrorIn(el, msg) {
+    if (!el) return;
+    el.innerHTML = '<div class="error-msg">' + escapeHtml(msg) + '</div>';
+}
+
+// Criteria lookup helpers
+function getCategoryById(criteriaId, categoryId) {
+    const c = CRITERIA_MAP[String(criteriaId||'').toLowerCase()];
+    if (!c || !c.CriteriaJson || !c.CriteriaJson.Categories) return null;
+    return c.CriteriaJson.Categories.find(x => String(x.CategoryId).toLowerCase() === String(categoryId||'').toLowerCase()) || null;
+}
+function getQuestionById(criteriaId, questionId) {
+    const c = CRITERIA_MAP[String(criteriaId||'').toLowerCase()];
+    if (!c || !c.CriteriaJson) return { question: null, category: null };
+    for (const cat of (c.CriteriaJson.Categories || [])) {
+        for (const q of (cat.Questions || [])) {
+            if (String(q.QuestionId).toLowerCase() === String(questionId||'').toLowerCase())
+                return { question: q, category: cat };
+        }
+    }
+    return { question: null, category: null };
+}
+function getOptionByValue(question, value) {
+    if (!question || !question.Options) return null;
+    return question.Options.find(o => Number(o.Value) === Number(value)) || null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════════════
+function goTo(n) {
+    phase = n;
+    for (let i = 0; i <= 6; i++) {
+        const ph = document.getElementById('ph' + i);
+        if (ph) ph.classList.toggle('on', i === n);
+    }
+    // Stepper visuals (only for phases 0..4 and the complete marker)
+    const steps = document.querySelectorAll('.stepper-bar .stp');
+    steps.forEach((el, idx) => {
+        el.classList.remove('active','done');
+        if (idx < n) el.classList.add('done');
+        if (idx === n) el.classList.add('active');
+    });
+    // Special: phases 5 / 6 both "complete"
+    if (n >= 5) {
+        const stpComplete = document.getElementById('stpComplete');
+        if (stpComplete) stpComplete.classList.add('active');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Hydrate phase content as we arrive
+    if (n === 2) fillOpen();
+    if (n === 3) fillCats();
+    if (n === 4) fillAction();
+    if (n === 5) fillComplete();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 0 — AGENT SELECTION
+// ═══════════════════════════════════════════════════════════════════════════════
+async function loadAgents() {
+    const grid = document.getElementById('agentGrid');
+    showLoadingIn(grid, L('ReviewSession_Phase0_Loading_Agents','Loading your team…'));
+    try {
+        allAgents = await API.getMyAgents();
+        renderAgents(allAgents);
+    } catch (e) {
+        showErrorIn(grid, Lf('ReviewSession_Phase0_Error_LoadAgents','Failed to load agents: {0}', e.message || e));
+    }
+}
+function renderAgents(list) {
+    const grid = document.getElementById('agentGrid');
+    if (!list || !list.length) {
+        grid.innerHTML = '<div class="loading">' + escapeHtml(L('ReviewSession_Phase0_NoAgentsFound','No agents found.')) + '</div>';
+        return;
+    }
+    grid.className = 'a-grid';
+    grid.innerHTML = list.map((a, idx) => {
+        const initials = a.initials || initialsFromName(a.name);
+        const color = agentColor(idx);
+        const isPicked = agent && agent.id === a.id;
+        return '<div class="a-card ' + (isPicked ? 'picked' : '') + '" onclick="pickAgent(\'' + escapeHtml(a.id) + '\')">' +
+            '<div class="a-av" style="background:' + color + '">' + escapeHtml(initials) + '</div>' +
+            '<div style="min-width:0;flex:1">' +
+                '<div class="a-name">' + escapeHtml(a.name || '') + '</div>' +
+                '<div class="a-role">' + escapeHtml(a.role || '') + '</div>' +
+                (a.queue ? '<div class="a-queue">' + escapeHtml(a.queue) + '</div>' : '') +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+function filterAgents() {
+    const q = (document.getElementById('agentQ').value || '').toLowerCase().trim();
+    if (!q) return renderAgents(allAgents);
+    const filtered = allAgents.filter(a =>
+        (a.name || '').toLowerCase().includes(q) ||
+        (a.role || '').toLowerCase().includes(q) ||
+        (a.queue || '').toLowerCase().includes(q)
+    );
+    renderAgents(filtered);
+}
+function pickAgent(id) {
+    agent = allAgents.find(a => a.id === id);
+    if (!agent) return;
+    renderAgents(allAgents);
+    // Reveal date-range card and reset consolidated
+    const dateCard = document.getElementById('dateRangeCard');
+    dateCard.style.display = 'block';
+    document.getElementById('dateRangeDesc').textContent =
+        Lf('ReviewSession_Phase0_PeriodDesc_ForAgent','Select the evaluation period for {0}', agent.name);
+    document.getElementById('consolidatedCard').style.display = 'none';
+    document.getElementById('ph0Next').style.display = 'none';
+    consolidatedData = null;
+    dateCard.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 0 — PERIOD SELECTION
+// ═══════════════════════════════════════════════════════════════════════════════
+function iso(d) { return d.toISOString().slice(0,10); }
+function computePreset(preset) {
+    const now = new Date();
+    let from, to, label;
+    const y = now.getFullYear(), m = now.getMonth();
+    if (preset === 'thisMonth') {
+        from = new Date(y, m, 1);
+        to = new Date(y, m+1, 0);
+        label = L('ReviewSession_Phase0_Period_ThisMonth','This Month');
+    } else if (preset === 'lastMonth') {
+        from = new Date(y, m-1, 1);
+        to = new Date(y, m, 0);
+        label = L('ReviewSession_Phase0_Period_LastMonth','Last Month');
+    } else if (preset === 'thisQuarter') {
+        const qStart = Math.floor(m/3) * 3;
+        from = new Date(y, qStart, 1);
+        to = new Date(y, qStart+3, 0);
+        label = L('ReviewSession_Phase0_Period_ThisQuarter','This Quarter');
+    } else if (preset === 'lastQuarter') {
+        const qStart = Math.floor(m/3) * 3 - 3;
+        from = new Date(y, qStart, 1);
+        to = new Date(y, qStart+3, 0);
+        label = L('ReviewSession_Phase0_Period_LastQuarter','Last Quarter');
+    } else if (preset === 'last6Months') {
+        to = new Date(y, m+1, 0);
+        from = new Date(y, m-5, 1);
+        label = L('ReviewSession_Phase0_Period_Last6Months','Last 6 Months');
+    }
+    return { from: iso(from), to: iso(to), label };
+}
+function setPeriod(preset, btn) {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const customBox = document.getElementById('periodCustom');
+    const selectedBox = document.getElementById('periodSelected');
+
+    if (preset === 'custom') {
+        customBox.style.display = 'block';
+        selectedPeriod = { preset:'custom', from: null, to: null,
+                           label: L('ReviewSession_Phase0_Period_CustomLabel','Custom') };
+        selectedBox.style.display = 'none';
+        return;
+    }
+    customBox.style.display = 'none';
+    const r = computePreset(preset);
+    selectedPeriod = { preset, from: r.from, to: r.to, label: r.label };
+    renderPeriodSelected();
+}
+function onDateChange() {
+    const f = document.getElementById('dateFrom').value;
+    const t = document.getElementById('dateTo').value;
+    if (!f || !t) return;
+    selectedPeriod = { preset:'custom', from: f, to: t,
+                       label: L('ReviewSession_Phase0_Period_CustomLabel','Custom') };
+    renderPeriodSelected();
+}
+function renderPeriodSelected() {
+    if (!selectedPeriod || !selectedPeriod.from || !selectedPeriod.to) return;
+    const box = document.getElementById('periodSelected');
+    box.style.display = 'flex';
+    document.getElementById('periodLabel').textContent =
+        Lf('ReviewSession_Phase0_PeriodLabelTemplate','{0}: {1} → {2}',
+           selectedPeriod.label, selectedPeriod.from, selectedPeriod.to);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 0 — CONSOLIDATED DASHBOARD
+// ═══════════════════════════════════════════════════════════════════════════════
+async function loadConsolidated() {
+    if (!agent || !selectedPeriod || !selectedPeriod.from || !selectedPeriod.to) return;
+    const btn = document.getElementById('loadEvalsBtn');
+    const card = document.getElementById('consolidatedCard');
+    btn.disabled = true;
+    btn.textContent = L('ReviewSession_Phase0_Button_LoadingEvaluations','Loading…');
+    card.style.display = 'block';
+    const body = document.getElementById('consolTableBody');
+    const hero = document.getElementById('consolHero');
+    hero.innerHTML = '';
+    showLoadingIn(body.parentElement.parentElement, L('ReviewSession_Phase0_Loading_Evaluations','Loading evaluations…'));
+    try {
+        const data = await API.getConsolidatedEvaluations(agent.id, selectedPeriod.from, selectedPeriod.to);
+        // In mock, API returns empty; fall back to MOCK.consolidated so dev preview works.
+        consolidatedData = (data && data.questionnaires && data.questionnaires.length)
+            ? data : MOCK.consolidated(agent.id);
+        sessionWeights = {};
+        (consolidatedData.questionnaires || []).forEach(q => {
+            sessionWeights[q.criteriaId] = q.effectiveWeight || 0;
+        });
+        renderConsolidated();
+        // Kick off AI insight loading in background (does not block UI)
+        loadAllInsights().catch(err => console.warn('Insights load failed', err));
+    } catch (e) {
+        showErrorIn(document.querySelector('#consolidatedCard .dash-table-wrap'),
+            Lf('ReviewSession_Phase0_Error_LoadEvaluations','Failed to load evaluations: {0}', e.message || e));
+    } finally {
+        btn.disabled = false;
+        btn.textContent = L('ReviewSession_Phase0_Button_LoadEvaluations','Load Evaluations');
+    }
+}
+
+function renderConsolidated() {
+    if (!consolidatedData) return;
+    const d = consolidatedData;
+    // Restore the table shell (showLoadingIn replaced it)
+    const wrap = document.querySelector('#consolidatedCard .dash-table-wrap');
+    wrap.innerHTML =
+        '<table class="dash-table" id="consolTable">' +
+            '<thead><tr>' +
+                '<th>' + escapeHtml(L('ReviewSession_Phase0_Table_Questionnaire','Questionnaire')) + '</th>' +
+                '<th>' + escapeHtml(L('ReviewSession_Phase0_Table_Evaluations','Evaluations')) + '</th>' +
+                '<th>' + escapeHtml(L('ReviewSession_Phase0_Table_AvgScore','Avg Score')) + '</th>' +
+                '<th>' + escapeHtml(L('ReviewSession_Phase0_Table_Range','Range')) + '</th>' +
+                '<th>' + escapeHtml(L('ReviewSession_Phase0_Table_Weight','Weight')) + '</th>' +
+                '<th>' + escapeHtml(L('ReviewSession_Phase0_Table_Source','Source')) + '</th>' +
+                '<th>' + escapeHtml(L('ReviewSession_Phase0_Table_Actions','Actions')) + '</th>' +
+            '</tr></thead>' +
+            '<tbody id="consolTableBody"></tbody>' +
+        '</table>';
+
+    document.getElementById('consolidatedTitle').textContent =
+        Lf('ReviewSession_Phase0_OverviewTitleForAgent','Evaluation Overview — {0}', agent.name);
+    document.getElementById('consolidatedDesc').textContent =
+        L('ReviewSession_Phase0_OverviewDescDefault','Consolidated results across all questionnaires for the selected period');
+
+    // Hero
+    const hero = document.getElementById('consolHero');
+    const overall = Math.round(d.weightedOverallScore || 0);
+    const overallCls = scCls(overall);
+    hero.innerHTML =
+        '<div class="hero-score">' +
+            '<div class="hero-score-val ' + overallCls + '">' + overall + '</div>' +
+            '<div class="hero-score-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_WeightedOverall','Weighted Overall')) + '</div>' +
+        '</div>' +
+        '<div class="hero-meta">' +
+            '<div class="hero-meta-item"><div class="hero-meta-val">' + (d.totalEvaluations || 0) + '</div>' +
+                '<div class="hero-meta-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_Evaluations','Evaluations')) + '</div></div>' +
+            '<div class="hero-meta-item"><div class="hero-meta-val">' + (d.questionnaireCount || (d.questionnaires||[]).length) + '</div>' +
+                '<div class="hero-meta-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_Questionnaires','Questionnaires')) + '</div></div>' +
+            '<div class="hero-meta-item"><div class="hero-meta-val" style="font-size:14px;">' + escapeHtml(d.dateFrom || '') + ' → ' + escapeHtml(d.dateTo || '') + '</div>' +
+                '<div class="hero-meta-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_PeriodFrom','From')) + ' / ' + escapeHtml(L('ReviewSession_Phase0_Hero_PeriodTo','To')) + '</div></div>' +
+        '</div>';
+
+    // Table rows
+    const body = document.getElementById('consolTableBody');
+    if (!d.questionnaires || !d.questionnaires.length) {
+        body.innerHTML = '<tr><td colspan="7"><div class="loading">' + escapeHtml(L('ReviewSession_Phase0_NoEvaluations','No evaluations found in this period.')) + '</div></td></tr>';
+    } else {
+        body.innerHTML = d.questionnaires.map((q, idx) => {
+            const avg = Math.round(q.avgScore || 0);
+            const srcCls = (q.configuredWeight && q.configuredWeight >= 0) ? 'configured' : 'auto';
+            const srcLbl = (q.configuredWeight && q.configuredWeight >= 0)
+                ? L('ReviewSession_Phase0_Source_Configured','Configured')
+                : L('ReviewSession_Phase0_Source_Auto','Auto');
+            return '<tr>' +
+                '<td data-label="' + escapeHtml(L('ReviewSession_Phase0_Table_Questionnaire','Questionnaire')) + '"><span class="dash-q-name">' + escapeHtml(q.criteriaName || '') + '</span></td>' +
+                '<td data-label="' + escapeHtml(L('ReviewSession_Phase0_Table_Evaluations','Evaluations')) + '" class="dash-num">' + (q.evaluationCount || 0) + '</td>' +
+                '<td data-label="' + escapeHtml(L('ReviewSession_Phase0_Table_AvgScore','Avg Score')) + '"><span class="pill pill-lg ' + pillCls(avg) + '">' + avg + '</span></td>' +
+                '<td data-label="' + escapeHtml(L('ReviewSession_Phase0_Table_Range','Range')) + '" class="dash-range">' + (q.minScore||0) + ' – ' + (q.maxScore||0) + '</td>' +
+                '<td data-label="' + escapeHtml(L('ReviewSession_Phase0_Table_Weight','Weight')) + '" class="dash-num">' + (q.effectiveWeight||0) + '%</td>' +
+                '<td data-label="' + escapeHtml(L('ReviewSession_Phase0_Table_Source','Source')) + '"><span class="dash-source ' + srcCls + '">' + escapeHtml(srcLbl) + '</span></td>' +
+                '<td data-label="' + escapeHtml(L('ReviewSession_Phase0_Table_Actions','Actions')) + '"><button class="btn-view" onclick="openSidePanel(' + idx + ')">' + escapeHtml(L('ReviewSession_Phase0_Button_ViewData','View Data')) + '</button></td>' +
+            '</tr>';
+        }).join('');
+    }
+    document.getElementById('ph0Next').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OFF-CANVAS SIDE PANEL
+// ═══════════════════════════════════════════════════════════════════════════════
+function openSidePanel(questionnaireIdx) {
+    if (!consolidatedData || !consolidatedData.questionnaires) return;
+    sidePanelState.questionnaireIndex = questionnaireIdx;
+    sidePanelState.evaluationIndex = null;
+    renderSidePanelList();
+    const panel = document.getElementById('sidePanel');
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden','false');
+    document.getElementById('spBack').classList.remove('visible');
+    document.body.style.overflow = 'hidden';
+}
+function closeSidePanel() {
+    const panel = document.getElementById('sidePanel');
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden','true');
+    sidePanelState.questionnaireIndex = null;
+    sidePanelState.evaluationIndex = null;
+    document.body.style.overflow = '';
+}
+function sidePanelBackToList() {
+    sidePanelState.evaluationIndex = null;
+    renderSidePanelList();
+    document.getElementById('spBack').classList.remove('visible');
+}
+
+// Sort control — cycles: date-desc → score-desc → score-asc → date-desc
+function toggleSidePanelSort() {
+    const order = ['date-desc','score-desc','score-asc'];
+    const i = order.indexOf(sidePanelState.sortMode);
+    sidePanelState.sortMode = order[(i + 1) % order.length];
+    renderSidePanelList();
+}
+// Build the toolbar from scratch every time so it can never be orphaned or
+// blanked by a stale DOM state. Called only from list-view render paths.
+function renderSidePanelToolbar() {
+    const toolbar = document.getElementById('spToolbar');
+    if (!toolbar) return;
+    const m = sidePanelState.sortMode;
+    const activeCls = m !== 'date-desc' ? ' active' : '';
+    const dirChar   = m === 'score-desc' ? '↓' : (m === 'score-asc' ? '↑' : '');
+    const label     = (m === 'date-desc')
+        ? L('ReviewSession_SidePanel_SortByScore','Sort by Score')
+        : (m === 'score-desc'
+            ? L('ReviewSession_SidePanel_SortByScore_HighFirst','Score · High first')
+            : L('ReviewSession_SidePanel_SortByScore_LowFirst','Score · Low first'));
+    toolbar.classList.remove('hidden');
+    toolbar.style.display = '';   // defensive: clear any inline hide
+    toolbar.innerHTML =
+        '<button class="sp-sort-btn' + activeCls + '" id="spSortBtn" type="button" ' +
+                'onclick="toggleSidePanelSort()" ' +
+                'aria-label="' + escapeHtml(label) + '">' +
+            '<svg class="sp-sort-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true" ' +
+                  'xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M7 4v12M7 4L4 7M7 4l3 3M13 16V4M13 16l-3-3M13 16l3-3" ' +
+                      'stroke="currentColor" stroke-width="1.6" ' +
+                      'stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>' +
+            '<span class="sp-sort-label">' + escapeHtml(label) + '</span>' +
+            (dirChar ? '<span class="sp-sort-dir" aria-hidden="true">' + dirChar + '</span>' : '') +
+        '</button>';
+}
+
+function renderSidePanelList() {
+    const q = consolidatedData.questionnaires[sidePanelState.questionnaireIndex];
+    if (!q) return;
+    document.getElementById('spTitle').textContent =
+        Lf('ReviewSession_SidePanel_ListTitle','{0}', q.criteriaName || '');
+    document.getElementById('spSubtitle').textContent =
+        Lf('ReviewSession_SidePanel_ListSubtitle','{0} evaluation(s) · Avg {1}',
+           (q.evaluations||[]).length, Math.round(q.avgScore || 0));
+
+    // Rebuild the toolbar from scratch — guarantees the sort button is present.
+    renderSidePanelToolbar();
+
+    const body = document.getElementById('spBody');
+    if (!q.evaluations || !q.evaluations.length) {
+        body.innerHTML = '<div class="loading">' + escapeHtml(L('ReviewSession_SidePanel_NoEvaluations','No evaluations in this questionnaire.')) + '</div>';
+        return;
+    }
+
+    // Consolidated AI-summary slot at the top of the list view
+    const insightSlot = '<div id="spInsightSlot" class="sp-insight-slot">' +
+                           renderInsightSlotHtml(q.criteriaId) +
+                       '</div>';
+
+    // Build index-preserving sorted list (so onclick still maps back to q.evaluations[origIdx])
+    const indexed = q.evaluations.map((ev, idx) => ({ ev, idx }));
+    const mode = sidePanelState.sortMode;
+    if (mode === 'score-desc') indexed.sort((a,b) => (b.ev.score || 0) - (a.ev.score || 0));
+    else if (mode === 'score-asc') indexed.sort((a,b) => (a.ev.score || 0) - (b.ev.score || 0));
+    else indexed.sort((a,b) => {
+        const da = a.ev.date ? new Date(a.ev.date).getTime() : 0;
+        const db = b.ev.date ? new Date(b.ev.date).getTime() : 0;
+        return db - da;
+    });
+
+    const cards = indexed.map(({ ev, idx }) => {
+        const rtCls = recordTypePillCls(ev.recordType);
+        const rtLbl = recordTypeLabel(ev.recordType);
+        const score = Math.round(ev.score || 0);
+        const preview = ev.aiSummary ? ev.aiSummary.split('\n')[0] : '';
+        return '<div class="sp-eval-card" onclick="renderSidePanelDetail(' + idx + ')">' +
+            '<div class="sp-eval-row">' +
+                '<div class="sp-eval-info">' +
+                    '<span class="pill ' + rtCls + '">' + escapeHtml(rtLbl) + '</span>' +
+                    '<span class="sp-eval-name">' + escapeHtml(ev.name || '') + '</span>' +
+                    '<span class="sp-eval-date">' + escapeHtml(formatDateShort(ev.date)) + '</span>' +
+                '</div>' +
+                '<span class="pill pill-lg ' + pillCls(score) + '">' + score + '</span>' +
+            '</div>' +
+            (preview
+                ? '<div class="sp-eval-preview">' + escapeHtml(preview) + '</div>'
+                : '<div class="sp-eval-nodata">' + escapeHtml(L('ReviewSession_SidePanel_NoAiData','No AI data is available for this evaluation.')) + '</div>') +
+        '</div>';
+    }).join('');
+
+    body.innerHTML = insightSlot + cards;
+}
+function renderSidePanelDetail(evIdx) {
+    sidePanelState.evaluationIndex = evIdx;
+    const q = consolidatedData.questionnaires[sidePanelState.questionnaireIndex];
+    const ev = q.evaluations[evIdx];
+    if (!ev) return;
+
+    document.getElementById('spTitle').textContent = ev.name || '';
+    document.getElementById('spSubtitle').textContent =
+        (q.criteriaName || '') + ' · ' + formatDateShort(ev.date);
+    document.getElementById('spBack').classList.add('visible');
+    const toolbar = document.getElementById('spToolbar');
+    if (toolbar) { toolbar.classList.add('hidden'); toolbar.innerHTML = ''; }
+
+    const rtCls = recordTypePillCls(ev.recordType);
+    const rtLbl = recordTypeLabel(ev.recordType);
+    const score = Math.round(ev.score || 0);
+    let html = '';
+
+    // Meta bar
+    html +=
+        '<div class="sp-detail-meta">' +
+            '<span class="pill ' + rtCls + '">' + escapeHtml(rtLbl) + '</span>' +
+            '<span class="pill pill-lg ' + pillCls(score) + '">' + score + '</span>' +
+            (ev.regardingName
+                ? '<span style="font-size:12.5px;color:var(--c-text-3);">' + escapeHtml(ev.regardingName) + '</span>'
+                : '') +
+        '</div>';
+
+    // AI Summary
+    if (ev.aiSummary) {
+        html +=
+            '<div class="sp-section">' +
+                '<div class="sp-section-title">' + COPILOT_ICON + ' ' + escapeHtml(L('ReviewSession_SidePanel_AiSummary','AI Summary')) + '</div>' +
+                '<div class="sp-ai-block">' + formatAiText(ev.aiSummary) + '</div>' +
+            '</div>';
+    }
+    // Recommended actions
+    if (ev.aiActionPlan) {
+        html +=
+            '<div class="sp-section">' +
+                '<div class="sp-section-title">' + COPILOT_ICON + ' ' + escapeHtml(L('ReviewSession_SidePanel_RecommendedActions','Recommended Actions')) + '</div>' +
+                '<div class="sp-ai-block">' + formatAiText(ev.aiActionPlan) + '</div>' +
+            '</div>';
+    }
+    // Question-by-question breakdown omitted by design for V2 —
+    // the consolidated API doesn't return localized question/option text,
+    // so we'd render raw GUIDs. Re-introduce once criteria metadata is
+    // bundled into the API response or pre-loaded for all questionnaires.
+    if (!ev.aiSummary && !ev.aiActionPlan) {
+        html += '<div class="loading">' + escapeHtml(L('ReviewSession_SidePanel_NoAiData','No AI data is available for this evaluation.')) + '</div>';
+    }
+
+    // Open record link (only in live D365)
+    if (API.isLive && ev.evaluationId) {
+        const openUrl = API.clientUrl + '/main.aspx?etn=msdyn_qualityevaluation&id=' + encodeURIComponent(ev.evaluationId) + '&pagetype=entityrecord';
+        html += '<div class="sp-link-row">' +
+                    '<a class="sp-link" href="' + openUrl + '" target="_blank" rel="noopener">' +
+                        escapeHtml(L('ReviewSession_SidePanel_OpenEvaluation','Open evaluation ↗')) +
+                    '</a>' +
+                '</div>';
+    }
+    document.getElementById('spBody').innerHTML = html;
+    document.getElementById('spBody').scrollTop = 0;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AI INSIGHTS — EvalSummary (alex_mcsaiinsight)
+// ─────────────────────────────────────────────────────────────────────────────
+// Strategy (per Alex's direction, matches original V1 semantics):
+//   • Fire insight lookup/creation IN PARALLEL immediately after Phase 0 loads
+//     consolidated data, so generation runs in the background while the manager
+//     reviews the dashboard, picks weights, etc.
+//   • Check existence first; only POST if no record matches (agent + criteria +
+//     insighttype=1 + periodstart + periodend).
+//   • Poll with backoff: attempts 1–5 → 3s, 6–10 → 5s, 11–40 → 8s. Max ≈ 4 min.
+//   • Stash poll handles in insightPollers, keyed by criteriaId (one insight per
+//     questionnaire, as the original does). stopAllInsightPollers() cleans up.
+//   • Results cached in insightCache[criteriaId]; UI re-renders wherever it's
+//     shown (side panel list header, Phase 1 questionnaire card).
+// ═══════════════════════════════════════════════════════════════════════════════
+const insightCache  = {};   // criteriaId → output text
+const insightStatus = {};   // criteriaId → 'loading' | 'ready' | 'failed' | 'timeout' | 'empty'
+
+function _truncName(s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n) : s; }
+
+async function loadAllInsights() {
+    if (!consolidatedData || !(consolidatedData.questionnaires || []).length) return;
+
+    // MOCK mode: synthesize a plausible consolidated summary per questionnaire so the
+    // UI surfaces remain populated in dev preview (no Dataverse round-trips).
+    if (!API.isLive) {
+        (consolidatedData.questionnaires || []).forEach(q => {
+            if (!(q.evaluations || []).some(e => e.aiSummary)) {
+                insightStatus[q.criteriaId] = 'empty';
+                return;
+            }
+            const mock =
+                '- **Consistent strengths**: ' + (q.criteriaName || '') + ' averaging ' + Math.round(q.avgScore || 0) + ' across ' + (q.evaluationCount || 0) + ' evaluations.\n' +
+                '- **Score variation**: range ' + (q.minScore || 0) + '–' + (q.maxScore || 0) + ' suggests case-type dependency.\n' +
+                '- **Top improvement area**: follow-through on complex tickets where scores dip below ' + Math.max(60, Math.round((q.avgScore || 70) - 15)) + '.';
+            insightCache[q.criteriaId]  = mock;
+            insightStatus[q.criteriaId] = 'ready';
+            refreshInsightSlots(q.criteriaId);
+        });
+        return;
+    }
+
+    // LIVE mode: Parallel dispatch — one ensureInsight per questionnaire.
+    await Promise.all((consolidatedData.questionnaires || []).map(q => {
+        // Don't even try to summarize if no per-eval aiSummary exists to feed it.
+        if (!(q.evaluations || []).some(e => e.aiSummary)) {
+            insightStatus[q.criteriaId] = 'empty';
+            return Promise.resolve();
+        }
+        insightStatus[q.criteriaId] = 'loading';
+        refreshInsightSlots(q.criteriaId);
+        return ensureInsight(q).catch(err => {
+            console.warn('ensureInsight failed for', q.criteriaId, err);
+            insightStatus[q.criteriaId] = 'failed';
+            refreshInsightSlots(q.criteriaId);
+        });
+    }));
+}
+
+// Look up an existing alex_mcsaiinsight for (agent, criteria, period, insighttype=1).
+// If completed → cache. If in-flight → poll. If absent → create + poll.
+async function ensureInsight(q) {
+    const existing = await findExistingInsight(agent.id, q.criteriaId);
+    if (existing && existing.alex_outputtext && existing.statuscode === INSIGHT_STATUS.COMPLETED) {
+        insightCache[q.criteriaId]  = existing.alex_outputtext;
+        insightStatus[q.criteriaId] = 'ready';
+        refreshInsightSlots(q.criteriaId);
+        return;
+    }
+    if (existing && (existing.statuscode === INSIGHT_STATUS.PENDING || existing.statuscode === INSIGHT_STATUS.PROCESSING)) {
+        startInsightPolling(q.criteriaId, existing.alex_mcsaiinsightid);
+        return;
+    }
+    if (existing && existing.statuscode === INSIGHT_STATUS.FAILED) {
+        insightStatus[q.criteriaId] = 'failed';
+        refreshInsightSlots(q.criteriaId);
+        return;
+    }
+    // No record — create and start polling.
+    const recordId = await createInsight(q);
+    startInsightPolling(q.criteriaId, recordId);
+}
+
+// GET /alex_mcsaiinsights?$filter=_alex_agent_value eq {agentId} and ...
+async function findExistingInsight(agentId, criteriaId) {
+    const filter =
+        '_alex_agent_value eq ' + agentId +
+        ' and _alex_evaluationcriteria_value eq ' + criteriaId +
+        ' and alex_insighttype eq ' + INSIGHT_TYPE_EVAL_SUMMARY +
+        ' and alex_periodstart eq ' + selectedPeriod.from +
+        ' and alex_periodend eq ' + selectedPeriod.to;
+    const url = API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights' +
+                '?$filter=' + encodeURIComponent(filter) +
+                '&$select=alex_mcsaiinsightid,alex_outputtext,statuscode' +
+                '&$top=1&$orderby=createdon desc';
+    const resp = await fetch(url, { headers: { 'OData-Version': '4.0', 'Accept': 'application/json' } });
+    if (!resp.ok) throw new Error('findExistingInsight: HTTP ' + resp.status);
+    const data = await resp.json();
+    return (data.value && data.value.length) ? data.value[0] : null;
+}
+
+// POST /alex_mcsaiinsights — returns the new record GUID
+async function createInsight(q) {
+    const inputText = buildInsightInput(q);
+    const body = {
+        'alex_name': _truncName('Summary - ' + (q.criteriaName || '') + ' - ' + (agent.name || ''), 100),
+        'alex_agent@odata.bind': '/systemusers(' + agent.id + ')',
+        'alex_evaluationcriteria@odata.bind': '/msdyn_evaluationcriterias(' + q.criteriaId + ')',
+        'alex_insighttype':  INSIGHT_TYPE_EVAL_SUMMARY,
+        'alex_periodstart':  selectedPeriod.from,
+        'alex_periodend':    selectedPeriod.to,
+        'alex_inputtext':    inputText,
+        'statuscode':        INSIGHT_STATUS.PENDING
+    };
+    const resp = await fetch(API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights', {
+        method: 'POST',
+        headers: {
+            'OData-Version':  '4.0',
+            'OData-MaxVersion': '4.0',
+            'Accept':         'application/json',
+            'Content-Type':   'application/json; charset=utf-8',
+            'Prefer':         'return=representation'
+        },
+        body: JSON.stringify(body)
+    });
+    if (!resp.ok) throw new Error('createInsight: HTTP ' + resp.status + ' ' + await resp.text());
+    const created = await resp.json();
+    return created.alex_mcsaiinsightid;
+}
+
+function buildInsightInput(q) {
+    const lines = [
+        'Please provide a concise consolidated summary formatted as a bulleted list (3-5 bullet points) that:',
+        '- Identifies patterns across evaluations (consistent strengths, recurring issues).',
+        '- Notes any significant score variations and possible causes.',
+        '- Highlights the most actionable improvement area.',
+        '',
+        'Formatting rules:',
+        '- Output only the bulleted list. Do not write a continuous paragraph.',
+        '- Use standard dashes (-) for each line.',
+        '- You may use **bold** to emphasize key phrases.',
+        '- Do not include any titles, headers, or greeting phrases.',
+        '- Do not use Markdown separators like "---".',
+        '- Do not echo back the agent name, score, or questionnaire details before the summary.',
+        '',
+        '--- Context ---',
+        '',
+        'Agent: ' + agent.name,
+        'Questionnaire: ' + q.criteriaName,
+        'Period: ' + selectedPeriod.from + ' to ' + selectedPeriod.to,
+        'Average Score: ' + (q.avgScore || 0) + ' (range ' + (q.minScore || 0) + '-' + (q.maxScore || 0) + ', ' + (q.evaluationCount || 0) + ' evaluations)',
+        '',
+        'Individual evaluation summaries:',
+        ''
+    ];
+    (q.evaluations || []).forEach(e => {
+        if (e.aiSummary) {
+            lines.push(e.name + ' (Score: ' + (e.score || 0) + ', Date: ' + (e.date || '') + '):');
+            lines.push(e.aiSummary);
+            lines.push('');
+        }
+    });
+    return lines.join('\n');
+}
+
+// Backoff polling — attempts 1-5 → 3s, 6-10 → 5s, 11-40 → 8s. Max ≈ 4 min.
+function _nextPollDelay(attempt) {
+    if (attempt <= 5)  return 3000;
+    if (attempt <= 10) return 5000;
+    return 8000;
+}
+function startInsightPolling(criteriaId, recordId) {
+    insightStatus[criteriaId] = 'loading';
+    refreshInsightSlots(criteriaId);
+    let attempts = 0;
+    const tick = async () => {
+        attempts++;
+        try {
+            const resp = await fetch(
+                API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights(' + recordId + ')' +
+                '?$select=alex_outputtext,statuscode',
+                { headers: { 'OData-Version': '4.0', 'Accept': 'application/json' } }
+            );
+            if (!resp.ok) throw new Error('poll HTTP ' + resp.status);
+            const rec = await resp.json();
+            if (rec.statuscode === INSIGHT_STATUS.COMPLETED && rec.alex_outputtext) {
+                insightCache[criteriaId]  = rec.alex_outputtext;
+                insightStatus[criteriaId] = 'ready';
+                refreshInsightSlots(criteriaId);
+                delete insightPollers[criteriaId];
+                return;
+            }
+            if (rec.statuscode === INSIGHT_STATUS.FAILED) {
+                insightStatus[criteriaId] = 'failed';
+                refreshInsightSlots(criteriaId);
+                delete insightPollers[criteriaId];
+                return;
+            }
+        } catch (e) {
+            console.warn('Poll error for', criteriaId, e);
+        }
+        if (attempts >= 40) {
+            insightStatus[criteriaId] = 'timeout';
+            refreshInsightSlots(criteriaId);
+            delete insightPollers[criteriaId];
+            return;
+        }
+        insightPollers[criteriaId] = setTimeout(tick, _nextPollDelay(attempts + 1));
+    };
+    insightPollers[criteriaId] = setTimeout(tick, _nextPollDelay(1));
+}
+
+function stopAllInsightPollers() {
+    Object.keys(insightPollers).forEach(k => {
+        clearTimeout(insightPollers[k]);
+        delete insightPollers[k];
+    });
+    if (coachingPoller) { clearTimeout(coachingPoller); coachingPoller = null; }
+}
+
+// Re-render any UI surface that displays this questionnaire's insight.
+function refreshInsightSlots(criteriaId) {
+    // Side-panel list-view slot
+    const sp = document.getElementById('spInsightSlot');
+    if (sp && consolidatedData && sidePanelState.questionnaireIndex != null) {
+        const q = consolidatedData.questionnaires[sidePanelState.questionnaireIndex];
+        if (q && String(q.criteriaId).toLowerCase() === String(criteriaId).toLowerCase()) {
+            sp.innerHTML = renderInsightSlotHtml(criteriaId);
+        }
+    }
+    // Phase 1 per-questionnaire slot
+    document.querySelectorAll('.prep-insight-slot[data-criteria-id]').forEach(el => {
+        if (String(el.dataset.criteriaId).toLowerCase() === String(criteriaId).toLowerCase()) {
+            el.innerHTML = renderInsightSlotHtml(criteriaId);
+        }
+    });
+}
+function renderInsightSlotHtml(criteriaId) {
+    const status = insightStatus[criteriaId];
+    if (status === 'ready') {
+        return '<div class="insight-card">' +
+                   '<div class="insight-header"><span class="insight-label">' + COPILOT_ICON + ' ' +
+                       escapeHtml(L('ReviewSession_Insight_ConsolidatedSummary','Consolidated AI Summary')) +
+                   '</span></div>' +
+                   '<div class="insight-text">' + formatAiText(insightCache[criteriaId] || '') + '</div>' +
+               '</div>';
+    }
+    if (status === 'failed') {
+        return '<div class="error-msg" style="font-size:13px">' +
+                   escapeHtml(L('ReviewSession_Insight_Failed','AI summary generation failed.')) +
+               '</div>';
+    }
+    if (status === 'timeout') {
+        return '<div class="error-msg" style="font-size:13px">' +
+                   escapeHtml(L('ReviewSession_Insight_Timeout','AI summary generation timed out.')) +
+               '</div>';
+    }
+    if (status === 'empty') return '';   // no per-eval data — don't show a slot
+    // loading / unknown
+    return '<div class="insight-spinner">' + COPILOT_BOUNCE + ' ' +
+               escapeHtml(L('ReviewSession_Insight_Generating','Generating consolidated summary…')) +
+           '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 1 — PREPARATION
+// ═══════════════════════════════════════════════════════════════════════════════
+async function startPreparation() {
+    if (!consolidatedData) return;
+    goTo(1);
+    await loadAllCriteria();
+    fillPrep();
+    // Fire draft creation in background (live mode only), then coaching plan
+    if (API.isLive) {
+        createDraftReview().catch(err => console.warn('Draft review creation failed', err));
+    }
+    startCoachingPlan().catch(err => console.warn('Coaching plan failed', err));
+}
+async function loadAllCriteria() {
+    CRITERIA_MAP = {};
+    // Always seed the embedded CRITERIA_CACHE (used for labels/options even in live mode if it matches)
+    if (CRITERIA_CACHE && CRITERIA_CACHE.CriteriaId) {
+        CRITERIA_MAP[String(CRITERIA_CACHE.CriteriaId).toLowerCase()] = CRITERIA_CACHE;
+    }
+    if (!API.isLive || !consolidatedData) return;
+    const ids = (consolidatedData.questionnaires || []).map(q => q.criteriaId).filter(Boolean);
+    const unique = [...new Set(ids.map(x => String(x).toLowerCase()))];
+    await Promise.all(unique.map(async id => {
+        if (CRITERIA_MAP[id]) return;
+        try {
+            const c = await API.getCriteriaById(id);
+            if (c && c.CriteriaId) CRITERIA_MAP[String(c.CriteriaId).toLowerCase()] = c;
+        } catch (e) { console.warn('Failed to load criteria', id, e); }
+    }));
+}
+
+function fillPrep() {
+    document.getElementById('prepTitle').textContent =
+        Lf('ReviewSession_Phase1_HeroSubtitleTemplate','{0} — {1}: {2} → {3}',
+           agent.name, selectedPeriod.label, selectedPeriod.from, selectedPeriod.to);
+    renderPrepHero();
+    renderWeightTable();
+    renderPrepQuestionnaires();
+    // Wire debounced autosave on private-notes textareas
+    ['prepStr','prepImp','prepTalk'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', () => {
+            clearTimeout(el._autosaveTimer);
+            el._autosaveTimer = setTimeout(() => savePrivateNotesToDraft(), 800);
+        });
+    });
+}
+function savePrepAndContinue() {
+    // Cancel any pending debounce timers and flush the save immediately
+    ['prepStr','prepImp','prepTalk'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) clearTimeout(el._autosaveTimer);
+    });
+    savePrivateNotesToDraft().catch(() => {});
+    goTo(2);
+}
+
+function renderPrepHero() {
+    const hero = document.getElementById('prepHero');
+    const overall = Math.round(calculateWeightedScore());
+    const totalEvals = (consolidatedData.questionnaires || []).reduce((s, q) => s + (q.evaluationCount || 0), 0);
+    hero.innerHTML =
+        '<div class="hero-score">' +
+            '<div class="hero-score-val ' + scCls(overall) + '">' + overall + '</div>' +
+            '<div class="hero-score-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_WeightedOverall','Weighted Overall')) + '</div>' +
+        '</div>' +
+        '<div class="hero-meta">' +
+            '<div class="hero-meta-item"><div class="hero-meta-val">' + totalEvals + '</div>' +
+                '<div class="hero-meta-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_Evaluations','Evaluations')) + '</div></div>' +
+            '<div class="hero-meta-item"><div class="hero-meta-val">' + (consolidatedData.questionnaires || []).length + '</div>' +
+                '<div class="hero-meta-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_Questionnaires','Questionnaires')) + '</div></div>' +
+        '</div>';
+}
+
+function calculateWeightedScore() {
+    let total = 0, weightSum = 0;
+    (consolidatedData.questionnaires || []).forEach(q => {
+        const w = Number(sessionWeights[q.criteriaId] || 0);
+        total += (q.avgScore || 0) * w;
+        weightSum += w;
+    });
+    return weightSum > 0 ? (total / weightSum) : 0;
+}
+
+function renderWeightTable() {
+    const body = document.getElementById('weightTableBody');
+    // Apply sort if active (3-state: none → score-desc → score-asc → none)
+    let qs = [...(consolidatedData.questionnaires || [])];
+    if (weightSortMode === 'score-desc') {
+        qs = qs.sort((a, b) => (b.avgScore || 0) - (a.avgScore || 0));
+    } else if (weightSortMode === 'score-asc') {
+        qs = qs.sort((a, b) => (a.avgScore || 0) - (b.avgScore || 0));
+    }
+    const rows = qs.map(q => {
+        const w = Number(sessionWeights[q.criteriaId] || 0);
+        const contrib = ((q.avgScore || 0) * w) / 100;
+        const srcCls = (q.configuredWeight && q.configuredWeight >= 0) ? 'configured' : 'auto';
+        const srcLbl = (q.configuredWeight && q.configuredWeight >= 0)
+            ? L('ReviewSession_Phase0_Source_Configured','Configured')
+            : L('ReviewSession_Phase0_Source_Auto','Auto');
+        return '<tr>' +
+            '<td class="wt-q-name" style="font-size:18px !important;font-weight:500">' + escapeHtml(q.criteriaName || '') + '</td>' +
+            '<td class="wt-num" style="font-size:18px !important;text-align:center">' + (q.evaluationCount || 0) + '</td>' +
+            '<td class="wt-score-txt ' + scCls(q.avgScore) + '" style="font-size:18px !important;text-align:center;font-weight:600">' + Math.round(q.avgScore || 0) + '</td>' +
+            '<td class="wt-weight-cell" style="text-align:center"><input type="number" class="weight-input" min="0" max="100" value="' + w + '" ' +
+                'style="font-size:18px !important" onchange="updateWeight(\'' + escapeHtml(q.criteriaId) + '\', this.value)"><span class="weight-pct" style="font-size:18px !important">%</span></td>' +
+            '<td class="wt-num" style="font-size:18px !important;text-align:center">' + contrib.toFixed(1) + '</td>' +
+            '<td style="font-size:16px !important"><span class="dash-source ' + srcCls + '">' + escapeHtml(srcLbl) + '</span></td>' +
+        '</tr>';
+    }).join('');
+    body.innerHTML = rows;
+
+    const totalWeight = Object.values(sessionWeights).reduce((s, v) => s + Number(v || 0), 0);
+    const totalEvals = (consolidatedData.questionnaires || []).reduce((s, q) => s + (q.evaluationCount || 0), 0);
+    document.getElementById('wtTotalEvals').textContent = totalEvals;
+    document.getElementById('wtTotalWeight').textContent = totalWeight + '%';
+    // Score cell: update text and color class together
+    const scoreEl = document.getElementById('wtTotalScore');
+    const scoreVal = Math.round(calculateWeightedScore());
+    scoreEl.textContent = scoreVal;
+    scoreEl.className = 'wt-num wt-score-txt ' + scCls(scoreVal);
+
+    // Keep sort button appearance + label in sync (inline styles survive CSS cache)
+    const btn = document.getElementById('wtSortBtn');
+    if (btn) {
+        if (weightSortMode === 'score-desc') {
+            btn.textContent = '↓ High → Low';
+            btn.style.background = 'var(--c-accent)';
+            btn.style.color = '#fff';
+            btn.style.borderColor = 'var(--c-accent)';
+        } else if (weightSortMode === 'score-asc') {
+            btn.textContent = '↑ Low → High';
+            btn.style.background = 'var(--c-accent)';
+            btn.style.color = '#fff';
+            btn.style.borderColor = 'var(--c-accent)';
+        } else {
+            btn.textContent = '↕ Sort by Score';
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+        }
+    }
+
+    renderWeightWarning(totalWeight);
+}
+function toggleWeightSort() {
+    // 3-state cycle: none → high-to-low → low-to-high → none
+    if (weightSortMode === 'none')        weightSortMode = 'score-desc';
+    else if (weightSortMode === 'score-desc') weightSortMode = 'score-asc';
+    else                                  weightSortMode = 'none';
+    renderWeightTable();
+}
+function renderWeightWarning(totalWeight) {
+    let bar = document.getElementById('weightWarnBar');
+    if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'weightWarnBar';
+        bar.className = 'weight-warn-bar';
+        document.querySelector('.weight-table-wrap').after(bar);
+    }
+    if (totalWeight === 100) { bar.innerHTML = ''; bar.className = 'weight-warn-bar'; return; }
+    const isOver = totalWeight > 100;
+    const key = isOver ? 'ReviewSession_Phase1_Weight_WarnOver' : 'ReviewSession_Phase1_Weight_WarnUnder';
+    const fallback = isOver
+        ? '⚠️ Weights exceed 100% (currently {0}%). Score is auto-normalized.'
+        : '⚠️ Weights below 100% (currently {0}%). Score is auto-normalized.';
+    bar.className = 'weight-warn-bar' + (isOver ? ' over' : '');
+    bar.innerHTML = '<span>' + escapeHtml(Lf(key, fallback, totalWeight)) + '</span>' +
+        '<button class="normalize-btn" onclick="normalizeWeights()">' + escapeHtml(L('ReviewSession_Phase1_Weight_Normalize','Normalize to 100%')) + '</button>';
+}
+function updateWeight(criteriaId, v) {
+    sessionWeights[criteriaId] = Number(v) || 0;
+    renderWeightTable();
+    renderPrepHero();
+    savePrivateNotesToDraft().catch(() => {});
+}
+function resetWeights() {
+    (consolidatedData.questionnaires || []).forEach(q => {
+        sessionWeights[q.criteriaId] = q.effectiveWeight || 0;
+    });
+    renderWeightTable();
+    renderPrepHero();
+}
+function normalizeWeights() {
+    const total = Object.values(sessionWeights).reduce((s, v) => s + Number(v || 0), 0);
+    if (!total) return;
+    const factor = 100 / total;
+    Object.keys(sessionWeights).forEach(k => {
+        sessionWeights[k] = Math.round(sessionWeights[k] * factor);
+    });
+    // Fix rounding drift
+    const keys = Object.keys(sessionWeights);
+    const sum = keys.reduce((s, k) => s + sessionWeights[k], 0);
+    if (sum !== 100 && keys.length) sessionWeights[keys[0]] += (100 - sum);
+    renderWeightTable();
+    renderPrepHero();
+}
+
+function renderPrepQuestionnaires() {
+    const host = document.getElementById('prepQuestionnaires');
+    host.innerHTML = (consolidatedData.questionnaires || []).map((q, qi) => {
+        const avg = Math.round(q.avgScore || 0);
+        const w = Number(sessionWeights[q.criteriaId] || 0);
+        const evalCount = q.evaluationCount || (q.evaluations || []).length;
+        const cats = (CRITERIA_MAP[String(q.criteriaId).toLowerCase()] || {}).CriteriaJson || { Categories: [] };
+
+        // ── Category bars ─────────────────────────────────────────────────────────
+        // Only render per-category bars when actual per-question response data is
+        // present in at least one evaluation. Without it, every category would
+        // fall back to q.avgScore (all identical — misleading). Show score
+        // distribution instead, which is always grounded in real per-eval scores.
+        let categoryContent = '';
+        const hasCatDefs = cats.Categories && cats.Categories.length > 0;
+        const anyResponseData = (q.evaluations || []).some(ev =>
+            ev.qeaResponse && ev.qeaResponse.responses && ev.qeaResponse.responses.length > 0
+        );
+
+        if (hasCatDefs && anyResponseData) {
+            // ── Per-category bars (real response data) ────────────────────────
+            const barRows = cats.Categories.map(cat => {
+                let totalScore = 0, totalMaxPossible = 0;
+                (q.evaluations || []).forEach(ev => {
+                    const responses = (ev.qeaResponse && ev.qeaResponse.responses) || [];
+                    (cat.Questions || []).forEach(question => {
+                        const maxQScore = (question.Options || []).reduce((m, o) => Math.max(m, o.Score || 0), 0);
+                        if (!maxQScore) return;
+                        const r = responses.find(x => String(x.questionId).toLowerCase() === String(question.QuestionId).toLowerCase());
+                        if (!r) return;
+                        const vals = Array.isArray(r.responseValue) ? r.responseValue : [r.responseValue];
+                        vals.forEach(v => {
+                            const opt = getOptionByValue(question, v);
+                            if (opt) { totalScore += (opt.Score || 0); totalMaxPossible += maxQScore; }
+                        });
+                    });
+                });
+                if (totalMaxPossible === 0) return null; // no responses for this category — skip
+                const displayAvg = Math.round((totalScore / totalMaxPossible) * 100);
+                return '<div class="bar-row">' +
+                    '<div class="bar-label" style="min-width:160px;flex-shrink:0">' + escapeHtml(cat.CategoryName) + '</div>' +
+                    '<div class="bar-track"><div class="bar-fill" style="width:' + displayAvg + '%;background:' +
+                        (displayAvg >= 80 ? 'var(--c-success)' : displayAvg >= 60 ? 'var(--c-warning)' : 'var(--c-danger)') + '"></div></div>' +
+                    '<div class="bar-val ' + scCls(displayAvg) + '">' + displayAvg + '</div>' +
+                '</div>';
+            }).filter(Boolean);
+            if (barRows.length > 0) categoryContent = barRows.join('');
+        }
+
+        if (!categoryContent) {
+            // ── Fallback: score-distribution bands ───────────────────────────
+            // Used when: no CRITERIA_MAP data, no qeaResponse data, or all
+            // categories skipped because their response data was absent.
+            const evs = q.evaluations || [];
+            if (evs.length > 0) {
+                const total = evs.length;
+                const hi = evs.filter(e => (e.score || 0) >= 80).length;
+                const md = evs.filter(e => (e.score || 0) >= 60 && (e.score || 0) < 80).length;
+                const lo = evs.filter(e => (e.score || 0) <  60).length;
+                categoryContent =
+                    '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--c-text-3);margin-block-end:10px">' +
+                        escapeHtml(L('ReviewSession_Phase1_ScoreDist','Score Distribution')) +
+                    '</div>' +
+                    buildDistRow(L('ReviewSession_Phase1_Dist_Hi','High ≥ 80'), hi, total, 'var(--c-success)', 'sc-hi') +
+                    buildDistRow(L('ReviewSession_Phase1_Dist_Md','Mid 60–79'),  md, total, 'var(--c-warning)', 'sc-md') +
+                    buildDistRow(L('ReviewSession_Phase1_Dist_Lo','Low < 60'),   lo, total, 'var(--c-danger)',  'sc-lo');
+            } else {
+                categoryContent = '<div style="font-size:12.5px;color:var(--c-text-3);font-style:italic;padding-block:4px">' +
+                    escapeHtml(L('ReviewSession_Phase1_NoEvalData','No evaluation data available')) + '</div>';
+            }
+        }
+
+        return '<div class="prep-q-card' + (qi === 0 ? ' open' : '') + '" data-qi="' + qi + '">' +
+            '<div class="prep-q-head" onclick="this.parentElement.classList.toggle(\'open\')">' +
+                '<div class="prep-q-title">' +
+                    '<span>' + escapeHtml(q.criteriaName || '') + '</span>' +
+                    '<span class="cat-weight-tag">' + w + '%</span>' +
+                    '<span class="pill ' + pillCls(avg) + '">' + avg + '</span>' +
+                '</div>' +
+                '<button class="btn-view prep-view-btn" type="button" ' +
+                    'onclick="event.stopPropagation();openSidePanel(' + qi + ')">' +
+                    '👁 ' + Lf('ReviewSession_Phase1_ViewEvals','View {0} Evaluations', evalCount) +
+                '</button>' +
+                '<span class="cat-chev">▼</span>' +
+            '</div>' +
+            '<div class="prep-q-body">' +
+                categoryContent +
+                '<div class="prep-insight-slot" data-criteria-id="' + escapeHtml(q.criteriaId) + '">' +
+                    renderInsightSlotHtml(q.criteriaId) +
+                '</div>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+}
+function buildDistRow(label, count, total, color, cls) {
+    const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+    return '<div class="score-dist-row">' +
+        '<div class="sdr-label ' + cls + '">' + escapeHtml(label) + '</div>' +
+        '<div class="sdr-track"><div class="sdr-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+        '<div class="sdr-count">' + count + ' eval' + (count !== 1 ? 's' : '') + '</div>' +
+    '</div>';
+}
+
+// ─── Draft Review (Dataverse) ──────────────────────────────────────
+async function findExistingDraftReview() {
+    if (!agent) return null;
+    const filter = '_alex_agent_value eq ' + agent.id + ' and alex_status eq 100000000';
+    try {
+        const resp = await fetch(
+            '/api/data/v9.2/alex_managereviews?$filter=' + encodeURIComponent(filter) +
+            '&$select=alex_managereviewid&$top=1&$orderby=createdon desc',
+            { headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0' } }
+        );
+        if (!resp.ok) return null;
+        const data = await resp.json();
+        return (data.value && data.value.length > 0) ? data.value[0] : null;
+    } catch (e) { return null; }
+}
+async function createDraftReview() {
+    if (!API.isLive || !agent || !consolidatedData) return;
+    const existing = await findExistingDraftReview();
+    if (existing) { draftReviewId = existing.alex_managereviewid; return; }
+    const evalIds = [];
+    const weightOverrides = {};
+    (consolidatedData.questionnaires || []).forEach(q => {
+        (q.evaluations || []).forEach(ev => { if (ev.evaluationId) evalIds.push(ev.evaluationId); });
+        weightOverrides[q.criteriaId] = Number(sessionWeights[q.criteriaId] || 0);
+    });
+    const body = {
+        'alex_name': ('REV-' + agent.name + '-' + selectedPeriod.from).substring(0, 100),
+        'alex_agent@odata.bind': '/systemusers(' + agent.id + ')',
+        'alex_overallscore': Math.round(calculateWeightedScore() * 100) / 100,
+        'alex_status': 100000000,
+        'alex_periodstart': selectedPeriod.from,
+        'alex_periodend': selectedPeriod.to,
+        'alex_reviewtype': 2,
+        'alex_evaluationids': JSON.stringify(evalIds),
+        'alex_weightoverrides': JSON.stringify(weightOverrides)
+    };
+    try {
+        const resp = await fetch('/api/data/v9.2/alex_managereviews', {
+            method: 'POST',
+            headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0',
+                       'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            body: JSON.stringify(body)
+        });
+        if (resp.ok) { draftReviewId = (await resp.json()).alex_managereviewid; }
+    } catch (e) { console.warn('Failed to create draft review', e); }
+}
+async function savePrivateNotesToDraft() {
+    if (!API.isLive) return;
+    // Wait up to 5 s for draftReviewId if draft creation is still in flight
+    if (!draftReviewId) {
+        for (let i = 0; i < 10; i++) {
+            await new Promise(r => setTimeout(r, 500));
+            if (draftReviewId) break;
+        }
+        if (!draftReviewId) return;
+    }
+    const patchBody = {
+        'alex_prepstrengths':    document.getElementById('prepStr')?.value  || '',
+        'alex_prepimprovements': document.getElementById('prepImp')?.value  || '',
+        'alex_preptalkingpoints':document.getElementById('prepTalk')?.value || ''
+    };
+    try {
+        await fetch('/api/data/v9.2/alex_managereviews(' + draftReviewId + ')', {
+            method: 'PATCH',
+            headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0',
+                       'Content-Type': 'application/json' },
+            body: JSON.stringify(patchBody)
+        });
+    } catch (e) { console.warn('Autosave failed', e); }
+}
+
+// ─── Coaching Plan (AI) ────────────────────────────────────────────
+function buildCoachingPlanInput() {
+    const qs = consolidatedData.questionnaires || [];
+    let evalSummary = '';
+    qs.forEach(q => {
+        evalSummary += 'Questionnaire: ' + q.criteriaName + '\n';
+        evalSummary += 'Average Score: ' + Math.round(q.avgScore || 0) + '%, Evaluations: ' + (q.evaluationCount || 0) + '\n';
+        (q.evaluations || []).slice(0, 5).forEach(ev => {
+            evalSummary += '  - ' + (ev.name || ev.evaluationId) + ': Score ' + (ev.score || 0);
+            if (ev.aiSummary) evalSummary += ' | ' + ev.aiSummary.substring(0, 120);
+            evalSummary += '\n';
+        });
+        evalSummary += '\n';
+    });
+    return 'You are a quality management coach preparing a manager for an agent feedback session.\n' +
+        'Based on the evaluation data below, generate coaching guidance in three clearly labeled sections.\n\n' +
+        'Output format (use these exact headers, followed by content):\n\n' +
+        'STRENGTHS:\n[2-3 key strengths with specific examples from the evaluations]\n\n' +
+        'AREAS FOR IMPROVEMENT:\n[2-3 priority improvement areas referencing specific patterns]\n\n' +
+        'TALKING POINTS:\n[3-5 concrete talking points the manager should raise during the session]\n\n' +
+        'Formatting rules:\n' +
+        '- Output only the three sections with their headers.\n' +
+        '- Do not include any titles, greetings, or preamble.\n' +
+        '- Do not use Markdown formatting (no **, no ##, no ---).\n' +
+        '- Be specific — reference evaluation names and scores where relevant.\n' +
+        '- Keep each section to 2-4 sentences or bullet points.\n\n' +
+        'EVALUATION DATA:\n' + evalSummary;
+}
+function parseCoachingSections(text) {
+    const result = { strengths: '', improvements: '', talkingPoints: '' };
+    if (!text) return result;
+    const normalized = text.replace(/\r\n/g, '\n');
+    const strengthsMatch    = normalized.match(/STRENGTHS:\s*\n([\s\S]*?)(?=AREAS FOR IMPROVEMENT:|IMPROVEMENT:|$)/i);
+    const improvementsMatch = normalized.match(/(?:AREAS FOR )?IMPROVEMENT[S]?:\s*\n([\s\S]*?)(?=TALKING POINTS:|$)/i);
+    const talkingMatch      = normalized.match(/TALKING POINTS:\s*\n([\s\S]*?)$/i);
+    if (strengthsMatch)    result.strengths    = strengthsMatch[1].trim();
+    if (improvementsMatch) result.improvements = improvementsMatch[1].trim();
+    if (talkingMatch)      result.talkingPoints = talkingMatch[1].trim();
+    // Fallback: if no sections matched, dump the whole text into strengths
+    if (!result.strengths && !result.improvements && !result.talkingPoints) result.strengths = text.trim();
+    return result;
+}
+async function findExistingCoachingInsight() {
+    if (!agent || !selectedPeriod) return null;
+    const filter = '_alex_agent_value eq ' + agent.id +
+        ' and alex_insighttype eq 2' +
+        ' and alex_periodstart eq ' + selectedPeriod.from +
+        ' and alex_periodend eq '   + selectedPeriod.to;
+    try {
+        const resp = await fetch(
+            '/api/data/v9.2/alex_mcsaiinsights?$filter=' + encodeURIComponent(filter) +
+            '&$select=alex_mcsaiinsightid,statuscode,alex_outputtext&$top=1&$orderby=createdon desc',
+            { headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0' } }
+        );
+        if (!resp.ok) return null;
+        const data = await resp.json();
+        return (data.value && data.value.length > 0) ? data.value[0] : null;
+    } catch (e) { return null; }
+}
+function startCoachingPolling() {
+    if (!coachingInsightId) return;
+    let attempts = 0;
+    coachingPoller = setInterval(async () => {
+        attempts++;
+        if (attempts > 40) {
+            clearInterval(coachingPoller); coachingPoller = null;
+            const spinner = document.getElementById('coachingPlanSpinner');
+            if (spinner) spinner.style.display = 'none';
+            return;
+        }
+        try {
+            const resp = await fetch(
+                '/api/data/v9.2/alex_mcsaiinsights(' + coachingInsightId + ')?$select=statuscode,alex_outputtext',
+                { headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0' } }
+            );
+            if (!resp.ok) return;
+            const rec = await resp.json();
+            if (rec.statuscode === INSIGHT_STATUS.COMPLETED) {
+                clearInterval(coachingPoller); coachingPoller = null;
+                const spinner = document.getElementById('coachingPlanSpinner');
+                if (spinner) spinner.style.display = 'none';
+                applyCoachingPlan(rec.alex_outputtext || '');
+            } else if (rec.statuscode === INSIGHT_STATUS.FAILED) {
+                clearInterval(coachingPoller); coachingPoller = null;
+                const spinner = document.getElementById('coachingPlanSpinner');
+                if (spinner) spinner.style.display = 'none';
+                console.warn('Coaching plan insight failed');
+            }
+        } catch (e) { /* ignore transient poll errors */ }
+    }, 3000);
+}
+async function startCoachingPlan() {
+    const spinner = document.getElementById('coachingPlanSpinner');
+    const spinBody = document.getElementById('coachingPlanSpinnerBody');
+    if (spinner) {
+        spinner.style.display = 'flex';
+        if (spinBody) spinBody.innerHTML = COPILOT_BOUNCE + ' ' +
+            escapeHtml(L('ReviewSession_Phase1_CoachingSpinner','Generating coaching suggestions…'));
+    }
+    if (!API.isLive) {
+        setTimeout(() => {
+            applyCoachingPlan(buildMockCoachingPlanText());
+            if (spinner) spinner.style.display = 'none';
+        }, 800);
+        return;
+    }
+    // Check for an existing completed insight first
+    const existing = await findExistingCoachingInsight();
+    if (existing && existing.statuscode === INSIGHT_STATUS.COMPLETED && existing.alex_outputtext) {
+        if (spinner) spinner.style.display = 'none';
+        applyCoachingPlan(existing.alex_outputtext);
+        return;
+    }
+    // Reuse an in-flight insight rather than creating a duplicate
+    if (existing && existing.statuscode !== INSIGHT_STATUS.FAILED) {
+        coachingInsightId = existing.alex_mcsaiinsightid;
+    } else {
+        // Create a new insight record
+        const insightBody = {
+            'alex_name': ('Coaching - ' + agent.name + ' - ' + selectedPeriod.from).substring(0, 100),
+            'alex_agent@odata.bind': '/systemusers(' + agent.id + ')',
+            'alex_insighttype': 2,
+            'alex_periodstart': selectedPeriod.from,
+            'alex_periodend':   selectedPeriod.to,
+            'alex_inputtext':   buildCoachingPlanInput(),
+            'statuscode':       INSIGHT_STATUS.PENDING
+        };
+        try {
+            const resp = await fetch('/api/data/v9.2/alex_mcsaiinsights', {
+                method: 'POST',
+                headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0',
+                           'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+                body: JSON.stringify(insightBody)
+            });
+            if (resp.ok) {
+                coachingInsightId = (await resp.json()).alex_mcsaiinsightid;
+            } else {
+                if (spinner) spinner.style.display = 'none';
+                return;
+            }
+        } catch (e) {
+            console.warn('Failed to create coaching insight', e);
+            if (spinner) spinner.style.display = 'none';
+            return;
+        }
+    }
+    startCoachingPolling();
+}
+function buildMockCoachingPlanText() {
+    const qs = consolidatedData.questionnaires || [];
+    const strongest = [...qs].sort((a,b) => (b.avgScore||0) - (a.avgScore||0))[0];
+    const weakest   = [...qs].sort((a,b) => (a.avgScore||0) - (b.avgScore||0))[0];
+    return 'STRENGTHS:\n' +
+        (strongest ? strongest.criteriaName : 'Overall') + ': averaging ' +
+        Math.round(strongest ? strongest.avgScore : 0) + '. ' +
+        'Consistent communication quality across evaluations. ' +
+        'Strong empathy and personalised acknowledgements observed.\n\n' +
+        'AREAS FOR IMPROVEMENT:\n' +
+        (weakest ? weakest.criteriaName : 'Accountability') + ': averaging ' +
+        Math.round(weakest ? weakest.avgScore : 0) + '. ' +
+        'Root-cause identification is inconsistent. ' +
+        'Probing questions sometimes skipped on complex cases.\n\n' +
+        'TALKING POINTS:\n' +
+        'Share the highest-scoring evaluation as a peer-coaching example.\n' +
+        'Review the RCA template together and commit to using it on the next 3 cases.\n' +
+        'Agree on a 2-week check-in to review progress.';
+}
+function applyCoachingPlan(rawText) {
+    const plan = parseCoachingSections(rawText);
+    const strEl  = document.getElementById('prepStr');
+    const impEl  = document.getElementById('prepImp');
+    const talkEl = document.getElementById('prepTalk');
+    if (plan.strengths && strEl && !strEl.value) {
+        strEl.value = plan.strengths;
+        const tag = document.getElementById('prepStrAiTag');
+        if (tag) { tag.style.display = 'inline-flex'; tag.innerHTML = COPILOT_ICON + ' ' + escapeHtml(L('ReviewSession_Phase1_AiTag','AI-suggested')); }
+        strEl.addEventListener('input', () => { const t = document.getElementById('prepStrAiTag'); if (t) t.style.display = 'none'; }, { once: true });
+    }
+    if (plan.improvements && impEl && !impEl.value) {
+        impEl.value = plan.improvements;
+        const tag = document.getElementById('prepImpAiTag');
+        if (tag) { tag.style.display = 'inline-flex'; tag.innerHTML = COPILOT_ICON + ' ' + escapeHtml(L('ReviewSession_Phase1_AiTag','AI-suggested')); }
+        impEl.addEventListener('input', () => { const t = document.getElementById('prepImpAiTag'); if (t) t.style.display = 'none'; }, { once: true });
+    }
+    if (plan.talkingPoints && talkEl && !talkEl.value) {
+        talkEl.value = plan.talkingPoints;
+        const tag = document.getElementById('prepTalkAiTag');
+        if (tag) { tag.style.display = 'inline-flex'; tag.innerHTML = COPILOT_ICON + ' ' + escapeHtml(L('ReviewSession_Phase1_AiTag','AI-suggested')); }
+        talkEl.addEventListener('input', () => { const t = document.getElementById('prepTalkAiTag'); if (t) t.style.display = 'none'; }, { once: true });
+    }
+    // Programmatic .value changes do NOT fire the input event, so the 800ms
+    // debounced autosave never runs. Explicitly persist the AI-populated text.
+    savePrivateNotesToDraft().catch(() => {});
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 2 — OPENING
+// ═══════════════════════════════════════════════════════════════════════════════
+function fillOpen() {
+    document.getElementById('openTitle').textContent =
+        Lf('ReviewSession_Phase2_TitleForAgent','{0} — Performance Highlights', agent.name);
+    const overall = Math.round(calculateWeightedScore());
+    const qs = [...(consolidatedData.questionnaires || [])].sort((a,b) => (b.avgScore||0) - (a.avgScore||0));
+    const top = qs[0];
+    let html =
+        '<div class="hero-stats">' +
+            '<div class="hero-score">' +
+                '<div class="hero-score-val ' + scCls(overall) + '">' + overall + '</div>' +
+                '<div class="hero-score-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_WeightedOverall','Weighted Overall')) + '</div>' +
+            '</div>' +
+            '<div class="hero-meta">' +
+                (top ? '<div class="hero-meta-item"><div class="hero-meta-val">' + Math.round(top.avgScore||0) + '</div>' +
+                    '<div class="hero-meta-lbl">' + escapeHtml(top.criteriaName || '') + '</div></div>' : '') +
+                '<div class="hero-meta-item"><div class="hero-meta-val">' + (consolidatedData.totalEvaluations || 0) + '</div>' +
+                    '<div class="hero-meta-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_Evaluations','Evaluations')) + '</div></div>' +
+            '</div>' +
+        '</div>';
+    document.getElementById('openHighlights').innerHTML = html;
+}
+function saveOpeningAndContinue() {
+    // Persist the agent's opening response before leaving Phase 2
+    if (API.isLive && draftReviewId) {
+        fetch('/api/data/v9.2/alex_managereviews(' + draftReviewId + ')', {
+            method: 'PATCH',
+            headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0',
+                       'Content-Type': 'application/json' },
+            body: JSON.stringify({ 'alex_openingresponse': document.getElementById('openResp')?.value || '' })
+        }).catch(e => console.warn('Failed to save opening response', e));
+    }
+    goTo(3);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 3 — QUESTIONNAIRE REVIEW
+// ═══════════════════════════════════════════════════════════════════════════════
+let activeQTab = 0;
+
+// Persist the currently visible tab's textarea values into the questionnaire
+// object so they survive DOM replacement when the user switches tabs.
+function snapshotActiveTab() {
+    const q = (consolidatedData.questionnaires || [])[activeQTab];
+    if (!q) return;
+    const p = document.getElementById('qPersp_' + activeQTab);
+    const m = document.getElementById('qMgr_' + activeQTab);
+    if (p) q._agentPerspective = p.value;
+    if (m) q._managerAssessment = m.value;
+}
+
+function fillCats() {
+    const bar = document.getElementById('qTabBar');
+    const qs = consolidatedData.questionnaires || [];
+    bar.innerHTML = qs.map((q, i) => {
+        const avg = Math.round(q.avgScore || 0);
+        return '<button class="q-tab ' + (i === activeQTab ? 'active' : '') + '" onclick="switchQTab(' + i + ')">' +
+            '<span>' + escapeHtml(q.criteriaName || '') + '</span>' +
+            '<span class="q-tab-score">' + avg + '</span>' +
+        '</button>';
+    }).join('');
+    buildQTabPanel(activeQTab);
+}
+function switchQTab(i) {
+    snapshotActiveTab(); // save current tab's inputs before DOM is replaced
+    activeQTab = i;
+    fillCats();
+}
+
+function buildQTabPanel(i) {
+    const q = (consolidatedData.questionnaires || [])[i];
+    if (!q) return;
+    const avg = Math.round(q.avgScore || 0);
+    const w = Number(sessionWeights[q.criteriaId] || 0);
+    const cats = ((CRITERIA_MAP[String(q.criteriaId).toLowerCase()] || {}).CriteriaJson || { Categories: [] }).Categories || [];
+
+    const catCards = cats.map(cat => {
+        // Category-level accumulators for header score badge + on-track summary
+        let catTotalScore = 0, catMaxPossible = 0, catOnTrack = 0, catResponders = 0;
+
+        const perQuestion = (cat.Questions || []).map(question => {
+            const flagCounts = {};
+            const reasons   = {};
+            let totalResponders = 0, onTrack = 0;
+            const maxQScore = (question.Options || []).reduce((mx, o) => Math.max(mx, o.Score || 0), 0);
+
+            (q.evaluations || []).forEach(ev => {
+                const responses = (ev.qeaResponse && ev.qeaResponse.responses) || [];
+                const r = responses.find(x =>
+                    String(x.questionId).toLowerCase() === String(question.QuestionId).toLowerCase()
+                );
+                if (!r) return;
+                totalResponders++;
+                const vals = Array.isArray(r.responseValue) ? r.responseValue : [r.responseValue];
+                vals.forEach(v => {
+                    flagCounts[v] = (flagCounts[v] || 0) + 1;
+                    if (r.reason) (reasons[v] = reasons[v] || []).push(r.reason);
+                    const opt = getOptionByValue(question, Number(v));
+                    if (opt) {
+                        catTotalScore += (opt.Score || 0);
+                        if (maxQScore) catMaxPossible += maxQScore;
+                        if (/on\s*track/i.test(opt.Label)) onTrack++;
+                    }
+                });
+            });
+            catOnTrack    += onTrack;
+            catResponders += totalResponders;
+
+            // Sort: concerning options first (by count desc), on-track last
+            const sortedKeys = Object.keys(flagCounts).sort((a, b) => {
+                const aOT = (o => o && /on\s*track/i.test(o.Label) ? 1 : 0)(getOptionByValue(question, Number(a)));
+                const bOT = (o => o && /on\s*track/i.test(o.Label) ? 1 : 0)(getOptionByValue(question, Number(b)));
+                if (aOT !== bOT) return aOT - bOT;        // on-track last
+                return flagCounts[b] - flagCounts[a];      // higher count first
+            });
+
+            const flagsHtml = sortedKeys.map(v => {
+                const opt  = getOptionByValue(question, Number(v));
+                const label = opt ? opt.Label : v;
+                const isOT  = opt && /on\s*track/i.test(opt.Label);
+                const pct   = totalResponders ? Math.round((flagCounts[v] / totalResponders) * 100) : 0;
+                return '<div>' +
+                    '<div class="qr-flag-row">' +
+                        '<div class="qr-flag-count" style="background:' +
+                            (isOT ? 'rgba(16,185,129,.12)' : 'var(--bg-accent-soft)') +
+                            ';color:' + (isOT ? 'var(--c-success)' : 'var(--c-accent-700)') + '">' +
+                            flagCounts[v] +
+                        '</div>' +
+                        '<div><strong>' + escapeHtml(label) + '</strong> ' +
+                            '<span style="color:var(--c-text-3);font-size:12px">' +
+                                escapeHtml(Lf('ReviewSession_Phase3_Category_PercentOfEvals','({0}% of evals)', pct)) +
+                            '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    ((reasons[v] && reasons[v].length)
+                        ? '<div class="qr-flag-detail">"' + escapeHtml(reasons[v][0]) + '"' +
+                          (reasons[v].length > 1
+                              ? ' <em style="color:var(--c-text-3)">(+' + (reasons[v].length - 1) + ' more)</em>'
+                              : '') +
+                          '</div>'
+                        : '') +
+                '</div>';
+            }).join('');
+
+            return '<div style="margin-block-end:12px">' +
+                '<div style="font-weight:600;margin-block-end:6px">' + escapeHtml(question.QuestionText) + '</div>' +
+                (sortedKeys.length
+                    ? flagsHtml
+                    : '<div class="qr-no-flags">' +
+                        escapeHtml(L('ReviewSession_Phase3_Category_FlagsEmpty','No evaluation responses available for this category.')) +
+                      '</div>') +
+                (totalResponders
+                    ? '<div style="margin-block-start:6px;font-size:12.5px;color:var(--c-text-3)">' +
+                        escapeHtml(Lf('ReviewSession_Phase3_Category_OnTrackTemplate','{0}/{1} on track', onTrack, totalResponders)) +
+                      '</div>'
+                    : '') +
+            '</div>';
+        }).join('');
+
+        // Header extras — only shown when real response data is present
+        const catScore = catMaxPossible > 0 ? Math.round((catTotalScore / catMaxPossible) * 100) : null;
+        const scoreBadge = catScore !== null
+            ? '<span class="pill ' + pillCls(catScore) + '" style="margin-inline-start:6px">' + catScore + '</span>'
+            : '';
+        const otBadge = catResponders > 0
+            ? '<span style="font-size:11.5px;font-weight:500;color:var(--c-text-3);margin-inline-start:8px">' +
+                escapeHtml(Lf('ReviewSession_Phase3_Category_OnTrackTemplate','{0}/{1} on track', catOnTrack, catResponders)) +
+              '</span>'
+            : '';
+
+        // Collapsed by default — manager opens only what's relevant to the discussion
+        return '<div class="qr-cat-card">' +
+            '<div class="qr-cat-head" onclick="this.parentElement.classList.toggle(\'open\')">' +
+                '<div class="qr-cat-title">' + escapeHtml(cat.CategoryName) +
+                    '<span class="cat-weight-tag">' + (cat.CategoryWeight || 0) + '%</span>' +
+                    scoreBadge + otBadge +
+                '</div>' +
+                '<span class="cat-chev">▼</span>' +
+            '</div>' +
+            '<div class="qr-cat-body">' + perQuestion + '</div>' +
+        '</div>';
+    }).join('') || '<div class="loading">' +
+        escapeHtml(L('ReviewSession_Error_CriteriaUnavailable','Category details not available — criteria could not be loaded for this questionnaire.')) +
+    '</div>';
+
+    const html =
+        '<div class="card">' +
+            '<div class="qr-header">' +
+                '<div class="qr-title">' + escapeHtml(q.criteriaName || '') + '</div>' +
+                '<div class="qr-meta">' +
+                    '<span>' + escapeHtml(Lf('ReviewSession_Phase3_Meta_Evaluations','{0} evaluations', q.evaluationCount || 0)) + '</span>' +
+                    '<span>' + escapeHtml(Lf('ReviewSession_Phase3_Meta_ScoreRange','Score range: {0}–{1}', q.minScore||0, q.maxScore||0)) + '</span>' +
+                    '<span>' + escapeHtml(Lf('ReviewSession_Phase3_Meta_Weight','Weight: {0}%', w)) + '</span>' +
+                    '<span class="pill pill-lg ' + pillCls(avg) + '">' + avg + '</span>' +
+                '</div>' +
+            '</div>' +
+            catCards +
+            '<div class="qr-responses">' +
+                '<div class="field">' +
+                    '<label class="field-lbl">' + escapeHtml(L('ReviewSession_Phase3_AgentPerspective_Label',"Agent's Perspective")) + '</label>' +
+                    '<textarea rows="3" id="qPersp_' + i + '" placeholder="' +
+                        escapeHtml(Lf('ReviewSession_Phase3_AgentPerspective_Placeholder',
+                            'What does the agent think about their {0} performance?', q.criteriaName || '')) + '">' +
+                        escapeHtml(q._agentPerspective || '') +
+                    '</textarea>' +
+                '</div>' +
+                '<div class="field">' +
+                    '<label class="field-lbl">' + escapeHtml(L('ReviewSession_Phase3_ManagerAssessment_Label','Manager Assessment')) + '</label>' +
+                    '<textarea rows="3" id="qMgr_' + i + '" placeholder="' +
+                        escapeHtml(L('ReviewSession_Phase3_ManagerAssessment_Placeholder','Your overall assessment for this questionnaire…')) + '">' +
+                        escapeHtml(q._managerAssessment || '') +
+                    '</textarea>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+    document.getElementById('qTabContent').innerHTML = html;
+}
+
+function saveCategoryReviewAndContinue() {
+    // Flush the active tab first, then collect all stored values across every tab
+    snapshotActiveTab();
+    (consolidatedData.questionnaires || []).forEach((q, i) => {
+        // Active tab: DOM elements still live — read directly to capture last edits
+        // Other tabs: DOM is gone — use values stored by snapshotActiveTab / prior switches
+        const p = document.getElementById('qPersp_' + i);
+        const m = document.getElementById('qMgr_' + i);
+        if (p) q._agentPerspective = p.value;
+        if (m) q._managerAssessment = m.value;
+    });
+    // Persist all questionnaire review notes to the draft record
+    if (API.isLive && draftReviewId) {
+        const payload = (consolidatedData.questionnaires || []).map(q => ({
+            criteriaId:        q.criteriaId,
+            criteriaName:      q.criteriaName,
+            agentPerspective:  q._agentPerspective  || '',
+            managerAssessment: q._managerAssessment || ''
+        }));
+        fetch('/api/data/v9.2/alex_managereviews(' + draftReviewId + ')', {
+            method: 'PATCH',
+            headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0',
+                       'Content-Type': 'application/json' },
+            body: JSON.stringify({ 'alex_categoryreviewjson': JSON.stringify(payload) })
+        }).catch(e => console.warn('Failed to save category review', e));
+    }
+    goTo(4);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 4 — SUMMARY
+// ═══════════════════════════════════════════════════════════════════════════════
+function fillAction() {
+    const host = document.getElementById('actItems');
+    if (!host.children.length) { actCount = 0; addAct(); }
+}
+function addAct() {
+    actCount++;
+    const item = document.createElement('div');
+    item.className = 'act-item';
+    item.innerHTML =
+        '<div class="act-n">' + actCount + '</div>' +
+        '<input class="act-inp" placeholder="' + escapeHtml(L('ReviewSession_Phase4_ActionItems_Placeholder','Action / improvement goal…')) + '" />' +
+        '<button class="act-del" title="' + escapeHtml(L('ReviewSession_Phase4_Button_RemoveAction','Remove')) + '" onclick="removeAct(this)">✕</button>';
+    document.getElementById('actItems').appendChild(item);
+}
+function removeAct(btn) {
+    btn.parentElement.remove();
+    // Renumber
+    document.querySelectorAll('#actItems .act-item').forEach((el, i) => {
+        el.querySelector('.act-n').textContent = i + 1;
+    });
+    actCount = document.querySelectorAll('#actItems .act-item').length;
+}
+
+async function saveSession() {
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = L('ReviewSession_Phase4_Button_Saving','Saving…');
+    try {
+        const actions = [...document.querySelectorAll('#actItems .act-inp')]
+            .map(i => (i.value || '').trim()).filter(Boolean);
+        const payload = {
+            AgentId: agent.id,
+            AgentName: agent.name,
+            DateFrom: selectedPeriod.from,
+            DateTo: selectedPeriod.to,
+            OverallScore: Math.round(calculateWeightedScore()),
+            WeightOverrides: sessionWeights,
+            Strengths: document.getElementById('prepStr').value,
+            Improvements: document.getElementById('prepImp').value,
+            TalkingPoints: document.getElementById('prepTalk').value,
+            OpeningResponse: document.getElementById('openResp').value,
+            Questionnaires: (consolidatedData.questionnaires || []).map(q => ({
+                CriteriaId: q.criteriaId,
+                CriteriaName: q.criteriaName,
+                AvgScore: q.avgScore,
+                EffectiveWeight: sessionWeights[q.criteriaId],
+                AgentPerspective: q._agentPerspective || '',
+                ManagerAssessment: q._managerAssessment || ''
+            })),
+            ActionItems: actions,
+            AgentComments: document.getElementById('agentComments').value,
+            ManagerSummary: document.getElementById('mgrSummary').value,
+            Status: 100000002   // Completed
+        };
+        const result = await API.saveManagerReview(payload);
+        lastSavedSession = { payload, result, savedAt: new Date() };
+        goTo(5);
+    } catch (e) {
+        alert(Lf('ReviewSession_Error_SaveFailed','❌ Failed to save: {0}', e.message || e));
+    } finally {
+        btn.disabled = false;
+        btn.textContent = L('ReviewSession_Phase4_Button_Save','💾 Save Review Session');
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PHASE 5 — COMPLETE
+// ═══════════════════════════════════════════════════════════════════════════════
+function fillComplete() {
+    if (!lastSavedSession) return;
+    const p = lastSavedSession.payload;
+    document.getElementById('completeSubtitle').textContent =
+        agent.name + ' · ' + p.DateFrom + ' → ' + p.DateTo;
+    const recap = document.getElementById('completeRecap');
+    const catsCovered = (p.Questionnaires || []).length;
+    recap.innerHTML =
+        '<div class="recap-item"><div class="recap-label">' + escapeHtml(L('ReviewSession_Phase5_Recap_Agent','Agent')) + '</div>' +
+            '<div class="recap-value">' + escapeHtml(agent.name) + '</div></div>' +
+        '<div class="recap-item"><div class="recap-label">' + escapeHtml(L('ReviewSession_Phase5_Recap_OverallScore','Overall Score')) + '</div>' +
+            '<div class="recap-value num ' + scCls(p.OverallScore) + '">' + p.OverallScore + '</div></div>' +
+        '<div class="recap-item"><div class="recap-label">' + escapeHtml(L('ReviewSession_Phase5_Recap_CategoriesCovered','Categories Covered')) + '</div>' +
+            '<div class="recap-value num">' + catsCovered + '</div></div>' +
+        '<div class="recap-item"><div class="recap-label">' + escapeHtml(L('ReviewSession_Phase5_Recap_ActionItems','Action Items')) + '</div>' +
+            '<div class="recap-value num">' + (p.ActionItems || []).length + '</div></div>' +
+        '<div class="recap-item"><div class="recap-label">' + escapeHtml(L('ReviewSession_Phase5_Recap_SavedAt','Saved At')) + '</div>' +
+            '<div class="recap-value" style="font-size:13px">' + escapeHtml(formatDateTime(lastSavedSession.savedAt)) + '</div></div>';
+    const actionsCard = document.getElementById('completeActionsCard');
+    const actionsHost = document.getElementById('completeActions');
+    if ((p.ActionItems || []).length) {
+        actionsCard.style.display = 'block';
+        actionsHost.innerHTML = p.ActionItems.map((a, i) =>
+            '<div class="action-pill"><div class="action-pill-num">' + (i+1) + '</div><div>' + escapeHtml(a) + '</div></div>'
+        ).join('');
+    } else {
+        actionsCard.style.display = 'none';
+    }
+}
+
+function viewCompletedReview() {
+    if (!lastSavedSession) return;
+    goTo(6);
+    renderReviewViewer(lastSavedSession.payload, lastSavedSession.savedAt);
+}
+function goToViewer() { goTo(6); }
+function closeViewer() { goTo(5); }
+
+function renderReviewViewer(payload, savedAt) {
+    document.getElementById('rvSubtitle').textContent =
+        agent.name + ' · ' + payload.DateFrom + ' → ' + payload.DateTo;
+    const status = document.getElementById('rvStatusBadge');
+    status.textContent = 'Completed';
+    status.className = 'badge badge-live';
+
+    let html = '';
+    // Metadata
+    html += '<div class="rv-section">' +
+        '<div class="rv-section-title">' + escapeHtml(L('ReviewSession_Phase6_SessionMetadata','Session Metadata')) + '</div>' +
+        '<div class="rv-meta-grid">' +
+            '<div class="rv-meta-item"><div class="rv-meta-label">' + escapeHtml(L('ReviewSession_Phase6_Meta_Agent','Agent')) + '</div><div class="rv-meta-value">' + escapeHtml(agent.name) + '</div></div>' +
+            '<div class="rv-meta-item"><div class="rv-meta-label">' + escapeHtml(L('ReviewSession_Phase6_Meta_OverallScore','Overall Score')) + '</div><div class="rv-meta-value ' + scCls(payload.OverallScore) + '">' + payload.OverallScore + '</div></div>' +
+            '<div class="rv-meta-item"><div class="rv-meta-label">' + escapeHtml(L('ReviewSession_Phase6_Meta_SessionDate','Session Date')) + '</div><div class="rv-meta-value">' + escapeHtml(formatDateTime(savedAt)) + '</div></div>' +
+        '</div>' +
+    '</div>';
+    // Private notes
+    html += '<div class="rv-section">' +
+        '<div class="rv-section-title">' + escapeHtml(L('ReviewSession_Phase6_PrivateNotes','🔒 Private Preparation Notes (Manager Only)')) + '</div>' +
+        renderField(L('ReviewSession_Phase1_Strengths_Label','Strengths Identified'), payload.Strengths) +
+        renderField(L('ReviewSession_Phase1_Improvements_Label','Areas for Improvement'), payload.Improvements) +
+        renderField(L('ReviewSession_Phase1_TalkingPoints_Label','Talking Points'), payload.TalkingPoints) +
+    '</div>';
+    // Opening
+    html += '<div class="rv-section">' +
+        '<div class="rv-section-title">' + escapeHtml(L('ReviewSession_Phase6_Opening',"Opening — Agent's Initial Response")) + '</div>' +
+        renderField(L('ReviewSession_Phase2_AgentResponse_Title','Agent Response'), payload.OpeningResponse) +
+    '</div>';
+    // Category review
+    html += '<div class="rv-section">' +
+        '<div class="rv-section-title">' + escapeHtml(L('ReviewSession_Phase6_CategoryReview','Category Review')) + '</div>';
+    if ((payload.Questionnaires || []).length) {
+        payload.Questionnaires.forEach(q => { html += renderReviewCategory(q); });
+    } else {
+        html += '<div class="rv-field-value empty">' + escapeHtml(L('ReviewSession_Phase6_NoCategoryFeedback','No category feedback recorded.')) + '</div>';
+    }
+    html += '</div>';
+    // Action items
+    html += '<div class="rv-section">' +
+        '<div class="rv-section-title">' + escapeHtml(Lf('ReviewSession_Phase6_ActionItemsTemplate','Action Items ({0})', (payload.ActionItems||[]).length)) + '</div>';
+    if ((payload.ActionItems || []).length) {
+        payload.ActionItems.forEach((a, i) => {
+            html += '<div class="rv-action"><div class="rv-action-n">' + (i+1) + '</div><div><div class="rv-action-desc">' + escapeHtml(a) + '</div></div></div>';
+        });
+    } else {
+        html += '<div class="rv-field-value empty">' + escapeHtml(L('ReviewSession_Phase6_NoActionItems','No action items recorded.')) + '</div>';
+    }
+    html += '</div>';
+    // Closing
+    html += '<div class="rv-section">' +
+        '<div class="rv-section-title">' + escapeHtml(L('ReviewSession_Phase6_Closing','Closing')) + '</div>' +
+        renderField(L('ReviewSession_Phase4_AgentComments_Title','Agent Comments'), payload.AgentComments) +
+        renderField(L('ReviewSession_Phase4_ManagerSummary_Title','Manager Summary'), payload.ManagerSummary) +
+    '</div>';
+    document.getElementById('rvContent').innerHTML = html;
+}
+function renderField(label, value) {
+    const v = (value || '').trim();
+    return '<div class="rv-field">' +
+        '<div class="rv-field-label">' + escapeHtml(label) + '</div>' +
+        '<div class="rv-field-value ' + (v ? '' : 'empty') + '">' + (v ? escapeHtml(v) : escapeHtml(L('Common_NotRecorded','Not recorded'))) + '</div>' +
+    '</div>';
+}
+function renderReviewCategory(q) {
+    const avg = Math.round(q.AvgScore || 0);
+    return '<div class="rv-cat">' +
+        '<div class="rv-cat-header">' +
+            '<div class="rv-cat-name">' + escapeHtml(q.CriteriaName || '') + '</div>' +
+            '<span class="rv-cat-score ' + scBgCls(avg) + '">' + avg + '</span>' +
+        '</div>' +
+        '<div class="rv-cat-responses">' +
+            '<div class="rv-cat-response-box">' +
+                '<div class="rv-cat-response-label">' + escapeHtml(L('ReviewSession_Phase3_AgentPerspective_Label',"Agent's Perspective")) + '</div>' +
+                '<div class="rv-cat-response-value ' + (q.AgentPerspective ? '' : 'empty') + '">' +
+                    (q.AgentPerspective ? escapeHtml(q.AgentPerspective) : escapeHtml(L('Common_NotRecorded','Not recorded'))) +
+                '</div>' +
+            '</div>' +
+            '<div class="rv-cat-response-box">' +
+                '<div class="rv-cat-response-label">' + escapeHtml(L('ReviewSession_Phase3_ManagerAssessment_Label','Manager Assessment')) + '</div>' +
+                '<div class="rv-cat-response-value ' + (q.ManagerAssessment ? '' : 'empty') + '">' +
+                    (q.ManagerAssessment ? escapeHtml(q.ManagerAssessment) : escapeHtml(L('Common_NotRecorded','Not recorded'))) +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+}
+
+function finishSession() {
+    // Reset state and return to Phase 0
+    agent = null; eval_ = null; consolidatedData = null; selectedPeriod = null;
+    draftReviewId = null; coachingInsightId = null;
+    sessionWeights = {}; lastSavedSession = null; actCount = 0;
+    stopAllInsightPollers();
+    document.getElementById('dateRangeCard').style.display = 'none';
+    document.getElementById('consolidatedCard').style.display = 'none';
+    document.getElementById('ph0Next').style.display = 'none';
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('periodSelected').style.display = 'none';
+    document.getElementById('periodCustom').style.display = 'none';
+    ['prepStr','prepImp','prepTalk','openResp','agentComments','mgrSummary']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('actItems').innerHTML = '';
+    goTo(0);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// THEME TOGGLE
+// ═══════════════════════════════════════════════════════════════════════════════
+function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    if (next === 'dark') document.documentElement.setAttribute('data-theme','dark');
+    else document.documentElement.removeAttribute('data-theme');
+    document.getElementById('themeBtn').textContent = next === 'dark' ? '🌙' : '☀️';
+    try { localStorage.setItem('rsTheme', next); } catch (e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+(function init() {
+    // 1. RTL + localisation
+    applyDirectionality();
+    applyStaticLabels(document);
+
+    // 2. Mode badge
+    const badge = document.getElementById('modeBadge');
+    if (API.isLive) {
+        badge.textContent = L('ReviewSession_Mode_Live','LIVE');
+        badge.classList.add('mode-live');
+    } else {
+        badge.textContent = L('ReviewSession_Mode_Mock','MOCK');
+        badge.classList.add('mode-mock');
+    }
+
+    // 3. Theme persistence
+    try {
+        const t = localStorage.getItem('rsTheme');
+        if (t === 'dark') {
+            document.documentElement.setAttribute('data-theme','dark');
+            document.getElementById('themeBtn').textContent = '🌙';
+        }
+    } catch (e) {}
+
+    // 4. Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.getElementById('sidePanel').classList.contains('open')) {
+            closeSidePanel();
+        }
+    });
+
+    // 5. Preload criteria cache for mock mode
+    if (!API.isLive && CRITERIA_CACHE && CRITERIA_CACHE.CriteriaId) {
+        CRITERIA_MAP[String(CRITERIA_CACHE.CriteriaId).toLowerCase()] = CRITERIA_CACHE;
+    }
+
+    // 6. Load agents
+    loadAgents();
+})();
+
+</script>
+</body>
+</html>

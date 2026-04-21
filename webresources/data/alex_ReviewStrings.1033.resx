@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Agent Review Session — English (en-US / LCID 1033) resource file.
+    Web Resource logical name (solution): alex_ReviewSession_Strings.1033.resx
+    Accessed from JavaScript via:
+      Xrm.Utility.getResourceString("alex_ReviewSession_Strings", "KeyName")
+
+    Key naming convention: [Module]_[Section]_[Purpose]
+      - Common_*                : cross-screen atoms (buttons, labels, states)
+      - ReviewSession_Header_*  : top banner
+      - ReviewSession_Stepper_* : horizontal stepper labels
+      - ReviewSession_PhaseN_*  : screen-specific strings (N = 0..5)
+      - ReviewSession_SidePanel_* : off-canvas drill-down panel
+      - ReviewSession_RecordType_* : conversation / case / email badges
+      - ReviewSession_Error_*   : user-facing error messages
+
+    Placeholder tokens use the .NET / String.Format style: {0}, {1}, {2}.
+    Client-side helper `Lf(key, fallback, ...args)` performs the substitution.
+
+    DO NOT rename existing keys after ship — JS has hard-coded references.
+    Add new keys at the bottom; never recycle retired keys.
+  -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- COMMON                                                           -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="Common_Loading" xml:space="preserve"><value>Loading…</value></data>
+  <data name="Common_Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Common_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Common_Continue" xml:space="preserve"><value>Continue</value></data>
+  <data name="Common_Done" xml:space="preserve"><value>Done</value></data>
+  <data name="Common_Print" xml:space="preserve"><value>Print</value></data>
+  <data name="Common_Unknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="Common_None" xml:space="preserve"><value>None</value></data>
+  <data name="Common_NotRecorded" xml:space="preserve"><value>Not recorded</value></data>
+  <data name="Common_Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="Common_Of" xml:space="preserve"><value>of</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- HEADER / STEPPER                                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Header_Title" xml:space="preserve"><value>Agent Review Session</value></data>
+  <data name="ReviewSession_Header_Subtitle" xml:space="preserve"><value>Quality Evaluation Feedback Tool</value></data>
+  <data name="ReviewSession_Mode_Live" xml:space="preserve"><value>LIVE</value></data>
+  <data name="ReviewSession_Mode_Mock" xml:space="preserve"><value>MOCK</value></data>
+  <data name="ReviewSession_Theme_Toggle" xml:space="preserve"><value>Toggle light / dark theme</value></data>
+
+  <data name="ReviewSession_Stepper_SelectAgent" xml:space="preserve"><value>Select Agent</value></data>
+  <data name="ReviewSession_Stepper_Preparation" xml:space="preserve"><value>Preparation</value></data>
+  <data name="ReviewSession_Stepper_Opening" xml:space="preserve"><value>Opening</value></data>
+  <data name="ReviewSession_Stepper_CategoryReview" xml:space="preserve"><value>Category Review</value></data>
+  <data name="ReviewSession_Stepper_Summary" xml:space="preserve"><value>Summary</value></data>
+  <data name="ReviewSession_Stepper_Complete" xml:space="preserve"><value>Complete</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 0 — AGENT SELECTION + CONSOLIDATED DASHBOARD               -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase0_SelectAgentTitle" xml:space="preserve"><value>Select Agent</value></data>
+  <data name="ReviewSession_Phase0_SelectAgentDesc" xml:space="preserve"><value>Choose the agent for this review session</value></data>
+  <data name="ReviewSession_Phase0_AgentSearchPlaceholder" xml:space="preserve"><value>Search by name, role, or queue…</value></data>
+  <data name="ReviewSession_Phase0_NoAgentsFound" xml:space="preserve"><value>No agents found.</value></data>
+  <data name="ReviewSession_Phase0_Loading_Agents" xml:space="preserve"><value>Loading your team…</value></data>
+  <data name="ReviewSession_Phase0_Error_LoadAgents" xml:space="preserve"><value>Failed to load agents: {0}</value></data>
+
+  <data name="ReviewSession_Phase0_PeriodTitle" xml:space="preserve"><value>Review Period</value></data>
+  <data name="ReviewSession_Phase0_PeriodDesc_Default" xml:space="preserve"><value>Select the evaluation period to review</value></data>
+  <data name="ReviewSession_Phase0_PeriodDesc_ForAgent" xml:space="preserve"><value>Select the evaluation period for {0}</value></data>
+  <data name="ReviewSession_Phase0_Period_ThisMonth" xml:space="preserve"><value>This Month</value></data>
+  <data name="ReviewSession_Phase0_Period_LastMonth" xml:space="preserve"><value>Last Month</value></data>
+  <data name="ReviewSession_Phase0_Period_ThisQuarter" xml:space="preserve"><value>This Quarter</value></data>
+  <data name="ReviewSession_Phase0_Period_LastQuarter" xml:space="preserve"><value>Last Quarter</value></data>
+  <data name="ReviewSession_Phase0_Period_Last6Months" xml:space="preserve"><value>Last 6 Months</value></data>
+  <data name="ReviewSession_Phase0_Period_Custom" xml:space="preserve"><value>Custom Range</value></data>
+  <data name="ReviewSession_Phase0_Period_CustomLabel" xml:space="preserve"><value>Custom</value></data>
+  <data name="ReviewSession_Phase0_Field_From" xml:space="preserve"><value>From</value></data>
+  <data name="ReviewSession_Phase0_Field_To" xml:space="preserve"><value>To</value></data>
+  <data name="ReviewSession_Phase0_PeriodLabelTemplate" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+
+  <data name="ReviewSession_Phase0_Button_LoadEvaluations" xml:space="preserve"><value>Load Evaluations</value></data>
+  <data name="ReviewSession_Phase0_Button_LoadingEvaluations" xml:space="preserve"><value>Loading…</value></data>
+  <data name="ReviewSession_Phase0_Loading_Evaluations" xml:space="preserve"><value>Loading evaluations…</value></data>
+  <data name="ReviewSession_Phase0_Error_LoadEvaluations" xml:space="preserve"><value>Failed to load evaluations: {0}</value></data>
+
+  <data name="ReviewSession_Phase0_OverviewTitle" xml:space="preserve"><value>Evaluation Overview</value></data>
+  <data name="ReviewSession_Phase0_OverviewTitleForAgent" xml:space="preserve"><value>Evaluation Overview — {0}</value></data>
+  <data name="ReviewSession_Phase0_OverviewDescDefault" xml:space="preserve"><value>Consolidated results across all questionnaires for the selected period</value></data>
+  <data name="ReviewSession_Phase0_NoEvaluations" xml:space="preserve"><value>No evaluations found in this period.</value></data>
+
+  <data name="ReviewSession_Phase0_Hero_WeightedOverall" xml:space="preserve"><value>Weighted Overall</value></data>
+  <data name="ReviewSession_Phase0_Hero_Evaluations" xml:space="preserve"><value>Evaluations</value></data>
+  <data name="ReviewSession_Phase0_Hero_Questionnaires" xml:space="preserve"><value>Questionnaires</value></data>
+  <data name="ReviewSession_Phase0_Hero_PeriodFrom" xml:space="preserve"><value>From</value></data>
+  <data name="ReviewSession_Phase0_Hero_PeriodTo" xml:space="preserve"><value>To</value></data>
+
+  <data name="ReviewSession_Phase0_Table_Questionnaire" xml:space="preserve"><value>Questionnaire</value></data>
+  <data name="ReviewSession_Phase0_Table_Evaluations" xml:space="preserve"><value>Evaluations</value></data>
+  <data name="ReviewSession_Phase0_Table_AvgScore" xml:space="preserve"><value>Avg Score</value></data>
+  <data name="ReviewSession_Phase0_Table_Range" xml:space="preserve"><value>Range</value></data>
+  <data name="ReviewSession_Phase0_Table_Weight" xml:space="preserve"><value>Weight</value></data>
+  <data name="ReviewSession_Phase0_Table_Source" xml:space="preserve"><value>Source</value></data>
+  <data name="ReviewSession_Phase0_Table_Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="ReviewSession_Phase0_Source_Configured" xml:space="preserve"><value>Configured</value></data>
+  <data name="ReviewSession_Phase0_Source_Auto" xml:space="preserve"><value>Auto</value></data>
+  <data name="ReviewSession_Phase0_Button_ViewData" xml:space="preserve"><value>View Data</value></data>
+
+  <data name="ReviewSession_Phase0_Button_ContinueToPrep" xml:space="preserve"><value>Continue to Preparation →</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SIDE PANEL (OFF-CANVAS DRILL-DOWN)                               -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_SidePanel_BackToList" xml:space="preserve"><value>← All evaluations</value></data>
+  <data name="ReviewSession_SidePanel_ListTitle" xml:space="preserve"><value>{0}</value></data>
+  <data name="ReviewSession_SidePanel_ListSubtitle" xml:space="preserve"><value>{0} evaluation(s) · Avg {1}</value></data>
+  <data name="ReviewSession_SidePanel_NoEvaluations" xml:space="preserve"><value>No evaluations in this questionnaire.</value></data>
+  <data name="ReviewSession_SidePanel_AiSummary" xml:space="preserve"><value>AI Summary</value></data>
+  <data name="ReviewSession_SidePanel_RecommendedActions" xml:space="preserve"><value>Recommended Actions</value></data>
+  <data name="ReviewSession_SidePanel_QuestionAnswers" xml:space="preserve"><value>Question-by-Question Breakdown</value></data>
+  <data name="ReviewSession_SidePanel_CategoryLabel" xml:space="preserve"><value>Category</value></data>
+  <data name="ReviewSession_SidePanel_AnswerLabel" xml:space="preserve"><value>Selected answer(s)</value></data>
+  <data name="ReviewSession_SidePanel_ReasonLabel" xml:space="preserve"><value>AI reasoning</value></data>
+  <data name="ReviewSession_SidePanel_EvaluatorChanged" xml:space="preserve"><value>Evaluator override</value></data>
+  <data name="ReviewSession_SidePanel_OpenEvaluation" xml:space="preserve"><value>Open evaluation ↗</value></data>
+  <data name="ReviewSession_SidePanel_OpenRecord" xml:space="preserve"><value>Open {0} ↗</value></data>
+  <data name="ReviewSession_SidePanel_NoAiData" xml:space="preserve"><value>No AI data is available for this evaluation.</value></data>
+  <data name="ReviewSession_SidePanel_Close" xml:space="preserve"><value>Close panel</value></data>
+  <data name="ReviewSession_SidePanel_SortByScore" xml:space="preserve"><value>Sort by Score</value></data>
+  <data name="ReviewSession_SidePanel_SortByScore_HighFirst" xml:space="preserve"><value>Score · High first</value></data>
+  <data name="ReviewSession_SidePanel_SortByScore_LowFirst" xml:space="preserve"><value>Score · Low first</value></data>
+
+  <!-- Record type badges — keep labels short (≤ 10 chars) for pill rendering -->
+  <data name="ReviewSession_RecordType_Chat" xml:space="preserve"><value>Chat</value></data>
+  <data name="ReviewSession_RecordType_Conversation" xml:space="preserve"><value>Chat</value></data>
+  <data name="ReviewSession_RecordType_Case" xml:space="preserve"><value>Case</value></data>
+  <data name="ReviewSession_RecordType_Email" xml:space="preserve"><value>Email</value></data>
+  <data name="ReviewSession_RecordType_Call" xml:space="preserve"><value>Call</value></data>
+  <data name="ReviewSession_RecordType_Unknown" xml:space="preserve"><value>Record</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 1 — PREPARATION                                            -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase1_Guide_Tag" xml:space="preserve"><value>💡 Manager Guidance — Preparation</value></data>
+  <data name="ReviewSession_Phase1_Guide_Body" xml:space="preserve"><value>This is your &lt;strong&gt;preparation phase&lt;/strong&gt; — before meeting with the agent.&lt;br&gt;Review the consolidated evaluation results across all questionnaires. Adjust weights if needed for this session. Identify patterns, strengths, and improvement areas.</value></data>
+  <data name="ReviewSession_Phase1_Title" xml:space="preserve"><value>Consolidated Performance</value></data>
+  <data name="ReviewSession_Phase1_Badge_Draft" xml:space="preserve"><value>Draft</value></data>
+  <data name="ReviewSession_Phase1_Badge_DraftFailed" xml:space="preserve"><value>⚠️ Draft save failed</value></data>
+  <data name="ReviewSession_Phase1_HeroSubtitleTemplate" xml:space="preserve"><value>{0} — {1}: {2} → {3}</value></data>
+
+  <data name="ReviewSession_Phase1_Weights_Title" xml:space="preserve"><value>Questionnaire Weights</value></data>
+  <data name="ReviewSession_Phase1_Weights_Desc" xml:space="preserve"><value>Adjust weights for this session. Changes are session-specific and don't affect default configuration.</value></data>
+  <data name="ReviewSession_Phase1_Weights_Reset" xml:space="preserve"><value>Reset to Default</value></data>
+  <data name="ReviewSession_Phase1_Weights_Total" xml:space="preserve"><value>Total</value></data>
+  <data name="ReviewSession_Phase1_Weights_Contribution" xml:space="preserve"><value>Contribution</value></data>
+  <data name="ReviewSession_Phase1_Weight_WarnOver" xml:space="preserve"><value>⚠️ Weights exceed 100% (currently {0}%). Score is auto-normalized.</value></data>
+  <data name="ReviewSession_Phase1_Weight_WarnUnder" xml:space="preserve"><value>⚠️ Weights below 100% (currently {0}%). Score is auto-normalized.</value></data>
+  <data name="ReviewSession_Phase1_Weight_Normalize" xml:space="preserve"><value>Normalize to 100%</value></data>
+
+  <data name="ReviewSession_Phase1_PrivateNotes_Title" xml:space="preserve"><value>🔒 Private Notes</value></data>
+  <data name="ReviewSession_Phase1_PrivateNotes_Desc" xml:space="preserve"><value>AI-generated coaching suggestions — edit freely to make them yours</value></data>
+  <data name="ReviewSession_Phase1_CoachingSpinner" xml:space="preserve"><value>Generating coaching suggestions…</value></data>
+  <data name="ReviewSession_Phase1_CoachingFailed" xml:space="preserve"><value>⚠️ Coaching plan generation failed.</value></data>
+  <data name="ReviewSession_Phase1_CoachingTimeout" xml:space="preserve"><value>⚠️ Coaching plan generation timed out.</value></data>
+  <data name="ReviewSession_Phase1_AiTag" xml:space="preserve"><value>AI-suggested</value></data>
+
+  <!-- Consolidated AI insight (alex_mcsaiinsight) states -->
+  <data name="ReviewSession_Insight_ConsolidatedSummary" xml:space="preserve"><value>Consolidated AI Summary</value></data>
+  <data name="ReviewSession_Insight_Generating" xml:space="preserve"><value>Generating consolidated summary…</value></data>
+  <data name="ReviewSession_Insight_Failed" xml:space="preserve"><value>AI summary generation failed.</value></data>
+  <data name="ReviewSession_Insight_Timeout" xml:space="preserve"><value>AI summary generation timed out.</value></data>
+
+  <data name="ReviewSession_Phase1_Strengths_Label" xml:space="preserve"><value>Strengths Identified</value></data>
+  <data name="ReviewSession_Phase1_Strengths_Placeholder" xml:space="preserve"><value>What did the agent do well? Note specific examples across evaluations…</value></data>
+  <data name="ReviewSession_Phase1_Improvements_Label" xml:space="preserve"><value>Areas for Improvement</value></data>
+  <data name="ReviewSession_Phase1_Improvements_Placeholder" xml:space="preserve"><value>Which areas need attention? Note patterns you've observed…</value></data>
+  <data name="ReviewSession_Phase1_TalkingPoints_Label" xml:space="preserve"><value>Talking Points</value></data>
+  <data name="ReviewSession_Phase1_TalkingPoints_Placeholder" xml:space="preserve"><value>Key topics to raise during the session…</value></data>
+
+  <data name="ReviewSession_Phase1_Button_StartSession" xml:space="preserve"><value>Start Session with Agent →</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 2 — OPENING                                                -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase2_Guide_Tag" xml:space="preserve"><value>💡 Manager Guidance — Opening</value></data>
+  <data name="ReviewSession_Phase2_Guide_Body" xml:space="preserve"><value>Start the conversation positively. Share the &lt;strong&gt;overall weighted score&lt;/strong&gt; and highlight the strongest questionnaire results first.&lt;br&gt;&lt;strong&gt;Example:&lt;/strong&gt; &lt;em&gt;"Thanks for joining. I wanted to go through your evaluations from this period. You had some really strong results in [top area]…"&lt;/em&gt;</value></data>
+  <data name="ReviewSession_Phase2_Title" xml:space="preserve"><value>Performance Highlights</value></data>
+  <data name="ReviewSession_Phase2_TitleForAgent" xml:space="preserve"><value>{0} — Performance Highlights</value></data>
+  <data name="ReviewSession_Phase2_Desc" xml:space="preserve"><value>Share these highlights with the agent</value></data>
+  <data name="ReviewSession_Phase2_Badge_InSession" xml:space="preserve"><value>In Session</value></data>
+  <data name="ReviewSession_Phase2_AgentResponse_Title" xml:space="preserve"><value>Agent Response</value></data>
+  <data name="ReviewSession_Phase2_AgentResponse_Desc" xml:space="preserve"><value>Document the agent's initial reaction</value></data>
+  <data name="ReviewSession_Phase2_AgentResponse_Placeholder" xml:space="preserve"><value>How did the agent respond to the initial overview?</value></data>
+  <data name="ReviewSession_Phase2_Button_Continue" xml:space="preserve"><value>Continue to Questionnaire Review →</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 3 — QUESTIONNAIRE REVIEW                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase3_Guide_Tag" xml:space="preserve"><value>💡 Manager Guidance — Detailed Review</value></data>
+  <data name="ReviewSession_Phase3_Guide_Body" xml:space="preserve"><value>Review each questionnaire with the agent. Discuss the AI assessment, walk through flagged categories, and document the agent's perspective.</value></data>
+  <data name="ReviewSession_Phase3_Notes_Title" xml:space="preserve"><value>Questionnaire Notes</value></data>
+  <data name="ReviewSession_Phase3_AgentPerspective_Label" xml:space="preserve"><value>Agent's Perspective</value></data>
+  <data name="ReviewSession_Phase3_AgentPerspective_Placeholder" xml:space="preserve"><value>What does the agent think about their {0} performance?</value></data>
+  <data name="ReviewSession_Phase3_ManagerAssessment_Label" xml:space="preserve"><value>Manager Assessment</value></data>
+  <data name="ReviewSession_Phase3_ManagerAssessment_Placeholder" xml:space="preserve"><value>Your overall assessment for this questionnaire…</value></data>
+  <data name="ReviewSession_Phase3_Meta_Evaluations" xml:space="preserve"><value>{0} evaluations</value></data>
+  <data name="ReviewSession_Phase3_Meta_ScoreRange" xml:space="preserve"><value>Score range: {0}–{1}</value></data>
+  <data name="ReviewSession_Phase3_Meta_Weight" xml:space="preserve"><value>Weight: {0}%</value></data>
+  <data name="ReviewSession_Phase3_Category_AvgScore" xml:space="preserve"><value>Average Score</value></data>
+  <data name="ReviewSession_Phase3_Category_FlagsEmpty" xml:space="preserve"><value>No evaluation responses available for this category.</value></data>
+  <data name="ReviewSession_Phase3_Category_OnTrackTemplate" xml:space="preserve"><value>{0}/{1} on track</value></data>
+  <data name="ReviewSession_Phase3_Category_FlaggedIn" xml:space="preserve"><value>Flagged in: {0}</value></data>
+  <data name="ReviewSession_Phase3_Category_PercentOfEvals" xml:space="preserve"><value>({0}% of evals)</value></data>
+  <data name="ReviewSession_Phase3_Button_Continue" xml:space="preserve"><value>Continue to Summary →</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 4 — SUMMARY & ACTION ITEMS                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase4_Guide_Tag" xml:space="preserve"><value>💡 Manager Guidance — Closing</value></data>
+  <data name="ReviewSession_Phase4_Guide_Body" xml:space="preserve"><value>Define &lt;strong&gt;concrete, measurable action items&lt;/strong&gt; together with the agent. Ask how they feel about the review.</value></data>
+  <data name="ReviewSession_Phase4_ActionItems_Title" xml:space="preserve"><value>Agreed Action Items</value></data>
+  <data name="ReviewSession_Phase4_ActionItems_Desc" xml:space="preserve"><value>Goals and actions agreed upon with the agent</value></data>
+  <data name="ReviewSession_Phase4_ActionItems_Placeholder" xml:space="preserve"><value>Action / improvement goal…</value></data>
+  <data name="ReviewSession_Phase4_ActionItems_Loading" xml:space="preserve"><value>Loading action items…</value></data>
+  <data name="ReviewSession_Phase4_Button_AddAction" xml:space="preserve"><value>+ Add Action</value></data>
+  <data name="ReviewSession_Phase4_Button_RemoveAction" xml:space="preserve"><value>Remove</value></data>
+  <data name="ReviewSession_Phase4_AgentComments_Title" xml:space="preserve"><value>Agent Comments</value></data>
+  <data name="ReviewSession_Phase4_AgentComments_Desc" xml:space="preserve"><value>Agent's overall feedback on the review</value></data>
+  <data name="ReviewSession_Phase4_AgentComments_Placeholder" xml:space="preserve"><value>How does the agent feel about the review? Additional comments…</value></data>
+  <data name="ReviewSession_Phase4_ManagerSummary_Title" xml:space="preserve"><value>Manager Summary</value></data>
+  <data name="ReviewSession_Phase4_ManagerSummary_Desc" xml:space="preserve"><value>Your overall assessment and recommendations</value></data>
+  <data name="ReviewSession_Phase4_ManagerSummary_Placeholder" xml:space="preserve"><value>Overall evaluation summary, key takeaways, and recommendations…</value></data>
+  <data name="ReviewSession_Phase4_Button_Save" xml:space="preserve"><value>💾 Save Review Session</value></data>
+  <data name="ReviewSession_Phase4_Button_Saving" xml:space="preserve"><value>Saving…</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 5 — COMPLETE                                               -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase5_Complete_Title" xml:space="preserve"><value>Review Session Complete</value></data>
+  <data name="ReviewSession_Phase5_Recap_Title" xml:space="preserve"><value>Session Recap</value></data>
+  <data name="ReviewSession_Phase5_Recap_Desc" xml:space="preserve"><value>A snapshot of what you captured during this session</value></data>
+  <data name="ReviewSession_Phase5_Recap_Agent" xml:space="preserve"><value>Agent</value></data>
+  <data name="ReviewSession_Phase5_Recap_Evaluation" xml:space="preserve"><value>Evaluation</value></data>
+  <data name="ReviewSession_Phase5_Recap_OverallScore" xml:space="preserve"><value>Overall Score</value></data>
+  <data name="ReviewSession_Phase5_Recap_CategoriesCovered" xml:space="preserve"><value>Categories Covered</value></data>
+  <data name="ReviewSession_Phase5_Recap_ActionItems" xml:space="preserve"><value>Action Items</value></data>
+  <data name="ReviewSession_Phase5_Recap_SavedAt" xml:space="preserve"><value>Saved At</value></data>
+  <data name="ReviewSession_Phase5_Actions_Title" xml:space="preserve"><value>Action Items</value></data>
+  <data name="ReviewSession_Phase5_Actions_Desc" xml:space="preserve"><value>Commitments agreed with the agent</value></data>
+  <data name="ReviewSession_Phase5_Button_ViewReview" xml:space="preserve"><value>📄 View This Review</value></data>
+  <data name="ReviewSession_Phase5_Button_Done" xml:space="preserve"><value>Done</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 6 — READ-ONLY VIEWER                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase6_Title" xml:space="preserve"><value>Review Summary</value></data>
+  <data name="ReviewSession_Phase6_SessionMetadata" xml:space="preserve"><value>Session Metadata</value></data>
+  <data name="ReviewSession_Phase6_Meta_Agent" xml:space="preserve"><value>Agent</value></data>
+  <data name="ReviewSession_Phase6_Meta_Reviewer" xml:space="preserve"><value>Reviewer</value></data>
+  <data name="ReviewSession_Phase6_Meta_Evaluation" xml:space="preserve"><value>Evaluation</value></data>
+  <data name="ReviewSession_Phase6_Meta_OverallScore" xml:space="preserve"><value>Overall Score</value></data>
+  <data name="ReviewSession_Phase6_Meta_SessionDate" xml:space="preserve"><value>Session Date</value></data>
+  <data name="ReviewSession_Phase6_Meta_LastModified" xml:space="preserve"><value>Last Modified</value></data>
+  <data name="ReviewSession_Phase6_PrivateNotes" xml:space="preserve"><value>🔒 Private Preparation Notes (Manager Only)</value></data>
+  <data name="ReviewSession_Phase6_Opening" xml:space="preserve"><value>Opening — Agent's Initial Response</value></data>
+  <data name="ReviewSession_Phase6_CategoryReview" xml:space="preserve"><value>Category Review</value></data>
+  <data name="ReviewSession_Phase6_ActionItemsTemplate" xml:space="preserve"><value>Action Items ({0})</value></data>
+  <data name="ReviewSession_Phase6_Closing" xml:space="preserve"><value>Closing</value></data>
+  <data name="ReviewSession_Phase6_NoCategoryFeedback" xml:space="preserve"><value>No category feedback recorded.</value></data>
+  <data name="ReviewSession_Phase6_NoActionItems" xml:space="preserve"><value>No action items recorded.</value></data>
+  <data name="ReviewSession_Phase6_DueDateTemplate" xml:space="preserve"><value>Due {0}</value></data>
+  <data name="ReviewSession_Phase6_Layer_AI" xml:space="preserve"><value>AI</value></data>
+  <data name="ReviewSession_Phase6_Layer_Evaluator" xml:space="preserve"><value>Evaluator</value></data>
+  <data name="ReviewSession_Phase6_Layer_Changed" xml:space="preserve"><value>Changed</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- ERRORS                                                           -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Error_Generic" xml:space="preserve"><value>Something went wrong. Please try again.</value></data>
+  <data name="ReviewSession_Error_SaveFailed" xml:space="preserve"><value>❌ Failed to save: {0}</value></data>
+  <data name="ReviewSession_Error_SummaryFailed" xml:space="preserve"><value>Summary generation failed.</value></data>
+  <data name="ReviewSession_Error_SummaryTimeout" xml:space="preserve"><value>Summary generation timed out.</value></data>
+  <data name="ReviewSession_Error_CriteriaUnavailable" xml:space="preserve"><value>Category details not available — criteria could not be loaded for this questionnaire.</value></data>
+</root>
