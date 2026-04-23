@@ -2,6 +2,8 @@
 
 AI-augmented agent review tool for contact-center managers, built on Microsoft Dynamics 365 Customer Service. Managers conduct structured coaching sessions, collect AI-generated insights, and produce personalised improvement plans — all within a single embedded web resource.
 
+ https://www.linkedin.com/posts/alexander-yurpolsky-89b14194_introducing-qea-review-hub-ai-augmented-activity-7453091345361154048-GdlN?utm_source=share&utm_medium=member_desktop&rcm=ACoAABP0G7cBWu8qnysT85XIAVloyAN_DKrMMKo
+
 ## Prerequisites
 
 | Requirement | Notes |
