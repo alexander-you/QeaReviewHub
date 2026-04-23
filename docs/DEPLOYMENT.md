@@ -11,8 +11,11 @@ Before you begin, confirm the following are in place:
 - [ ] Dynamics 365 Customer Service with Omnichannel and Quality Evaluation (QEA) module enabled
 - [ ] At least one `msdyn_evaluationcriteria` (questionnaire) configured with completed evaluations
 - [ ] Power Platform System Administrator or System Customizer role
-- [ ] Plugin Registration Tool installed
-- [ ] .NET 4.6.2 SDK (to rebuild the plugin from source if needed)
+
+> **Note — Plugin Registration Tool and .NET SDK are not required for deployment.**
+> The plugin assembly and all Custom API–to–plugin linkages are fully packaged inside the solution ZIP.
+> Importing the solution handles plugin registration automatically.
+> You only need these tools if you are modifying and rebuilding the plugin source code from `src/`.
 
 ---
 
@@ -50,32 +53,7 @@ Weights are used by `GetConsolidatedEvaluations` to compute the weighted composi
 
 ---
 
-## Step 3 — Register the plugin assembly
-
-1. Build the assembly (if rebuilding from source):
-   ```
-   cd src
-   dotnet build -c Release
-   ```
-2. Open **Plugin Registration Tool** and connect to your environment.
-3. Register the assembly `Alex.ReviewSession.Plugins.dll`:
-   - **Isolation Mode**: Sandbox
-   - **Location**: Database
-4. For each Custom API, open its record in Dataverse and set the **Plugin Type** lookup:
-
-   | Custom API | Plugin class |
-   |---|---|
-   | `alex_GetMyAgents` | `Alex.ReviewSession.Plugins.GetMyAgents` |
-   | `alex_GetAgentEvaluations` | `Alex.ReviewSession.Plugins.GetAgentEvaluations` |
-   | `alex_GetConsolidatedEvaluations` | `Alex.ReviewSession.Plugins.GetConsolidatedEvaluations` |
-   | `alex_SaveManagerReview` | `Alex.ReviewSession.Plugins.SaveManagerReview` |
-   | `alex_GetManagerReview` | `Alex.ReviewSession.Plugins.GetManagerReview` |
-
-> The Custom API records are imported with the solution. You only need to link the plugin type — no step registration is required.
-
----
-
-## Step 4 — Activate flows
+## Step 3 — Activate flows
 
 After import, flows are off by default. Turn on only the flows relevant to your environment:
 
@@ -90,7 +68,7 @@ After import, flows are off by default. Turn on only the flows relevant to your 
 
 ---
 
-## Step 5 — Publish Copilot Studio agents
+## Step 4 — Publish Copilot Studio agents
 
 1. Open **Copilot Studio** in your environment.
 2. For each of the three agents (`alex_coaching_copilot`, `alex_action_plan_extractor`, `alex_elevate_qa`):
@@ -100,7 +78,7 @@ After import, flows are off by default. Turn on only the flows relevant to your 
 
 ---
 
-## Step 6 — Add the web resource to a form
+## Step 5 — Add the web resource to a form
 
 1. In D365, open the form where the review tool should appear (e.g. a custom app page or queue item form).
 2. Insert the web resource `alex_agent_review_session_V2`.
@@ -109,7 +87,7 @@ After import, flows are off by default. Turn on only the flows relevant to your 
 
 ---
 
-## Step 7 — Verify end-to-end
+## Step 6 — Verify end-to-end
 
 1. Open the web resource as a manager user.
 2. Confirm agents load in Phase 0.

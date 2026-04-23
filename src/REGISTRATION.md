@@ -1,6 +1,8 @@
 # Plugin Registration Guide
 ## Alex.ReviewSession.Plugins
 
+> **Note:** If you are deploying via the solution package, plugin registration is handled automatically by the solution import — PRT is not required. This guide is only relevant if you need to rebuild or update the plugin assembly from source.
+
 ### Prerequisites
 1. Generate a strong name key: `sn -k key.snk` (place in project root)
 2. Build: `dotnet build -c Release`
