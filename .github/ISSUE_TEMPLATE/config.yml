@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discuss ideas and vote on features
+    url: https://github.com/alexander-you/QeaReviewHub/discussions
+    about: Use Discussions to suggest features, ask questions, and vote on what gets built next.

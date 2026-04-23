@@ -1,0 +1,68 @@
+---
+title: "Bug Report"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the bug clearly. Include environment details where possible.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Web Resource / UI
+        - AI / Copilot (improvement plan, coaching, summary)
+        - Power Automate Flows
+        - Plugins / Custom API
+        - Data / Dataverse
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the web resource
+        2. Select an agent
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Blocker — cannot use the solution
+        - High — major feature broken
+        - Medium — workaround exists
+        - Low — cosmetic / minor
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: D365 region, browser, solution version if known.
+    validations:
+      required: false
