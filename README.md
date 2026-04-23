@@ -35,6 +35,8 @@ AI-augmented agent review tool for contact-center managers, built on Microsoft D
 | [Copilot Agents](docs/COPILOT-AGENTS.md) | Copilot Studio agents — inputs, outputs, usage |
 | [Web Resource](docs/WEB-RESOURCE.md) | HTML SPA — session phases, localization |
 | [Deployment](docs/DEPLOYMENT.md) | Step-by-step guide for deploying to a fresh environment |
+| [Roadmap](docs/ROADMAP.md) | Planned features, enhancements, and known improvements |
+| [Changelog](CHANGELOG.md) | Release history |
 
 ## Solution versions
 
