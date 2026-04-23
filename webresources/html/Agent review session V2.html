@@ -451,6 +451,16 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
     transition: all var(--dur-s) var(--ease);
 }
 .btn-view:hover { background: var(--c-accent); color: #fff; box-shadow: var(--shadow-1); }
+.btn-eye {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; padding: 0; flex-shrink: 0;
+    background: transparent; color: var(--c-text-3);
+    border: 1px solid var(--c-border); border-radius: var(--radius-s);
+    cursor: pointer; font-size: 14px; line-height: 1;
+    transition: all var(--dur-s) var(--ease);
+    margin-inline-start: 4px;
+}
+.btn-eye:hover { background: var(--bg-accent-soft); color: var(--c-accent); border-color: var(--c-accent); }
 
 /* ═══ Hero stats ═══ */
 .hero-stats {
@@ -870,7 +880,7 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
 
 /* Bars */
 .bar-row { display: flex; align-items: center; gap: 16px; margin-block-end: 12px; }
-.bar-label { font-size: 13px; color: var(--c-text-2); min-width: 160px; flex-shrink: 0; line-height: 1.4; }
+.bar-label { font-size: 13px; color: var(--c-text-2); width: 220px; flex: 0 0 220px; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-track {
     flex: 1; height: 10px;
     background: var(--bg-sunken);
@@ -911,6 +921,35 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
     flex-shrink: 0;
     animation: bounce 1.2s var(--ease) infinite;
 }
+/* Notification panel shown while improvement plan is generating */
+.notif-panel {
+    margin-block-start: 4px;
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-m);
+    padding: 12px 14px;
+    background: var(--bg-raised);
+}
+.notif-panel-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--c-text-3);
+    margin-block-end: 10px;
+}
+.notif-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--c-text);
+    cursor: pointer;
+    padding: 4px 0;
+    user-select: none;
+}
+.notif-option + .notif-option { margin-block-start: 4px; }
+.notif-option input[type="checkbox"] { width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; accent-color: var(--c-brand, #6366f1); }
+.notif-logo { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; border-radius: 4px; }
 /* Scale up further inside prominent section titles and card labels */
 .sp-section-title .copilot-icon,
 .ai-field-tag      .copilot-icon,
@@ -1151,11 +1190,39 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
     .dash-table tbody td::before { content: attr(data-label); font-size: 11px; font-weight: 700; color: var(--c-text-3); text-transform: uppercase; letter-spacing: 0.4px; }
 }
 
+/* ═══ Improvement Plan Report ═══ */
+.report-body {
+    font-size: 14px; line-height: 1.7; color: var(--c-text);
+    max-height: 600px; overflow-y: auto;
+    padding: 4px 8px; border-top: 1px solid var(--c-border); margin-block-start: 12px;
+}
+.report-body h1 { font-size: 20px; font-weight: 700; margin: 20px 0 8px; }
+.report-body h2 { font-size: 17px; font-weight: 700; margin: 18px 0 6px; color: var(--c-accent); border-bottom: 1px solid var(--c-border); padding-bottom: 4px; }
+.report-body h3 { font-size: 15px; font-weight: 600; margin: 14px 0 4px; }
+.report-body h4 { font-size: 14px; font-weight: 600; margin: 10px 0 4px; }
+.report-body p  { margin: 6px 0; }
+.report-body ul, .report-body ol { margin: 6px 0 6px 20px; padding: 0; }
+.report-body li { margin: 3px 0; }
+.report-body hr { border: none; border-top: 1px solid var(--c-border); margin: 16px 0; }
+.report-body blockquote {
+    border-inline-start: 3px solid var(--c-accent); margin: 12px 0;
+    padding: 8px 12px; background: var(--bg-raised);
+    border-radius: 0 var(--radius-s) var(--radius-s) 0;
+    font-style: italic; color: var(--c-text-2);
+}
+.report-body code { font-family: var(--font-mono); background: var(--bg-raised); padding: 1px 4px; border-radius: 3px; font-size: 12px; }
+.md-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+.md-table th, .md-table td { border: 1px solid var(--c-border); padding: 8px 10px; text-align: start; }
+.md-table thead th { background: var(--bg-raised); font-weight: 700; color: var(--c-text); }
+.md-table tbody tr:nth-child(even) { background: var(--bg-raised); }
+
 /* ═══ Print ═══ */
 @media print {
     .header, .stepper-bar, .btn-grp, .side-panel, .rv-actions { display: none !important; }
     body { background: #fff; }
     .card, .rv-section { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+    .report-body { max-height: none; overflow: visible; }
+    #improvementPlanCard .btn { display: none !important; }
 }
 </style>
 </head>
@@ -1281,8 +1348,10 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
         </div>
     </div>
 
+    <div id="consolDraftBanner" style="display:none;margin-block-start:20px;"></div>
+
     <div class="btn-grp" id="ph0Next" style="display:none">
-        <button class="btn btn-p" onclick="startPreparation()"
+        <button class="btn btn-p" id="ph0NextBtn" onclick="startPreparation()"
                 data-l10n="ReviewSession_Phase0_Button_ContinueToPrep">Continue to Preparation →</button>
     </div>
 </div>
@@ -1389,6 +1458,7 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
         <button class="btn btn-s" onclick="goTo(0)" data-l10n="Common_Back">← Back</button>
         <button class="btn btn-p" onclick="savePrepAndContinue()" data-l10n="ReviewSession_Phase1_Button_StartSession">Start Session with Agent →</button>
     </div>
+    <div id="startSessionWarn" style="display:none;margin-block-start:8px;padding:8px 12px;background:var(--c-warn-soft,#fef3c7);border:1px solid var(--c-warn,#f59e0b);border-radius:6px;font-size:12px;color:var(--c-text-2);text-align:right;"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -1492,23 +1562,27 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
     </div>
     <div class="btn-grp">
         <button class="btn btn-s" onclick="goTo(3)" data-l10n="Common_Back">← Back</button>
-        <button class="btn btn-ok" id="saveBtn" onclick="saveSession()"
-                data-l10n="ReviewSession_Phase4_Button_Save">💾 Save Review Session</button>
+        <button class="btn btn-s" id="saveDraftBtn" onclick="saveSession(true)"
+                data-l10n="ReviewSession_Phase4_Button_SaveDraft">💾 Save as Draft</button>
+        <button class="btn btn-ok" id="saveBtn" onclick="saveSession(false)"
+                data-l10n="ReviewSession_Phase4_Button_Save">✅ Save Review Session</button>
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════ -->
-<!-- PHASE 5 — COMPLETION                                             -->
-<!-- ═══════════════════════════════════════════════════════════════ -->
 <div class="phase" id="ph5">
     <div class="complete-hero">
-        <div class="complete-check">
+        <div class="complete-check" id="completeCheckIcon">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"></polyline>
             </svg>
         </div>
-        <div class="complete-title" data-l10n="ReviewSession_Phase5_Complete_Title">Review Session Complete</div>
+        <div class="complete-title" id="completeTitle" data-l10n="ReviewSession_Phase5_Complete_Title">Review Session Complete</div>
         <div class="complete-subtitle" id="completeSubtitle"></div>
+        <div id="completeDraftBadge" style="display:none;margin-block-start:8px;">
+            <span class="badge" style="background:var(--c-warn,#f59e0b);color:#fff;font-size:13px;padding:4px 12px;border-radius:20px;">
+                📝 <span data-l10n="ReviewSession_Phase5_Badge_Draft">Draft — not yet finalised</span>
+            </span>
+        </div>
     </div>
     <div class="card">
         <div class="card-head">
@@ -1528,12 +1602,22 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
         </div>
         <div id="completeActions"></div>
     </div>
-    <div class="btn-grp" style="justify-content:center;margin-block-start:28px;">
-        <button class="btn btn-p" onclick="viewCompletedReview()"
-                data-l10n="ReviewSession_Phase5_Button_ViewReview">📄 View This Review</button>
-        <button class="btn btn-s" onclick="finishSession()"
-                data-l10n="ReviewSession_Phase5_Button_Done">Done</button>
+    <div class="card" id="improvementPlanCard" style="display:none;">
+        <div class="card-head">
+            <div>
+                <div class="card-title" data-l10n="ReviewSession_Phase5_Report_Title">📄 Agent Improvement Plan</div>
+                <div class="card-desc" data-l10n="ReviewSession_Phase5_Report_Desc">AI-generated personalised improvement plan based on all evaluations</div>
+            </div>
+        </div>
+        <div id="improvementPlanBody" style="margin-block-start:12px;">
+            <button class="btn btn-ok" id="generateReportBtn" onclick="generateImprovementPlan()">
+                <img class="copilot-icon" src="" id="generateReportBtnIcon" alt="Copilot" style="vertical-align:-4px;margin-inline-end:6px;" />
+                <span data-l10n="ReviewSession_Phase5_Report_Generate">Ask Copilot to generate an Improvement Plan</span>
+            </button>
+        </div>
+        <div id="improvementPlanReport" class="report-body" style="display:none;"></div>
     </div>
+    <div class="btn-grp" id="completeButtons" style="justify-content:center;margin-block-start:28px;"></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════ -->
@@ -1573,9 +1657,6 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
             <button class="sp-close" onclick="closeSidePanel()"
                     data-l10n-title="ReviewSession_SidePanel_Close" title="Close">✕</button>
         </div>
-        <!-- Toolbar is built dynamically by renderSidePanelToolbar() on every
-             list render — this guarantees the sort button is always present,
-             no matter the open/close history of the panel. -->
         <div class="sp-toolbar" id="spToolbar"></div>
         <div class="sp-body" id="spBody"></div>
     </div>
@@ -1588,10 +1669,13 @@ textarea::placeholder, input::placeholder { color: var(--c-text-3); }
 // ═══════════════════════════════════════════════════════════════════════════════
 // LOCALIZATION & RTL
 // ═══════════════════════════════════════════════════════════════════════════════
-// RESX web resource base name (solution prefix + logical name, minus the .xxxx.resx suffix).
-// Dynamics 365 resolves the correct LCID-suffixed file based on userSettings.languageId
-// as long as all language variants have been uploaded and added as dependencies.
-const RESX_NAME = 'alex_ReviewStrings';
+// RESX web resource base name. Each language variant has its LCID appended:
+// alex_ReviewStrings.1033 (English), alex_ReviewStrings.1037 (Hebrew), etc.
+const RESX_BASE = 'alex_ReviewStrings';
+
+// In-memory strings dictionary populated by loadResxStrings() at init time.
+// Keys are RESX data-name attributes; values are the localized strings.
+let _l10nStrings = {};
 
 // RTL LCIDs. Source: MS LCID registry (Arabic variants + Hebrew + Persian + Dari + Urdu).
 const RTL_LCIDS = new Set([
@@ -1613,18 +1697,60 @@ function getGlobalXrmContext() {
     return null;
 }
 
+// Fetch the RESX web resource content directly from the Dataverse Web API, decode the
+// base64 payload, parse the XML, and populate _l10nStrings.
+// Tries the user's LCID first, falls back to English (1033).
+// Returns a promise that resolves when the dictionary is ready (or silently on any error).
+async function loadResxStrings(lcid) {
+    const lcidsToTry = lcid !== 1033 ? [lcid, 1033] : [1033];
+    for (const lang of lcidsToTry) {
+        // Try both naming patterns — with dot separator (alex_ReviewStrings.1037)
+        // and without (alex_ReviewStrings1037) — to tolerate Power Apps UI rename quirks.
+        const namesToTry = [RESX_BASE + '.' + lang, RESX_BASE + lang];
+        for (const resourceName of namesToTry) {
+            try {
+                const url = '/api/data/v9.2/webresourceset' +
+                    '?$filter=name eq \'' + resourceName + '\'' +
+                    '&$select=content&$top=1';
+                const resp = await fetch(url, {
+                    headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0' }
+                });
+                if (!resp.ok) continue;
+                const data = await resp.json();
+                if (!data.value || !data.value.length || !data.value[0].content) continue;
+
+                // content is base64-encoded UTF-8 RESX XML
+                const xml = decodeURIComponent(
+                    atob(data.value[0].content)
+                        .split('')
+                        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                        .join('')
+                );
+                const doc = new DOMParser().parseFromString(xml, 'text/xml');
+                const dict = {};
+                doc.querySelectorAll('data').forEach(node => {
+                    const name  = node.getAttribute('name');
+                    const value = node.querySelector('value');
+                    if (name && value) dict[name] = value.textContent;
+                });
+                if (Object.keys(dict).length > 0) {
+                    _l10nStrings = dict;
+                    console.log('[l10n] Loaded', Object.keys(dict).length, 'strings from', resourceName);
+                    return; // success — stop trying further names/languages
+                }
+            } catch (e) {
+                console.warn('[l10n] loadResxStrings failed for', resourceName, e);
+            }
+        }
+    }
+}
+
+// Look up a localized string. Returns null if not found so L() can fall through to its
+// hardcoded English fallback.
 function getResourceString(key) {
-    try {
-        if (typeof Xrm !== 'undefined' && Xrm.Utility && typeof Xrm.Utility.getResourceString === 'function') {
-            const s = Xrm.Utility.getResourceString(RESX_NAME, key);
-            if (s) return s;
-        }
-        if (typeof parent !== 'undefined' && parent.Xrm && parent.Xrm.Utility && typeof parent.Xrm.Utility.getResourceString === 'function') {
-            const s = parent.Xrm.Utility.getResourceString(RESX_NAME, key);
-            if (s) return s;
-        }
-    } catch (e) { /* not in D365 — fall through to fallback */ }
-    return null;
+    return Object.prototype.hasOwnProperty.call(_l10nStrings, key)
+        ? _l10nStrings[key]
+        : null;
 }
 
 // Localized string helper. `fallback` is the English text baked into the markup;
@@ -1889,7 +2015,7 @@ let weightSortMode = 'none';     // 'none' | 'score-desc'
 let lastSavedSession = null;
 let actCount = 0;
 const insightPollers = {};       // evaluationId -> pollHandle
-const sidePanelState = { questionnaireIndex: null, evaluationIndex: null, sortMode: 'date-desc' };
+const sidePanelState = { questionnaireIndex: null, evaluationIndex: null, sortMode: 'date-desc', categoryFilter: null };
 // sortMode: 'date-desc' (default) | 'score-desc' | 'score-asc'
 
 const INSIGHT_STATUS = {
@@ -1901,6 +2027,9 @@ const INSIGHT_STATUS = {
 const INSIGHT_TYPE_EVAL_SUMMARY  = 1;
 const INSIGHT_TYPE_COACHING_PLAN = 2;
 
+// Status option-set values for alex_mcsaireport.alex_status
+const REPORT_STATUS = { PENDING: 1, COMPLETED: 2, FAILED: 3 };
+
 const AGENT_COLORS = ['#6366F1','#8B5CF6','#EC4899','#F59E0B','#10B981','#06B6D4','#3B82F6','#EF4444'];
 
 // Copilot logo — served from a D365 Web Resource (image/png, logical name: alex_copilot_logo).
@@ -1911,6 +2040,13 @@ const COPILOT_LOGO_URL = (API.clientUrl
     : 'https://demo-contact-center-en.crm4.dynamics.com/WebResources/alex_copilot_logo');
 const COPILOT_ICON    = '<img class="copilot-icon"   src="' + COPILOT_LOGO_URL + '" alt="Copilot" />';
 const COPILOT_BOUNCE  = '<img class="copilot-bounce" src="' + COPILOT_LOGO_URL + '" alt="Copilot" />';
+const COPILOT_THINKING = COPILOT_BOUNCE;
+const TEAMS_LOGO_URL  = (API.clientUrl
+    ? API.clientUrl + '/WebResources/alex_microsoft_teams_logo'
+    : 'https://demo-contact-center-en.crm4.dynamics.com/WebResources/alex_microsoft_teams_logo');
+const OUTLOOK_LOGO_URL = (API.clientUrl
+    ? API.clientUrl + '/WebResources/alex_microsoft_outlook_logo'
+    : 'https://demo-contact-center-en.crm4.dynamics.com/WebResources/alex_microsoft_outlook_logo');
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // HELPERS
@@ -2127,6 +2263,10 @@ function filterAgents() {
 function pickAgent(id) {
     agent = allAgents.find(a => a.id === id);
     if (!agent) return;
+    // Reset improvement plan state so we don't show a different agent's plan
+    if (_reportPoller) { clearInterval(_reportPoller); _reportPoller = null; }
+    _reportRecordId = null;
+    _notifyByTeams = false; _notifyByEmail = false;
     renderAgents(allAgents);
     // Reveal date-range card and reset consolidated
     const dateCard = document.getElementById('dateRangeCard');
@@ -2135,6 +2275,15 @@ function pickAgent(id) {
         Lf('ReviewSession_Phase0_PeriodDesc_ForAgent','Select the evaluation period for {0}', agent.name);
     document.getElementById('consolidatedCard').style.display = 'none';
     document.getElementById('ph0Next').style.display = 'none';
+    // Clear draft banner and button label when switching agents
+    const banner = document.getElementById('consolDraftBanner');
+    if (banner) { banner.style.display = 'none'; banner.innerHTML = ''; }
+    const ph0Btn = document.getElementById('ph0NextBtn');
+    if (ph0Btn) {
+        ph0Btn.textContent = L('ReviewSession_Phase0_Button_ContinueToPrep', 'Continue to Preparation →');
+        ph0Btn.classList.remove('btn-ok');
+        ph0Btn.classList.add('btn-p');
+    }
     consolidatedData = null;
     dateCard.scrollIntoView({ behavior:'smooth', block:'start' });
 }
@@ -2232,6 +2381,11 @@ async function loadConsolidated() {
             sessionWeights[q.criteriaId] = q.effectiveWeight || 0;
         });
         renderConsolidated();
+        // Check for existing draft and show banner (non-blocking)
+        if (API.isLive) checkForDraftBanner().catch(() => {});
+        // Pre-load criteria metadata so the side-panel Q&A view is ready to render
+        // as soon as the manager opens an evaluation — no wait required.
+        loadAllCriteria().catch(err => console.warn('Criteria preload failed', err));
         // Kick off AI insight loading in background (does not block UI)
         loadAllInsights().catch(err => console.warn('Insights load failed', err));
     } catch (e) {
@@ -2267,14 +2421,24 @@ function renderConsolidated() {
     document.getElementById('consolidatedDesc').textContent =
         L('ReviewSession_Phase0_OverviewDescDefault','Consolidated results across all questionnaires for the selected period');
 
-    // Hero
+    // Hero — use weight-normalized score (same formula as Phase 1) so the number
+    // is consistent regardless of whether configured weights sum to exactly 100%.
     const hero = document.getElementById('consolHero');
-    const overall = Math.round(d.weightedOverallScore || 0);
+    const _qs = d.questionnaires || [];
+    const _totalW = _qs.reduce((s, q) => s + (q.effectiveWeight || 0), 0);
+    const _totalS = _qs.reduce((s, q) => s + (q.avgScore || 0) * (q.effectiveWeight || 0), 0);
+    const overall = _totalW > 0 ? Math.round(_totalS / _totalW) : Math.round(d.weightedOverallScore || 0);
     const overallCls = scCls(overall);
+    const weightNote = (_totalW > 0 && Math.abs(_totalW - 100) > 0.5)
+        ? '<div style="font-size:11px;color:var(--c-text-3);margin-block-start:6px;font-style:italic;">' +
+              escapeHtml(Lf('ReviewSession_Phase0_Hero_WeightNormalized','Weights total {0}% — score normalized', Math.round(_totalW))) +
+          '</div>'
+        : '';
     hero.innerHTML =
         '<div class="hero-score">' +
             '<div class="hero-score-val ' + overallCls + '">' + overall + '</div>' +
             '<div class="hero-score-lbl">' + escapeHtml(L('ReviewSession_Phase0_Hero_WeightedOverall','Weighted Overall')) + '</div>' +
+            weightNote +
         '</div>' +
         '<div class="hero-meta">' +
             '<div class="hero-meta-item"><div class="hero-meta-val">' + (d.totalEvaluations || 0) + '</div>' +
@@ -2317,12 +2481,33 @@ function openSidePanel(questionnaireIdx) {
     if (!consolidatedData || !consolidatedData.questionnaires) return;
     sidePanelState.questionnaireIndex = questionnaireIdx;
     sidePanelState.evaluationIndex = null;
+    sidePanelState.categoryFilter = null;
     renderSidePanelList();
     const panel = document.getElementById('sidePanel');
     panel.classList.add('open');
     panel.setAttribute('aria-hidden','false');
     document.getElementById('spBack').classList.remove('visible');
     document.body.style.overflow = 'hidden';
+    // Ensure criteria metadata is loaded so the detail view can render Q&A
+    // (may already be populated if the manager visited Phase 1 first)
+    if (API.isLive && Object.keys(CRITERIA_MAP).length === 0) {
+        loadAllCriteria().catch(e => console.warn('Criteria load (side panel):', e));
+    }
+}
+function openSidePanelForCategory(questionnaireIdx, categoryId, categoryName, categoryScore) {
+    if (!consolidatedData || !consolidatedData.questionnaires) return;
+    sidePanelState.questionnaireIndex = questionnaireIdx;
+    sidePanelState.evaluationIndex = null;
+    sidePanelState.categoryFilter = { categoryId: String(categoryId), categoryName: categoryName, score: categoryScore };
+    renderSidePanelList();
+    const panel = document.getElementById('sidePanel');
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden','false');
+    document.getElementById('spBack').classList.remove('visible');
+    document.body.style.overflow = 'hidden';
+    if (API.isLive && Object.keys(CRITERIA_MAP).length === 0) {
+        loadAllCriteria().catch(e => console.warn('Criteria load (side panel):', e));
+    }
 }
 function closeSidePanel() {
     const panel = document.getElementById('sidePanel');
@@ -2331,6 +2516,17 @@ function closeSidePanel() {
     sidePanelState.questionnaireIndex = null;
     sidePanelState.evaluationIndex = null;
     document.body.style.overflow = '';
+}
+function openRelatedRecord(entityName, entityId) {
+    if (!entityName || !entityId) return;
+    if (typeof parent !== 'undefined' && parent.Xrm && parent.Xrm.Navigation) {
+        parent.Xrm.Navigation.navigateTo(
+            { pageType: 'entityrecord', entityName: entityName, entityId: entityId },
+            { target: 2, width: { value: 80, unit: '%' }, height: { value: 80, unit: '%' } }
+        ).catch(function(e) { console.warn('[ViewRecord] navigateTo failed', e); });
+    } else {
+        console.warn('[ViewRecord] parent.Xrm.Navigation not available');
+    }
 }
 function sidePanelBackToList() {
     sidePanelState.evaluationIndex = null;
@@ -2378,12 +2574,22 @@ function renderSidePanelToolbar() {
 function renderSidePanelList() {
     const q = consolidatedData.questionnaires[sidePanelState.questionnaireIndex];
     if (!q) return;
-    document.getElementById('spTitle').textContent =
-        Lf('ReviewSession_SidePanel_ListTitle','{0}', q.criteriaName || '');
-    document.getElementById('spSubtitle').textContent =
-        Lf('ReviewSession_SidePanel_ListSubtitle','{0} evaluation(s) · Avg {1}',
-           (q.evaluations||[]).length, Math.round(q.avgScore || 0));
 
+    const catFilter = sidePanelState.categoryFilter;
+
+    if (catFilter) {
+        document.getElementById('spTitle').textContent = catFilter.categoryName;
+        document.getElementById('spSubtitle').textContent =
+            (q.criteriaName || '') + ' · Category avg ' + catFilter.score;
+    } else {
+        document.getElementById('spTitle').textContent =
+            Lf('ReviewSession_SidePanel_ListTitle','{0}', q.criteriaName || '');
+        document.getElementById('spSubtitle').textContent =
+            Lf('ReviewSession_SidePanel_ListSubtitle','{0} evaluation(s) · Avg {1}',
+               (q.evaluations||[]).length, Math.round(q.avgScore || 0));
+    }
+
+    // Hide View Record button in list view
     // Rebuild the toolbar from scratch — guarantees the sort button is present.
     renderSidePanelToolbar();
 
@@ -2393,10 +2599,11 @@ function renderSidePanelList() {
         return;
     }
 
-    // Consolidated AI-summary slot at the top of the list view
-    const insightSlot = '<div id="spInsightSlot" class="sp-insight-slot">' +
-                           renderInsightSlotHtml(q.criteriaId) +
-                       '</div>';
+    // Consolidated AI-summary slot at the top of the list view (only when not category-filtered)
+    const insightSlot = catFilter ? '' :
+        '<div id="spInsightSlot" class="sp-insight-slot">' +
+            renderInsightSlotHtml(q.criteriaId) +
+        '</div>';
 
     // Build index-preserving sorted list (so onclick still maps back to q.evaluations[origIdx])
     const indexed = q.evaluations.map((ev, idx) => ({ ev, idx }));
@@ -2412,7 +2619,35 @@ function renderSidePanelList() {
     const cards = indexed.map(({ ev, idx }) => {
         const rtCls = recordTypePillCls(ev.recordType);
         const rtLbl = recordTypeLabel(ev.recordType);
-        const score = Math.round(ev.score || 0);
+
+        // When category filter is active, show per-category score instead of overall score
+        let displayScore = Math.round(ev.score || 0);
+        if (catFilter) {
+            const criteriaData = CRITERIA_MAP[String(q.criteriaId || '').toLowerCase()];
+            if (criteriaData && criteriaData.CriteriaJson) {
+                const catDef = (criteriaData.CriteriaJson.Categories || []).find(c =>
+                    String(c.CategoryId).toLowerCase() === catFilter.categoryId.toLowerCase());
+                if (catDef) {
+                    const responses =
+                        (ev.qeaResponse && ev.qeaResponse.responses) ||
+                        (ev.evaluatorResponse && ev.evaluatorResponse.responses) || [];
+                    let catScore = 0, catMax = 0;
+                    (catDef.Questions || []).forEach(q => {
+                        const maxQ = (q.Options || []).reduce((m, o) => Math.max(m, o.Score || 0), 0);
+                        if (!maxQ) return;
+                        const r = responses.find(x => String(x.questionId).toLowerCase() === String(q.QuestionId).toLowerCase());
+                        if (!r) return;
+                        const vals = Array.isArray(r.responseValue) ? r.responseValue : [r.responseValue];
+                        vals.forEach(v => {
+                            const opt = getOptionByValue(q, v);
+                            if (opt) { catScore += (opt.Score || 0); catMax += maxQ; }
+                        });
+                    });
+                    if (catMax > 0) displayScore = Math.round((catScore / catMax) * 100);
+                }
+            }
+        }
+
         const preview = ev.aiSummary ? ev.aiSummary.split('\n')[0] : '';
         return '<div class="sp-eval-card" onclick="renderSidePanelDetail(' + idx + ')">' +
             '<div class="sp-eval-row">' +
@@ -2421,7 +2656,7 @@ function renderSidePanelList() {
                     '<span class="sp-eval-name">' + escapeHtml(ev.name || '') + '</span>' +
                     '<span class="sp-eval-date">' + escapeHtml(formatDateShort(ev.date)) + '</span>' +
                 '</div>' +
-                '<span class="pill pill-lg ' + pillCls(score) + '">' + score + '</span>' +
+                '<span class="pill pill-lg ' + pillCls(displayScore) + '">' + displayScore + '</span>' +
             '</div>' +
             (preview
                 ? '<div class="sp-eval-preview">' + escapeHtml(preview) + '</div>'
@@ -2449,7 +2684,7 @@ function renderSidePanelDetail(evIdx) {
     const score = Math.round(ev.score || 0);
     let html = '';
 
-    // Meta bar
+    // ── Meta bar (with View Record button if a related record exists) ──
     html +=
         '<div class="sp-detail-meta">' +
             '<span class="pill ' + rtCls + '">' + escapeHtml(rtLbl) + '</span>' +
@@ -2457,9 +2692,17 @@ function renderSidePanelDetail(evIdx) {
             (ev.regardingName
                 ? '<span style="font-size:12.5px;color:var(--c-text-3);">' + escapeHtml(ev.regardingName) + '</span>'
                 : '') +
+            (ev.regardingEntity && ev.regardingId
+                ? '<button class="btn btn-s sp-view-record-btn" style="margin-inline-start:auto;font-size:12px;padding:4px 12px;"' +
+                    ' onclick="openRelatedRecord(' +
+                        escapeHtml(JSON.stringify(ev.regardingEntity)) + ',' +
+                        escapeHtml(JSON.stringify(ev.regardingId)) +
+                    ')" title="' + escapeHtml(L('ReviewSession_SidePanel_ViewRecord_Title','Open the related record')) + '">' +
+                    L('ReviewSession_SidePanel_ViewRecord','👁 View Record') + '</button>'
+                : '') +
         '</div>';
 
-    // AI Summary
+    // ── 1. AI Summary ──
     if (ev.aiSummary) {
         html +=
             '<div class="sp-section">' +
@@ -2467,7 +2710,8 @@ function renderSidePanelDetail(evIdx) {
                 '<div class="sp-ai-block">' + formatAiText(ev.aiSummary) + '</div>' +
             '</div>';
     }
-    // Recommended actions
+
+    // ── 2. Recommended Actions ──
     if (ev.aiActionPlan) {
         html +=
             '<div class="sp-section">' +
@@ -2475,23 +2719,109 @@ function renderSidePanelDetail(evIdx) {
                 '<div class="sp-ai-block">' + formatAiText(ev.aiActionPlan) + '</div>' +
             '</div>';
     }
-    // Question-by-question breakdown omitted by design for V2 —
-    // the consolidated API doesn't return localized question/option text,
-    // so we'd render raw GUIDs. Re-introduce once criteria metadata is
-    // bundled into the API response or pre-loaded for all questionnaires.
-    if (!ev.aiSummary && !ev.aiActionPlan) {
+
+    // ── 3. Q&A breakdown ──
+    const criteriaData = CRITERIA_MAP[String(q.criteriaId || '').toLowerCase()];
+    const responses =
+        (ev.qeaResponse && ev.qeaResponse.responses && ev.qeaResponse.responses.length > 0
+            ? ev.qeaResponse.responses : null) ||
+        (ev.evaluatorResponse && ev.evaluatorResponse.responses && ev.evaluatorResponse.responses.length > 0
+            ? ev.evaluatorResponse.responses : null) ||
+        [];
+
+    if (!criteriaData && responses.length && API.isLive) {
+        // Criteria still loading — show spinner and re-render once ready
+        html += '<div class="sp-section">' +
+            '<div class="sp-section-title">📋 ' +
+                escapeHtml(L('ReviewSession_SidePanel_QA','Questions & Answers')) + '</div>' +
+            '<div style="font-size:13px;color:var(--c-text-3);font-style:italic;padding:8px 0;">' +
+                '⏳ ' + escapeHtml(L('ReviewSession_SidePanel_QALoading','Loading question details…')) +
+            '</div>' +
+        '</div>';
+        loadAllCriteria().then(() => {
+            if (sidePanelState.evaluationIndex === evIdx &&
+                sidePanelState.questionnaireIndex === consolidatedData.questionnaires.indexOf(q)) {
+                renderSidePanelDetail(evIdx);
+            }
+        }).catch(() => {});
+    } else if (criteriaData && criteriaData.CriteriaJson && responses.length) {
+        const categories = criteriaData.CriteriaJson.Categories || [];
+        let qaHtml = '';
+
+        for (const cat of categories) {
+            const answeredQuestions = (cat.Questions || []).filter(ques =>
+                responses.find(r => String(r.questionId).toLowerCase() === String(ques.QuestionId).toLowerCase())
+            );
+            if (!answeredQuestions.length) continue;
+
+            qaHtml += '<div style="margin-block-end:14px;">';
+            qaHtml += '<div class="sp-q-cat">' +
+                escapeHtml(cat.CategoryName || '') +
+                (cat.CategoryWeight ? ' · ' + cat.CategoryWeight + '%' : '') +
+            '</div>';
+
+            for (const ques of answeredQuestions) {
+                const resp = responses.find(r =>
+                    String(r.questionId).toLowerCase() === String(ques.QuestionId).toLowerCase()
+                );
+                const vals = Array.isArray(resp.responseValue) ? resp.responseValue : [resp.responseValue];
+
+                qaHtml += '<div class="sp-question">';
+                qaHtml += '<div class="sp-q-text">' + escapeHtml(ques.QuestionText || '') + '</div>';
+
+                qaHtml += '<div class="sp-answer">';
+                for (const v of vals) {
+                    const opt = getOptionByValue(ques, v);
+                    const isOnTrack = opt && (opt.Label || '').toLowerCase().includes('on track');
+                    const pillStyle = isOnTrack
+                        ? 'background:var(--bg-success-soft,#d1fae5);color:var(--c-success,#10b981);'
+                        : 'background:var(--bg-accent-soft);color:var(--c-accent-700);';
+                    qaHtml += '<span class="sp-answer-pill" style="' + pillStyle + '">' +
+                        (isOnTrack ? '✓ ' : '⚑ ') +
+                        escapeHtml(opt ? opt.Label : String(v)) +
+                    '</span>';
+                }
+                qaHtml += '</div>';
+
+                // AI insight per answer ("About this answer") — may be in explanation, insight, or reason
+                const insight = resp.explanation || resp.insight || resp.aiExplanation || resp.aboutAnswer || resp.reason || '';
+                if (insight) {
+                    qaHtml += '<div class="sp-reason">' + escapeHtml(insight) + '</div>';
+                }
+                qaHtml += '</div>';
+            }
+            qaHtml += '</div>';
+        }
+
+        if (qaHtml) {
+            html += '<div class="sp-section">' +
+                '<div class="sp-section-title">📋 ' +
+                    escapeHtml(L('ReviewSession_SidePanel_QA','Questions & Answers')) +
+                '</div>' +
+                qaHtml +
+            '</div>';
+        }
+    } else if (criteriaData && !responses.length) {
+        html += '<div class="sp-section">' +
+            '<div class="sp-section-title">📋 ' + escapeHtml(L('ReviewSession_SidePanel_QA','Questions & Answers')) + '</div>' +
+            '<div style="font-size:12.5px;color:var(--c-text-3);font-style:italic;">' +
+                escapeHtml(L('ReviewSession_SidePanel_NoResponses','No individual question responses recorded for this evaluation.')) +
+            '</div>' +
+        '</div>';
+    } else if (!criteriaData && !responses.length && !ev.aiSummary && !ev.aiActionPlan) {
         html += '<div class="loading">' + escapeHtml(L('ReviewSession_SidePanel_NoAiData','No AI data is available for this evaluation.')) + '</div>';
     }
 
-    // Open record link (only in live D365)
+    // ── 4. Open in D365 (secondary link) ──
     if (API.isLive && ev.evaluationId) {
         const openUrl = API.clientUrl + '/main.aspx?etn=msdyn_qualityevaluation&id=' + encodeURIComponent(ev.evaluationId) + '&pagetype=entityrecord';
-        html += '<div class="sp-link-row">' +
+        html += '<div class="sp-link-row" style="margin-block-start:16px;padding-block-start:12px;border-top:1px solid var(--c-border);">' +
                     '<a class="sp-link" href="' + openUrl + '" target="_blank" rel="noopener">' +
-                        escapeHtml(L('ReviewSession_SidePanel_OpenEvaluation','Open evaluation ↗')) +
+                        escapeHtml(L('ReviewSession_SidePanel_OpenInD365','Open evaluation in D365 ↗')) +
                     '</a>' +
                 '</div>';
     }
+
     document.getElementById('spBody').innerHTML = html;
     document.getElementById('spBody').scrollTop = 0;
 }
@@ -2511,8 +2841,14 @@ function renderSidePanelDetail(evIdx) {
 //   • Results cached in insightCache[criteriaId]; UI re-renders wherever it's
 //     shown (side panel list header, Phase 1 questionnaire card).
 // ═══════════════════════════════════════════════════════════════════════════════
-const insightCache  = {};   // criteriaId → output text
-const insightStatus = {};   // criteriaId → 'loading' | 'ready' | 'failed' | 'timeout' | 'empty'
+const insightCache  = {};   // insightKey(criteriaId) → output text
+const insightStatus = {};   // insightKey(criteriaId) → 'loading' | 'ready' | 'failed' | 'timeout' | 'empty'
+
+// Composite key scoped to the currently selected agent so switching agents never
+// cross-contaminates the cache between different agents sharing the same criteria.
+function insightKey(criteriaId) {
+    return (agent && agent.id ? agent.id + '__' : '') + String(criteriaId);
+}
 
 function _truncName(s, n) { s = String(s || ''); return s.length > n ? s.slice(0, n) : s; }
 
@@ -2524,32 +2860,34 @@ async function loadAllInsights() {
     if (!API.isLive) {
         (consolidatedData.questionnaires || []).forEach(q => {
             if (!(q.evaluations || []).some(e => e.aiSummary)) {
-                insightStatus[q.criteriaId] = 'empty';
+                insightStatus[insightKey(q.criteriaId)] = 'empty';
                 return;
             }
             const mock =
                 '- **Consistent strengths**: ' + (q.criteriaName || '') + ' averaging ' + Math.round(q.avgScore || 0) + ' across ' + (q.evaluationCount || 0) + ' evaluations.\n' +
                 '- **Score variation**: range ' + (q.minScore || 0) + '–' + (q.maxScore || 0) + ' suggests case-type dependency.\n' +
                 '- **Top improvement area**: follow-through on complex tickets where scores dip below ' + Math.max(60, Math.round((q.avgScore || 70) - 15)) + '.';
-            insightCache[q.criteriaId]  = mock;
-            insightStatus[q.criteriaId] = 'ready';
+            insightCache[insightKey(q.criteriaId)]  = mock;
+            insightStatus[insightKey(q.criteriaId)] = 'ready';
             refreshInsightSlots(q.criteriaId);
         });
         return;
     }
 
     // LIVE mode: Parallel dispatch — one ensureInsight per questionnaire.
+    const forceNew = _insightForceNew;
+    _insightForceNew = false; // consume the flag before any async work
     await Promise.all((consolidatedData.questionnaires || []).map(q => {
         // Don't even try to summarize if no per-eval aiSummary exists to feed it.
         if (!(q.evaluations || []).some(e => e.aiSummary)) {
-            insightStatus[q.criteriaId] = 'empty';
+            insightStatus[insightKey(q.criteriaId)] = 'empty';
             return Promise.resolve();
         }
-        insightStatus[q.criteriaId] = 'loading';
+        insightStatus[insightKey(q.criteriaId)] = 'loading';
         refreshInsightSlots(q.criteriaId);
-        return ensureInsight(q).catch(err => {
+        return ensureInsight(q, forceNew).catch(err => {
             console.warn('ensureInsight failed for', q.criteriaId, err);
-            insightStatus[q.criteriaId] = 'failed';
+            insightStatus[insightKey(q.criteriaId)] = 'failed';
             refreshInsightSlots(q.criteriaId);
         });
     }));
@@ -2557,11 +2895,12 @@ async function loadAllInsights() {
 
 // Look up an existing alex_mcsaiinsight for (agent, criteria, period, insighttype=1).
 // If completed → cache. If in-flight → poll. If absent → create + poll.
-async function ensureInsight(q) {
-    const existing = await findExistingInsight(agent.id, q.criteriaId);
+// forceNew=true skips the existence check — always creates a new record (used by Start Fresh).
+async function ensureInsight(q, forceNew = false) {
+    const existing = forceNew ? null : await findExistingInsight(agent.id, q.criteriaId);
     if (existing && existing.alex_outputtext && existing.statuscode === INSIGHT_STATUS.COMPLETED) {
-        insightCache[q.criteriaId]  = existing.alex_outputtext;
-        insightStatus[q.criteriaId] = 'ready';
+        insightCache[insightKey(q.criteriaId)]  = existing.alex_outputtext;
+        insightStatus[insightKey(q.criteriaId)] = 'ready';
         refreshInsightSlots(q.criteriaId);
         return;
     }
@@ -2570,7 +2909,7 @@ async function ensureInsight(q) {
         return;
     }
     if (existing && existing.statuscode === INSIGHT_STATUS.FAILED) {
-        insightStatus[q.criteriaId] = 'failed';
+        insightStatus[insightKey(q.criteriaId)] = 'failed';
         refreshInsightSlots(q.criteriaId);
         return;
     }
@@ -2608,6 +2947,7 @@ async function createInsight(q) {
         'alex_periodstart':  selectedPeriod.from,
         'alex_periodend':    selectedPeriod.to,
         'alex_inputtext':    inputText,
+        'alex_userlanguage': _userLanguageDisplay || undefined,
         'statuscode':        INSIGHT_STATUS.PENDING
     };
     const resp = await fetch(API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights', {
@@ -2668,7 +3008,8 @@ function _nextPollDelay(attempt) {
     return 8000;
 }
 function startInsightPolling(criteriaId, recordId) {
-    insightStatus[criteriaId] = 'loading';
+    const key = insightKey(criteriaId);
+    insightStatus[key] = 'loading';
     refreshInsightSlots(criteriaId);
     let attempts = 0;
     const tick = async () => {
@@ -2682,30 +3023,30 @@ function startInsightPolling(criteriaId, recordId) {
             if (!resp.ok) throw new Error('poll HTTP ' + resp.status);
             const rec = await resp.json();
             if (rec.statuscode === INSIGHT_STATUS.COMPLETED && rec.alex_outputtext) {
-                insightCache[criteriaId]  = rec.alex_outputtext;
-                insightStatus[criteriaId] = 'ready';
+                insightCache[key]  = rec.alex_outputtext;
+                insightStatus[key] = 'ready';
                 refreshInsightSlots(criteriaId);
-                delete insightPollers[criteriaId];
+                delete insightPollers[key];
                 return;
             }
             if (rec.statuscode === INSIGHT_STATUS.FAILED) {
-                insightStatus[criteriaId] = 'failed';
+                insightStatus[key] = 'failed';
                 refreshInsightSlots(criteriaId);
-                delete insightPollers[criteriaId];
+                delete insightPollers[key];
                 return;
             }
         } catch (e) {
             console.warn('Poll error for', criteriaId, e);
         }
         if (attempts >= 40) {
-            insightStatus[criteriaId] = 'timeout';
+            insightStatus[key] = 'timeout';
             refreshInsightSlots(criteriaId);
-            delete insightPollers[criteriaId];
+            delete insightPollers[key];
             return;
         }
-        insightPollers[criteriaId] = setTimeout(tick, _nextPollDelay(attempts + 1));
+        insightPollers[key] = setTimeout(tick, _nextPollDelay(attempts + 1));
     };
-    insightPollers[criteriaId] = setTimeout(tick, _nextPollDelay(1));
+    insightPollers[key] = setTimeout(tick, _nextPollDelay(1));
 }
 
 function stopAllInsightPollers() {
@@ -2734,13 +3075,14 @@ function refreshInsightSlots(criteriaId) {
     });
 }
 function renderInsightSlotHtml(criteriaId) {
-    const status = insightStatus[criteriaId];
+    const key = insightKey(criteriaId);
+    const status = insightStatus[key];
     if (status === 'ready') {
         return '<div class="insight-card">' +
                    '<div class="insight-header"><span class="insight-label">' + COPILOT_ICON + ' ' +
                        escapeHtml(L('ReviewSession_Insight_ConsolidatedSummary','Consolidated AI Summary')) +
                    '</span></div>' +
-                   '<div class="insight-text">' + formatAiText(insightCache[criteriaId] || '') + '</div>' +
+                   '<div class="insight-text">' + formatAiText(insightCache[key] || '') + '</div>' +
                '</div>';
     }
     if (status === 'failed') {
@@ -2810,12 +3152,25 @@ function fillPrep() {
     });
 }
 function savePrepAndContinue() {
+    // Auto-normalize weights if they don't sum to 100%
+    const weightTotal = Object.values(sessionWeights).reduce((s, v) => s + Number(v || 0), 0);
+    if (Math.round(weightTotal) !== 100) {
+        normalizeWeights();
+    }
     // Cancel any pending debounce timers and flush the save immediately
     ['prepStr','prepImp','prepTalk'].forEach(id => {
         const el = document.getElementById(id);
         if (el) clearTimeout(el._autosaveTimer);
     });
     savePrivateNotesToDraft().catch(() => {});
+    // Mark the draft as In Progress — the live session with the agent is starting
+    if (API.isLive && draftReviewId) {
+        fetch('/api/data/v9.2/alex_managereviews(' + draftReviewId + ')', {
+            method: 'PATCH',
+            headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 'alex_status': 100000001 })
+        }).catch(e => console.warn('Failed to set In Progress status:', e));
+    }
     goTo(2);
 }
 
@@ -2922,15 +3277,32 @@ function renderWeightWarning(totalWeight) {
         bar.className = 'weight-warn-bar';
         document.querySelector('.weight-table-wrap').after(bar);
     }
-    if (totalWeight === 100) { bar.innerHTML = ''; bar.className = 'weight-warn-bar'; return; }
-    const isOver = totalWeight > 100;
-    const key = isOver ? 'ReviewSession_Phase1_Weight_WarnOver' : 'ReviewSession_Phase1_Weight_WarnUnder';
-    const fallback = isOver
-        ? '⚠️ Weights exceed 100% (currently {0}%). Score is auto-normalized.'
-        : '⚠️ Weights below 100% (currently {0}%). Score is auto-normalized.';
-    bar.className = 'weight-warn-bar' + (isOver ? ' over' : '');
-    bar.innerHTML = '<span>' + escapeHtml(Lf(key, fallback, totalWeight)) + '</span>' +
-        '<button class="normalize-btn" onclick="normalizeWeights()">' + escapeHtml(L('ReviewSession_Phase1_Weight_Normalize','Normalize to 100%')) + '</button>';
+    if (totalWeight === 100) { bar.innerHTML = ''; bar.className = 'weight-warn-bar'; }
+    else {
+        const isOver = totalWeight > 100;
+        const key = isOver ? 'ReviewSession_Phase1_Weight_WarnOver' : 'ReviewSession_Phase1_Weight_WarnUnder';
+        const fallback = isOver
+            ? '⚠️ Weights exceed 100% (currently {0}%). Score is auto-normalized.'
+            : '⚠️ Weights below 100% (currently {0}%). Score is auto-normalized.';
+        bar.className = 'weight-warn-bar' + (isOver ? ' over' : '');
+        bar.innerHTML = '<span>' + escapeHtml(Lf(key, fallback, totalWeight)) + '</span>' +
+            '<button class="normalize-btn" onclick="normalizeWeights()">' + escapeHtml(L('ReviewSession_Phase1_Weight_Normalize','Normalize to 100%')) + '</button>';
+    }
+    updateStartSessionWarn(totalWeight);
+}
+
+function updateStartSessionWarn(totalWeight) {
+    const el = document.getElementById('startSessionWarn');
+    if (!el) return;
+    if (typeof totalWeight === 'undefined') {
+        totalWeight = Object.values(sessionWeights).reduce((s, v) => s + Number(v || 0), 0);
+    }
+    const rounded = Math.round(totalWeight);
+    if (rounded === 100) { el.style.display = 'none'; el.textContent = ''; return; }
+    el.style.display = 'block';
+    el.textContent = '⚠️ ' + Lf('ReviewSession_Phase1_Weight_AutoNormWarn',
+        'Weights currently total {0}%. Clicking "Start Session with Agent" will automatically normalize them to 100%.',
+        rounded);
 }
 function updateWeight(criteriaId, v) {
     sessionWeights[criteriaId] = Number(v) || 0;
@@ -2958,6 +3330,7 @@ function normalizeWeights() {
     if (sum !== 100 && keys.length) sessionWeights[keys[0]] += (100 - sum);
     renderWeightTable();
     renderPrepHero();
+    updateStartSessionWarn(100);
 }
 
 function renderPrepQuestionnaires() {
@@ -2976,7 +3349,8 @@ function renderPrepQuestionnaires() {
         let categoryContent = '';
         const hasCatDefs = cats.Categories && cats.Categories.length > 0;
         const anyResponseData = (q.evaluations || []).some(ev =>
-            ev.qeaResponse && ev.qeaResponse.responses && ev.qeaResponse.responses.length > 0
+            (ev.qeaResponse && ev.qeaResponse.responses && ev.qeaResponse.responses.length > 0) ||
+            (ev.evaluatorResponse && ev.evaluatorResponse.responses && ev.evaluatorResponse.responses.length > 0)
         );
 
         if (hasCatDefs && anyResponseData) {
@@ -2984,7 +3358,8 @@ function renderPrepQuestionnaires() {
             const barRows = cats.Categories.map(cat => {
                 let totalScore = 0, totalMaxPossible = 0;
                 (q.evaluations || []).forEach(ev => {
-                    const responses = (ev.qeaResponse && ev.qeaResponse.responses) || [];
+                    const responses = (ev.qeaResponse && ev.qeaResponse.responses) ||
+                                      (ev.evaluatorResponse && ev.evaluatorResponse.responses) || [];
                     (cat.Questions || []).forEach(question => {
                         const maxQScore = (question.Options || []).reduce((m, o) => Math.max(m, o.Score || 0), 0);
                         if (!maxQScore) return;
@@ -3000,10 +3375,16 @@ function renderPrepQuestionnaires() {
                 if (totalMaxPossible === 0) return null; // no responses for this category — skip
                 const displayAvg = Math.round((totalScore / totalMaxPossible) * 100);
                 return '<div class="bar-row">' +
-                    '<div class="bar-label" style="min-width:160px;flex-shrink:0">' + escapeHtml(cat.CategoryName) + '</div>' +
+                    '<div class="bar-label" title="' + escapeHtml(cat.CategoryName) + '">' + escapeHtml(cat.CategoryName) + '</div>' +
                     '<div class="bar-track"><div class="bar-fill" style="width:' + displayAvg + '%;background:' +
                         (displayAvg >= 80 ? 'var(--c-success)' : displayAvg >= 60 ? 'var(--c-warning)' : 'var(--c-danger)') + '"></div></div>' +
                     '<div class="bar-val ' + scCls(displayAvg) + '">' + displayAvg + '</div>' +
+                    '<button class="btn-eye" type="button" title="View evaluations in this category"' +
+                        ' onclick="event.stopPropagation();openSidePanelForCategory(' + qi + ',' +
+                            escapeHtml(JSON.stringify(cat.CategoryId)) + ',' +
+                            escapeHtml(JSON.stringify(cat.CategoryName)) + ',' +
+                            displayAvg +
+                        ')">👁</button>' +
                 '</div>';
             }).filter(Boolean);
             if (barRows.length > 0) categoryContent = barRows.join('');
@@ -3065,23 +3446,205 @@ function buildDistRow(label, count, total, color, cls) {
 
 // ─── Draft Review (Dataverse) ──────────────────────────────────────
 async function findExistingDraftReview() {
-    if (!agent) return null;
-    const filter = '_alex_agent_value eq ' + agent.id + ' and alex_status eq 100000000';
+    if (!agent || !selectedPeriod) return null;
+    // Match Draft (100000000) or In Progress (100000001)
+    const filter = '_alex_agent_value eq ' + agent.id +
+        ' and (alex_status eq 100000000 or alex_status eq 100000001)';
+    const fields = [
+        'alex_managereviewid', 'alex_periodstart', 'alex_periodend', 'createdon',
+        'alex_prepstrengths', 'alex_prepimprovements', 'alex_preptalkingpoints',
+        'alex_openingresponse', 'alex_categoryreviewjson', 'alex_weightoverrides'
+    ].join(',');
     try {
         const resp = await fetch(
             '/api/data/v9.2/alex_managereviews?$filter=' + encodeURIComponent(filter) +
-            '&$select=alex_managereviewid&$top=1&$orderby=createdon desc',
+            '&$select=' + fields + '&$orderby=createdon desc',
             { headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0' } }
         );
-        if (!resp.ok) return null;
+        if (!resp.ok) {
+            console.warn('[findExistingDraftReview] HTTP', resp.status, await resp.text());
+            return null;
+        }
         const data = await resp.json();
-        return (data.value && data.value.length > 0) ? data.value[0] : null;
-    } catch (e) { return null; }
+        const records = data.value || [];
+        console.log('[findExistingDraftReview] draft records for agent:', records.length, records.map(r => ({ id: r.alex_managereviewid, start: r.alex_periodstart, end: r.alex_periodend })));
+        return records.find(r =>
+            r.alex_periodstart && r.alex_periodstart.startsWith(selectedPeriod.from) &&
+            r.alex_periodend   && r.alex_periodend.startsWith(selectedPeriod.to)
+        ) || null;
+    } catch (e) {
+        console.warn('[findExistingDraftReview] error:', e);
+        return null;
+    }
 }
+
+async function checkForDraftBanner() {
+    const banner = document.getElementById('consolDraftBanner');
+    const ph0Btn = document.getElementById('ph0NextBtn');
+    if (!banner) return;
+    banner.style.display = 'none';
+    if (ph0Btn) {
+        ph0Btn.textContent = L('ReviewSession_Phase0_Button_ContinueToPrep', 'Continue to Preparation →');
+        ph0Btn.classList.remove('btn-ok');
+        ph0Btn.classList.add('btn-p');
+    }
+    const existing = await findExistingDraftReview();
+    if (!existing) return;
+
+    // Turn the main Continue button green to signal draft resume
+    if (ph0Btn) {
+        ph0Btn.textContent = L('ReviewSession_Phase0_DraftBanner_Continue', 'Continue with Draft →');
+        ph0Btn.classList.remove('btn-p');
+        ph0Btn.classList.add('btn-ok');
+    }
+
+    // Format the creation date
+    const createdDate = existing.createdon
+        ? formatDateTime(new Date(existing.createdon))
+        : '';
+    const createdLabel = createdDate
+        ? ' <span style="font-weight:400;font-size:12px;color:var(--c-text-3);">(' + escapeHtml(createdDate) + ')</span>'
+        : '';
+
+    banner.style.display = 'block';
+    banner.innerHTML =
+        '<div style="background:var(--c-warn-soft,#fef3c7);border:1px solid var(--c-warn,#f59e0b);border-radius:10px;padding:16px 20px;display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">' +
+            '<div style="flex:1;min-width:220px;">' +
+                '<div style="font-weight:600;font-size:14px;margin-block-end:4px;">⚠️ ' +
+                    escapeHtml(L('ReviewSession_Phase0_DraftBanner_Title','Existing draft found')) +
+                    createdLabel +
+                '</div>' +
+                '<div style="font-size:13px;color:var(--c-text-2);line-height:1.5">' +
+                    escapeHtml(L('ReviewSession_Phase0_DraftBanner_Desc',
+                        'This draft was saved from a previous session. Your notes and weights have been pre-loaded.')) +
+                '</div>' +
+                '<div style="font-size:12px;color:var(--c-text-3);margin-block-start:6px;">' +
+                    '💡 ' + escapeHtml(L('ReviewSession_Phase0_DraftBanner_NewEvalsNote',
+                        'Note: the evaluation data shown above is always freshly fetched and includes any new evaluations added since the draft was created.')) +
+                '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:8px;flex-shrink:0;align-self:center;">' +
+                '<button class="btn btn-s" style="min-width:120px" onclick="abandonDraftAndStartFresh()">' +
+                    escapeHtml(L('ReviewSession_Phase0_DraftBanner_StartFresh','↺ Start Fresh')) +
+                '</button>' +
+            '</div>' +
+        '</div>';
+}
+
+async function abandonDraftAndStartFresh() {
+    const banner = document.getElementById('consolDraftBanner');
+    if (banner) banner.innerHTML =
+        '<div style="background:var(--c-warn-soft,#fef3c7);border:1px solid var(--c-warn,#f59e0b);border-radius:10px;padding:14px 20px;font-size:13px;color:var(--c-text-2);">♻️ ' +
+        escapeHtml(L('ReviewSession_Phase0_DraftBanner_Discarding','Discarding draft…')) + '</div>';
+
+    if (API.isLive) {
+        const existing = await findExistingDraftReview();
+        if (existing) {
+            try {
+                // Cancel the review. Keep insights linked to it — they are historical records
+                // tied to that session. New records will be created for the fresh session.
+                await fetch('/api/data/v9.2/alex_managereviews(' + existing.alex_managereviewid + ')', {
+                    method: 'PATCH',
+                    headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 'alex_status': 100000004 })
+                });
+            } catch (e) { console.warn('Failed to cancel draft:', e); }
+        }
+    }
+
+    // Clear in-memory insight cache for this agent so the UI shows fresh loading state
+    stopAllInsightPollers();
+    coachingInsightId = null;
+    const agentPrefix = (agent && agent.id ? agent.id + '__' : '');
+    Object.keys(insightCache).forEach(k => { if (k.startsWith(agentPrefix)) delete insightCache[k]; });
+    Object.keys(insightStatus).forEach(k => { if (k.startsWith(agentPrefix)) delete insightStatus[k]; });
+
+    // Signal that ensureInsight and startCoachingPlan should always create new records this cycle
+    _insightForceNew  = true;
+    _coachingForceNew = true;
+
+    // Clear improvement plan state so Phase 5 shows a fresh Generate button
+    if (_reportPoller) { clearInterval(_reportPoller); _reportPoller = null; }
+    _reportRecordId = null;
+    _notifyByTeams = false; _notifyByEmail = false;
+
+    // Reset draft state
+    draftReviewId = null;
+
+    // Clear private-note fields so stale text from the previous session isn't shown and so
+    // applyCoachingPlan (which guards with !field.value) will populate them from the new insight.
+    ['prepStr', 'prepImp', 'prepTalk'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.value = ''; clearTimeout(el._autosaveTimer); }
+    });
+    ['prepStrAiTag', 'prepImpAiTag', 'prepTalkAiTag'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    // Reset button to default label/style
+    if (banner) banner.style.display = 'none';
+    const ph0Btn = document.getElementById('ph0NextBtn');
+    if (ph0Btn) {
+        ph0Btn.textContent = L('ReviewSession_Phase0_Button_ContinueToPrep', 'Continue to Preparation →');
+        ph0Btn.classList.remove('btn-ok');
+        ph0Btn.classList.add('btn-p');
+    }
+
+    // Re-fetch evaluations from scratch — includes any new evaluations added since the
+    // original load. loadConsolidated will also trigger loadAllInsights (with forceNew=true)
+    // so fresh AI insight records are created and linked to the new review.
+    await loadConsolidated();
+}
+
+function restoreDraftIntoUI(draft) {
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+    setVal('prepStr',       draft.alex_prepstrengths);
+    setVal('prepImp',       draft.alex_prepimprovements);
+    setVal('prepTalk',      draft.alex_preptalkingpoints);
+    setVal('openResp',      draft.alex_openingresponse);
+    setVal('agentComments', draft.alex_agentcomments);
+    setVal('mgrSummary',    draft.alex_managersummary);
+
+    if (draft.alex_categoryreviewjson) {
+        try {
+            const saved = JSON.parse(draft.alex_categoryreviewjson);
+            (consolidatedData.questionnaires || []).forEach(q => {
+                const match = saved.find(s =>
+                    String(s.criteriaId).toLowerCase() === String(q.criteriaId).toLowerCase()
+                );
+                if (match) {
+                    q._agentPerspective  = match.agentPerspective  || '';
+                    q._managerAssessment = match.managerAssessment || '';
+                }
+            });
+        } catch (e) { console.warn('Failed to restore category review JSON', e); }
+    }
+
+    if (draft.alex_weightoverrides) {
+        try {
+            const savedWeights = JSON.parse(draft.alex_weightoverrides);
+            Object.keys(savedWeights).forEach(k => {
+                sessionWeights[k] = Number(savedWeights[k]) || 0;
+            });
+            renderWeightTable();
+            renderPrepHero();
+        } catch (e) { console.warn('Failed to restore weight overrides', e); }
+    }
+
+    console.log('✅ Draft restored into UI from record:', draft.alex_managereviewid);
+}
+
 async function createDraftReview() {
     if (!API.isLive || !agent || !consolidatedData) return;
     const existing = await findExistingDraftReview();
-    if (existing) { draftReviewId = existing.alex_managereviewid; return; }
+    if (existing) {
+        draftReviewId = existing.alex_managereviewid;
+        restoreDraftIntoUI(existing);
+        // Also stamp insights in case they were created before the review existed
+        stampInsightsWithReviewId(draftReviewId).catch(e => console.warn('stampInsights (existing draft) failed:', e));
+        return;
+    }
     const evalIds = [];
     const weightOverrides = {};
     (consolidatedData.questionnaires || []).forEach(q => {
@@ -3097,7 +3660,8 @@ async function createDraftReview() {
         'alex_periodend': selectedPeriod.to,
         'alex_reviewtype': 2,
         'alex_evaluationids': JSON.stringify(evalIds),
-        'alex_weightoverrides': JSON.stringify(weightOverrides)
+        'alex_weightoverrides': JSON.stringify(weightOverrides),
+        'alex_userlanguage': _userLanguageDisplay || undefined
     };
     try {
         const resp = await fetch('/api/data/v9.2/alex_managereviews', {
@@ -3106,8 +3670,111 @@ async function createDraftReview() {
                        'Content-Type': 'application/json', 'Prefer': 'return=representation' },
             body: JSON.stringify(body)
         });
-        if (resp.ok) { draftReviewId = (await resp.json()).alex_managereviewid; }
+        if (resp.ok) {
+            draftReviewId = (await resp.json()).alex_managereviewid;
+            // Back-stamp all existing insights for this agent+period with the new review ID
+            stampInsightsWithReviewId(draftReviewId).catch(e => console.warn('stampInsights failed:', e));
+        }
     } catch (e) { console.warn('Failed to create draft review', e); }
+}
+
+// Cached nav property name for the alex_managereviewid lookup on alex_mcsaiinsight.
+// Fetched once from OData metadata — avoids hard-coding a name that may differ per org.
+let _insightReviewNavProp = null;
+let _insightForceNew      = false; // set true by Start Fresh so type-1 records are always created
+let _coachingForceNew     = false; // same flag for the type-2 coaching plan
+let _userLanguageDisplay  = '';    // display name of the user's UI language (e.g. "Hebrew"); set at init
+let _reportRecordId       = null;  // GUID of the active alex_mcsimprovementplan record
+let _reportPoller         = null;  // interval handle for improvement plan polling
+let _notifyByTeams        = false; // user preference: notify via Teams when plan is ready
+let _notifyByEmail        = false; // user preference: send plan by email when ready
+async function getInsightReviewNavProp() {
+    if (_insightReviewNavProp) return _insightReviewNavProp;
+    try {
+        const resp = await fetch(
+            API.clientUrl + '/api/data/v9.2/EntityDefinitions(LogicalName=\'alex_mcsaiinsight\')/ManyToOneRelationships' +
+            '?$filter=ReferencingAttribute eq \'alex_managereviewid\'&$select=ReferencingEntityNavigationPropertyName',
+            { headers: { 'OData-Version': '4.0', 'Accept': 'application/json' } }
+        );
+        if (!resp.ok) throw new Error('metadata HTTP ' + resp.status);
+        const data = await resp.json();
+        if (data.value && data.value.length) {
+            _insightReviewNavProp = data.value[0].ReferencingEntityNavigationPropertyName;
+            console.log('[Stamp] Nav property resolved:', _insightReviewNavProp);
+        }
+    } catch (e) { console.warn('[Stamp] Could not resolve nav property from metadata:', e); }
+    return _insightReviewNavProp;
+}
+
+// Back-stamp all eval-summary insights for the current agent+period with the given review ID.
+// Called immediately after createDraftReview() succeeds so insights are owned by this review.
+async function stampInsightsWithReviewId(reviewId) {
+    if (!API.isLive || !agent || !selectedPeriod || !reviewId) return;
+    const navProp = await getInsightReviewNavProp();
+    if (!navProp) {
+        console.warn('[Stamp] Could not determine nav property — aborting stamp');
+        return;
+    }
+    const filter =
+        '_alex_agent_value eq ' + agent.id +
+        ' and alex_periodstart eq ' + selectedPeriod.from +
+        ' and alex_periodend eq ' + selectedPeriod.to;
+    try {
+        const resp = await fetch(
+            API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights?$filter=' + encodeURIComponent(filter) +
+            '&$select=alex_mcsaiinsightid',
+            { headers: { 'OData-Version': '4.0', 'Accept': 'application/json' } }
+        );
+        if (!resp.ok) {
+            console.warn('stampInsightsWithReviewId: fetch failed', resp.status, await resp.text());
+            return;
+        }
+        const data = await resp.json();
+        console.log('[Stamp] Found', (data.value || []).length, 'insights to stamp with reviewId', reviewId);
+        const patchBody = {};
+        patchBody[navProp + '@odata.bind'] = '/alex_managereviews(' + reviewId + ')';
+        await Promise.all((data.value || []).map(async insight => {
+            const patchResp = await fetch(
+                API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights(' + insight.alex_mcsaiinsightid + ')',
+                {
+                    method: 'PATCH',
+                    headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json' },
+                    body: JSON.stringify(patchBody)
+                }
+            );
+            if (!patchResp.ok) {
+                const errText = await patchResp.text();
+                console.warn('[Stamp] PATCH failed for', insight.alex_mcsaiinsightid, patchResp.status, errText);
+            } else {
+                console.log('[Stamp] Stamped insight', insight.alex_mcsaiinsightid);
+            }
+        }));
+    } catch (e) { console.warn('stampInsightsWithReviewId failed:', e); }
+}
+
+// Clear the alex_managereviewid link on all insights owned by the given review.
+// Called during Start Fresh so cancelled-review insights become unlinked (orphans),
+// ready to be re-stamped if/when a new review is created for the same agent+period.
+async function clearInsightLinks(reviewId) {
+    if (!API.isLive || !reviewId) return;
+    const navProp = await getInsightReviewNavProp();
+    if (!navProp) return;
+    const filter = '_' + navProp + '_value eq ' + reviewId;
+    try {
+        const resp = await fetch(
+            API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights?$filter=' + encodeURIComponent(filter) +
+            '&$select=alex_mcsaiinsightid',
+            { headers: { 'OData-Version': '4.0', 'Accept': 'application/json' } }
+        );
+        if (!resp.ok) return;
+        const data = await resp.json();
+        await Promise.all((data.value || []).map(insight =>
+            fetch(API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights(' + insight.alex_mcsaiinsightid + ')/' + navProp + '/$ref', {
+                method: 'DELETE',
+                headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0' }
+            }).catch(e => console.warn('Failed to clear insight link', insight.alex_mcsaiinsightid, e))
+        ));
+    } catch (e) { console.warn('clearInsightLinks failed:', e); }
 }
 async function savePrivateNotesToDraft() {
     if (!API.isLive) return;
@@ -3122,7 +3789,9 @@ async function savePrivateNotesToDraft() {
     const patchBody = {
         'alex_prepstrengths':    document.getElementById('prepStr')?.value  || '',
         'alex_prepimprovements': document.getElementById('prepImp')?.value  || '',
-        'alex_preptalkingpoints':document.getElementById('prepTalk')?.value || ''
+        'alex_preptalkingpoints':document.getElementById('prepTalk')?.value || '',
+        'alex_weightoverrides':  JSON.stringify(sessionWeights),
+        'alex_overallscore':     Math.round(calculateWeightedScore() * 100) / 100
     };
     try {
         await fetch('/api/data/v9.2/alex_managereviews(' + draftReviewId + ')', {
@@ -3240,8 +3909,10 @@ async function startCoachingPlan() {
         }, 800);
         return;
     }
-    // Check for an existing completed insight first
-    const existing = await findExistingCoachingInsight();
+    // Check for an existing completed insight first, unless Start Fresh forced a new record
+    const skipExistingCheck = _coachingForceNew;
+    _coachingForceNew = false; // consume flag
+    const existing = skipExistingCheck ? null : await findExistingCoachingInsight();
     if (existing && existing.statuscode === INSIGHT_STATUS.COMPLETED && existing.alex_outputtext) {
         if (spinner) spinner.style.display = 'none';
         applyCoachingPlan(existing.alex_outputtext);
@@ -3250,8 +3921,21 @@ async function startCoachingPlan() {
     // Reuse an in-flight insight rather than creating a duplicate
     if (existing && existing.statuscode !== INSIGHT_STATUS.FAILED) {
         coachingInsightId = existing.alex_mcsaiinsightid;
+        // Stamp with review ID if not already set (e.g. created before review existed)
+        if (draftReviewId) {
+            getInsightReviewNavProp().then(navProp => {
+                if (!navProp) return;
+                const body = {};
+                body[navProp + '@odata.bind'] = '/alex_managereviews(' + draftReviewId + ')';
+                fetch(API.clientUrl + '/api/data/v9.2/alex_mcsaiinsights(' + coachingInsightId + ')', {
+                    method: 'PATCH',
+                    headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).catch(e => console.warn('Failed to stamp coaching insight (existing):', e));
+            });
+        }
     } else {
-        // Create a new insight record
+        // Create a new insight record — include review link directly if review already exists
         const insightBody = {
             'alex_name': ('Coaching - ' + agent.name + ' - ' + selectedPeriod.from).substring(0, 100),
             'alex_agent@odata.bind': '/systemusers(' + agent.id + ')',
@@ -3259,8 +3943,17 @@ async function startCoachingPlan() {
             'alex_periodstart': selectedPeriod.from,
             'alex_periodend':   selectedPeriod.to,
             'alex_inputtext':   buildCoachingPlanInput(),
+            'alex_userlanguage': _userLanguageDisplay || undefined,
             'statuscode':       INSIGHT_STATUS.PENDING
         };
+        // Attach review link at creation time if the review record already exists.
+        // If createDraftReview() is still in flight, stampInsightsWithReviewId() will
+        // catch it when it resolves (type-2 is included by the agent+period query).
+        if (draftReviewId) {
+            getInsightReviewNavProp().then(navProp => {
+                if (navProp) insightBody[navProp + '@odata.bind'] = '/alex_managereviews(' + draftReviewId + ')';
+            });
+        }
         try {
             const resp = await fetch('/api/data/v9.2/alex_mcsaiinsights', {
                 method: 'POST',
@@ -3418,7 +4111,8 @@ function buildQTabPanel(i) {
             const maxQScore = (question.Options || []).reduce((mx, o) => Math.max(mx, o.Score || 0), 0);
 
             (q.evaluations || []).forEach(ev => {
-                const responses = (ev.qeaResponse && ev.qeaResponse.responses) || [];
+                const responses = (ev.qeaResponse && ev.qeaResponse.responses) ||
+                                  (ev.evaluatorResponse && ev.evaluatorResponse.responses) || [];
                 const r = responses.find(x =>
                     String(x.questionId).toLowerCase() === String(question.QuestionId).toLowerCase()
                 );
@@ -3475,6 +4169,7 @@ function buildQTabPanel(i) {
                 '</div>';
             }).join('');
 
+            const hasOnTrackOption = (question.Options || []).some(o => /on\s*track/i.test(o.Label));
             return '<div style="margin-block-end:12px">' +
                 '<div style="font-weight:600;margin-block-end:6px">' + escapeHtml(question.QuestionText) + '</div>' +
                 (sortedKeys.length
@@ -3482,7 +4177,7 @@ function buildQTabPanel(i) {
                     : '<div class="qr-no-flags">' +
                         escapeHtml(L('ReviewSession_Phase3_Category_FlagsEmpty','No evaluation responses available for this category.')) +
                       '</div>') +
-                (totalResponders
+                (totalResponders && hasOnTrackOption
                     ? '<div style="margin-block-start:6px;font-size:12.5px;color:var(--c-text-3)">' +
                         escapeHtml(Lf('ReviewSession_Phase3_Category_OnTrackTemplate','{0}/{1} on track', onTrack, totalResponders)) +
                       '</div>'
@@ -3495,7 +4190,10 @@ function buildQTabPanel(i) {
         const scoreBadge = catScore !== null
             ? '<span class="pill ' + pillCls(catScore) + '" style="margin-inline-start:6px">' + catScore + '</span>'
             : '';
-        const otBadge = catResponders > 0
+        const catHasOnTrack = (cat.Questions || []).some(q =>
+            (q.Options || []).some(o => /on\s*track/i.test(o.Label))
+        );
+        const otBadge = catResponders > 0 && catHasOnTrack
             ? '<span style="font-size:11.5px;font-weight:500;color:var(--c-text-3);margin-inline-start:8px">' +
                 escapeHtml(Lf('ReviewSession_Phase3_Category_OnTrackTemplate','{0}/{1} on track', catOnTrack, catResponders)) +
               '</span>'
@@ -3581,9 +4279,74 @@ function saveCategoryReviewAndContinue() {
 // ═══════════════════════════════════════════════════════════════════════════════
 // PHASE 4 — SUMMARY
 // ═══════════════════════════════════════════════════════════════════════════════
-function fillAction() {
-    const host = document.getElementById('actItems');
-    if (!host.children.length) { actCount = 0; addAct(); }
+async function fillAction() {
+    const container = document.getElementById('actItems');
+    if (!container) return;
+
+    function showEmptyRows() {
+        container.innerHTML = '';
+        actCount = 0;
+        addAct(); addAct(); addAct();
+    }
+
+    console.log('[fillAction] isLive=' + API.isLive + ' draftReviewId=' + draftReviewId);
+    if (!API.isLive) { showEmptyRows(); return; }
+
+    // Show loading state immediately so the user sees feedback
+    container.innerHTML = '<div class="insight-spinner">' + COPILOT_THINKING + ' ' +
+        escapeHtml(L('ReviewSession_Phase4_ActionItems_Loading', 'Loading action items…')) + '</div>';
+
+    // Wait up to 5s for draftReviewId if draft creation is still in flight
+    if (!draftReviewId) {
+        for (let i = 0; i < 10; i++) {
+            await new Promise(r => setTimeout(r, 500));
+            if (draftReviewId) break;
+        }
+    }
+
+    console.log('[fillAction] after wait — draftReviewId=' + draftReviewId);
+    if (!draftReviewId) { showEmptyRows(); return; }
+
+    const fetchUrl = '/api/data/v9.2/alex_reviewactionitemids?$filter=_alex_managereview_value eq ' + draftReviewId +
+        ' and alex_is_ignored ne true' +
+        '&$select=alex_name,alex_sortorder,alex_status,alex_reviewactionitemidid,alex_is_ignored&$orderby=alex_sortorder asc';
+    console.log('[fillAction] fetching:', fetchUrl);
+
+    try {
+        const resp = await fetch(fetchUrl, { headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0' } });
+        console.log('[fillAction] fetch status:', resp.status, resp.ok);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        const items = data.value || [];
+        console.log('[fillAction] items found:', items.length, items);
+
+        if (items.length > 0) {
+            container.innerHTML = items.map((item, i) =>
+                '<div class="act-item" data-record-id="' + item.alex_reviewactionitemidid + '">' +
+                    '<div class="act-n">' + (i + 1) + '</div>' +
+                    '<input class="act-inp" value="' + escapeHtml(item.alex_name || '') + '" ' +
+                        'placeholder="' + escapeHtml(L('ReviewSession_Phase4_ActionItems_Placeholder','Action / improvement goal…')) + '" />' +
+                    '<span class="ai-field-tag" style="flex-shrink:0;display:inline-flex;">' + COPILOT_ICON + ' ' +
+                        escapeHtml(L('ReviewSession_Phase4_ActionItems_AiTag','AI')) + '</span>' +
+                    '<button class="act-del" title="' + escapeHtml(L('ReviewSession_Phase4_Button_RemoveAction','Remove')) + '" onclick="removeAct(this)">✕</button>' +
+                '</div>'
+            ).join('');
+            actCount = items.length;
+
+            // Hide AI tag once manager starts editing
+            container.querySelectorAll('.act-inp').forEach(inp => {
+                inp.addEventListener('input', () => {
+                    const tag = inp.parentElement.querySelector('.ai-field-tag');
+                    if (tag) tag.style.display = 'none';
+                }, { once: true });
+            });
+        } else {
+            showEmptyRows();
+        }
+    } catch (e) {
+        console.warn('fillAction error:', e);
+        showEmptyRows();
+    }
 }
 function addAct() {
     actCount++;
@@ -3596,54 +4359,464 @@ function addAct() {
     document.getElementById('actItems').appendChild(item);
 }
 function removeAct(btn) {
-    btn.parentElement.remove();
-    // Renumber
+    const item = btn.parentElement;
+    const recordId = item.dataset.recordId;
+    if (recordId && API.isLive) {
+        fetch('/api/data/v9.2/alex_reviewactionitemids(' + recordId + ')', {
+            method: 'PATCH',
+            headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 'alex_is_ignored': true })
+        }).catch(e => console.warn('Failed to mark action item ignored:', e));
+    }
+    item.remove();
     document.querySelectorAll('#actItems .act-item').forEach((el, i) => {
         el.querySelector('.act-n').textContent = i + 1;
     });
     actCount = document.querySelectorAll('#actItems .act-item').length;
 }
 
-async function saveSession() {
-    const btn = document.getElementById('saveBtn');
-    btn.disabled = true;
-    btn.textContent = L('ReviewSession_Phase4_Button_Saving','Saving…');
+async function saveSession(asDraft = false) {
+    const saveBtn      = document.getElementById('saveBtn');
+    const saveDraftBtn = document.getElementById('saveDraftBtn');
+    const activeBtn    = asDraft ? saveDraftBtn : saveBtn;
+    if (activeBtn) { activeBtn.disabled = true; activeBtn.textContent = L('ReviewSession_Phase4_Button_Saving','Saving…'); }
+
     try {
+        // Snapshot any unsaved category tab inputs
+        snapshotActiveTab();
+
         const actions = [...document.querySelectorAll('#actItems .act-inp')]
             .map(i => (i.value || '').trim()).filter(Boolean);
+
         const payload = {
+            ReviewId: draftReviewId || null,
             AgentId: agent.id,
             AgentName: agent.name,
             DateFrom: selectedPeriod.from,
             DateTo: selectedPeriod.to,
             OverallScore: Math.round(calculateWeightedScore()),
-            WeightOverrides: sessionWeights,
-            Strengths: document.getElementById('prepStr').value,
-            Improvements: document.getElementById('prepImp').value,
-            TalkingPoints: document.getElementById('prepTalk').value,
+            PrepNotes: {
+                Strengths:     document.getElementById('prepStr').value,
+                Improvements:  document.getElementById('prepImp').value,
+                TalkingPoints: document.getElementById('prepTalk').value
+            },
             OpeningResponse: document.getElementById('openResp').value,
             Questionnaires: (consolidatedData.questionnaires || []).map(q => ({
-                CriteriaId: q.criteriaId,
-                CriteriaName: q.criteriaName,
-                AvgScore: q.avgScore,
-                EffectiveWeight: sessionWeights[q.criteriaId],
-                AgentPerspective: q._agentPerspective || '',
+                CriteriaId:        q.criteriaId,
+                CriteriaName:      q.criteriaName,
+                AvgScore:          q.avgScore,
+                EffectiveWeight:   sessionWeights[q.criteriaId],
+                AgentPerspective:  q._agentPerspective  || '',
                 ManagerAssessment: q._managerAssessment || ''
             })),
-            ActionItems: actions,
-            AgentComments: document.getElementById('agentComments').value,
+            ActionItems: actions.map(desc => ({ Description: desc, CategoryId: null, DueDate: null })),
+            AgentComments:  document.getElementById('agentComments').value,
             ManagerSummary: document.getElementById('mgrSummary').value,
-            Status: 100000002   // Completed
         };
-        const result = await API.saveManagerReview(payload);
-        lastSavedSession = { payload, result, savedAt: new Date() };
+
+        if (asDraft) {
+            // Persist everything to the draft record without changing its status
+            if (draftReviewId && API.isLive) {
+                const catPayload = (consolidatedData.questionnaires || []).map(q => ({
+                    criteriaId:        q.criteriaId,
+                    criteriaName:      q.criteriaName,
+                    agentPerspective:  q._agentPerspective  || '',
+                    managerAssessment: q._managerAssessment || ''
+                }));
+                await fetch('/api/data/v9.2/alex_managereviews(' + draftReviewId + ')', {
+                    method: 'PATCH',
+                    headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        'alex_prepstrengths':     payload.PrepNotes.Strengths,
+                        'alex_prepimprovements':  payload.PrepNotes.Improvements,
+                        'alex_preptalkingpoints': payload.PrepNotes.TalkingPoints,
+                        'alex_openingresponse':   payload.OpeningResponse,
+                        'alex_agentcomments':     payload.AgentComments,
+                        'alex_managersummary':    payload.ManagerSummary,
+                        'alex_categoryreviewjson':JSON.stringify(catPayload),
+                        'alex_overallscore':      payload.OverallScore,
+                        'alex_weightoverrides':   JSON.stringify(sessionWeights)
+                    })
+                });
+            }
+            lastSavedSession = { payload, isDraft: true, savedAt: new Date() };
+        } else {
+            const result = await API.saveManagerReview(payload);
+            if (result && result.Success === false) {
+                throw new Error(result.ErrorMessage || 'Unknown error from SaveManagerReview');
+            }
+            lastSavedSession = { payload, isDraft: false, result, savedAt: new Date() };
+        }
         goTo(5);
     } catch (e) {
         alert(Lf('ReviewSession_Error_SaveFailed','❌ Failed to save: {0}', e.message || e));
     } finally {
-        btn.disabled = false;
-        btn.textContent = L('ReviewSession_Phase4_Button_Save','💾 Save Review Session');
+        if (saveBtn)      { saveBtn.disabled = false;      saveBtn.textContent      = L('ReviewSession_Phase4_Button_Save','✅ Save Review Session'); }
+        if (saveDraftBtn) { saveDraftBtn.disabled = false; saveDraftBtn.textContent = L('ReviewSession_Phase4_Button_SaveDraft','💾 Save as Draft'); }
     }
+}
+
+async function closeEvaluation() {
+    if (!lastSavedSession) return;
+    const btn = document.querySelector('#completeButtons .btn-ok');
+    if (btn) { btn.disabled = true; btn.textContent = L('ReviewSession_Phase4_Button_Saving','Saving…'); }
+    try {
+        const result = await API.saveManagerReview(lastSavedSession.payload);
+        if (result && result.Success === false) throw new Error(result.ErrorMessage || 'Unknown error');
+        lastSavedSession.isDraft = false;
+        lastSavedSession.result  = result;
+        fillComplete(); // re-render with completed state
+    } catch (e) {
+        alert(Lf('ReviewSession_Error_SaveFailed','❌ Failed to close evaluation: {0}', e.message || e));
+        if (btn) { btn.disabled = false; btn.textContent = L('ReviewSession_Phase5_Button_CloseEvaluation','✅ Close Evaluation'); }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// IMPROVEMENT PLAN — alex_mcsaireport
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Compile everything the bot needs into a single structured text block so the
+// Flow can pass it directly to Copilot Studio — no secondary Dataverse lookups.
+function buildReportContext() {
+    const qs = (consolidatedData && consolidatedData.questionnaires) || [];
+    const lines = [
+        'AGENT: ' + (agent ? agent.name : ''),
+        'PERIOD: ' + (selectedPeriod ? selectedPeriod.from + ' to ' + selectedPeriod.to : ''),
+        'OVERALL SCORE: ' + (Math.round((calculateWeightedScore ? calculateWeightedScore() : 0) * 100) / 100),
+        ''
+    ];
+    qs.forEach(q => {
+        lines.push('══════════════════════════════');
+        lines.push('QUESTIONNAIRE: ' + (q.criteriaName || ''));
+        lines.push('Average Score: ' + Math.round(q.avgScore || 0) +
+                   ' | Range: ' + (q.minScore || 0) + '–' + (q.maxScore || 0) +
+                   ' | Evaluations: ' + (q.evaluationCount || 0));
+        if (q._agentPerspective)  lines.push('Agent Perspective: ' + q._agentPerspective);
+        if (q._managerAssessment) lines.push('Manager Assessment: ' + q._managerAssessment);
+        lines.push('');
+        (q.evaluations || []).forEach(ev => {
+            lines.push('  Evaluation: ' + (ev.name || ev.evaluationId) +
+                       ' | Date: ' + (ev.date || '') + ' | Score: ' + (ev.score || 0));
+            if (ev.aiSummary)    lines.push('  AI Summary: ' + ev.aiSummary);
+            if (ev.aiActionPlan) lines.push('  AI Action Plan: ' + ev.aiActionPlan);
+            lines.push('');
+        });
+    });
+    // Manager private notes
+    const prepStr  = (document.getElementById('prepStr')  || {}).value || '';
+    const prepImp  = (document.getElementById('prepImp')  || {}).value || '';
+    const prepTalk = (document.getElementById('prepTalk') || {}).value || '';
+    if (prepStr || prepImp || prepTalk) {
+        lines.push('══════════════════════════════');
+        lines.push('MANAGER PRIVATE NOTES');
+        if (prepStr)  lines.push('Identified Strengths:\n' + prepStr);
+        if (prepImp)  lines.push('Areas for Improvement:\n' + prepImp);
+        if (prepTalk) lines.push('Talking Points:\n' + prepTalk);
+        lines.push('');
+    }
+    // Agreed action items
+    const p = lastSavedSession && lastSavedSession.payload;
+    if (p && (p.ActionItems || []).length) {
+        lines.push('══════════════════════════════');
+        lines.push('AGREED ACTION ITEMS');
+        (p.ActionItems || []).forEach((a, i) => {
+            const desc = (typeof a === 'object') ? (a.Description || '') : a;
+            lines.push((i + 1) + '. ' + desc);
+        });
+    }
+    return lines.join('\n');
+}
+
+function collectEvaluationIds() {
+    const ids = [];
+    ((consolidatedData && consolidatedData.questionnaires) || []).forEach(q => {
+        (q.evaluations || []).forEach(ev => { if (ev.evaluationId) ids.push(ev.evaluationId); });
+    });
+    return ids;
+}
+
+// Lightweight Markdown → HTML renderer. Handles: headings, bold, italic, code,
+// pipe tables, unordered/ordered lists, blockquotes, horizontal rules.
+function renderMarkdown(md) {
+    if (!md) return '';
+    function escape(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function inline(s) {
+        return escape(s)
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/`(.*?)`/g, '<code>$1</code>');
+    }
+    const lines = md.split('\n');
+    const out = [];
+    let listType = null, inTable = false, inBq = false;
+    const closeList  = () => { if (listType) { out.push(listType === 'ul' ? '</ul>' : '</ol>'); listType = null; } };
+    const closeTable = () => { if (inTable)  { out.push('</tbody></table>'); inTable = false; } };
+    const closeBq    = () => { if (inBq)     { out.push('</blockquote>');    inBq    = false; } };
+    const closeAll   = () => { closeList(); closeTable(); closeBq(); };
+
+    for (let i = 0; i < lines.length; i++) {
+        const raw = lines[i];
+        const t = raw.trim();
+
+        if (/^(-{3,}|\*{3,}|_{3,})$/.test(t)) { closeAll(); out.push('<hr>'); continue; }
+
+        const hm = t.match(/^(#{1,4})\s+([\s\S]+)/);
+        if (hm) { closeAll(); const l = hm[1].length; out.push('<h'+l+'>'+inline(hm[2])+'</h'+l+'>'); continue; }
+
+        // Table: detect header row by peeking at the next (separator) line
+        if (t.startsWith('|') && i + 1 < lines.length) {
+            const nxt = lines[i + 1].trim();
+            if (nxt.startsWith('|') && /^[\|:\-\s]+$/.test(nxt)) {
+                closeAll();
+                const cells = t.slice(1, t.endsWith('|') ? -1 : t.length).split('|').map(c => c.trim());
+                out.push('<table class="md-table"><thead><tr>' +
+                    cells.map(c => '<th>' + inline(c) + '</th>').join('') +
+                    '</tr></thead><tbody>');
+                inTable = true;
+                i++; // skip separator row
+                continue;
+            }
+        }
+        if (t.startsWith('|') && inTable) {
+            if (/^[\|:\-\s]+$/.test(t)) continue; // stray separator
+            const cells = t.slice(1, t.endsWith('|') ? -1 : t.length).split('|').map(c => c.trim());
+            out.push('<tr>' + cells.map(c => '<td>' + inline(c) + '</td>').join('') + '</tr>');
+            continue;
+        }
+        closeTable();
+
+        const bqm = raw.match(/^>\s?(.*)/);
+        if (bqm) { closeList(); if (!inBq) { out.push('<blockquote>'); inBq = true; } out.push('<p>' + inline(bqm[1]) + '</p>'); continue; }
+        closeBq();
+
+        const ulm = t.match(/^[-*+]\s+([\s\S]+)/);
+        if (ulm) { if (listType !== 'ul') { closeList(); out.push('<ul>'); listType = 'ul'; } out.push('<li>' + inline(ulm[1]) + '</li>'); continue; }
+
+        const olm = t.match(/^(\d+)[.)]\s+([\s\S]+)/);
+        if (olm) { if (listType !== 'ol') { closeList(); out.push('<ol>'); listType = 'ol'; } out.push('<li>' + inline(olm[2]) + '</li>'); continue; }
+
+        if (!t) { closeList(); continue; }
+        closeList();
+        out.push('<p>' + inline(t) + '</p>');
+    }
+    closeAll();
+    return out.join('\n');
+}
+
+async function generateImprovementPlan() {
+    const body = document.getElementById('improvementPlanBody');
+    const reportEl = document.getElementById('improvementPlanReport');
+
+    // Mock mode — show a preview immediately
+    if (!API.isLive) {
+        if (body) body.innerHTML =
+            '<button class="btn btn-s" onclick="generateImprovementPlan()">' + escapeHtml(L('ReviewSession_Phase5_Report_Regenerate', '↺ Regenerate')) + '</button>' +
+            '<button class="btn btn-s" style="margin-inline-start:8px" onclick="printReport()">' + escapeHtml(L('ReviewSession_Phase5_Report_Print', '🖨 Print')) + '</button>';
+        if (reportEl) { reportEl.innerHTML = renderMarkdown(buildMockReportMarkdown()); reportEl.style.display = 'block'; }
+        return;
+    }
+
+    // If an existing record is pending/processing, resume polling it rather than creating a new one.
+    // Only create a new record when there is no prior attempt or the prior attempt failed (status 3).
+    if (_reportRecordId) {
+        try {
+            const chk = await fetch(
+                '/api/data/v9.2/alex_mcsimprovementplans(' + _reportRecordId + ')?$select=alex_status,alex_reportcontent,alex_errormessage',
+                { headers: { 'OData-Version': '4.0', 'Accept': 'application/json' } }
+            );
+            if (chk.ok) {
+                const rec = await chk.json();
+                if (rec.alex_status === REPORT_STATUS.COMPLETED) {
+                    _showReportResult(rec.alex_reportcontent || '');
+                    return;
+                }
+                if (rec.alex_status !== REPORT_STATUS.FAILED) {
+                    // Still pending — resume polling the same record
+                    _showReportSpinner();
+                    startReportPolling(_reportRecordId);
+                    return;
+                }
+                // Failed — fall through to create a new record
+            }
+        } catch (e) { /* fall through to create */ }
+        _reportRecordId = null;
+    }
+
+    // Show spinner while creating the record
+    _showReportSpinner();
+
+    try {
+        const evalIds = collectEvaluationIds();
+        const postBody = {
+            'alex_name':                ('Report - ' + (agent ? agent.name : '') + ' - ' + (selectedPeriod ? selectedPeriod.from : '')).substring(0, 100),
+            'alex_agent@odata.bind':    '/systemusers(' + agent.id + ')',
+            'alex_userlanguage':        _userLanguageDisplay || undefined,
+            'alex_evaluationids':       evalIds.join('\n'),
+            'alex_evaluationcontext':   buildReportContext(),
+            'alex_status':              REPORT_STATUS.PENDING,
+            'alex_periodstart':         selectedPeriod.from,
+            'alex_periodend':           selectedPeriod.to,
+            'alex_notify_by_teams':     _notifyByTeams,
+            'alex_notify_by_email':     _notifyByEmail
+        };
+        if (draftReviewId) postBody['alex_managereview@odata.bind'] = '/alex_managereviews(' + draftReviewId + ')';
+
+        const resp = await fetch('/api/data/v9.2/alex_mcsimprovementplans', {
+            method: 'POST',
+            headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            body: JSON.stringify(postBody)
+        });
+        if (!resp.ok) throw new Error('POST alex_mcsimprovementplans HTTP ' + resp.status + ': ' + await resp.text());
+        const created = await resp.json();
+        _reportRecordId = created.alex_mcsimprovementplanid;
+        startReportPolling(_reportRecordId);
+    } catch (e) {
+        console.error('generateImprovementPlan failed:', e);
+        _showReportError(L('ReviewSession_Phase5_Report_Error', 'Failed to start improvement plan. Please try again.'));
+    }
+}
+
+function startReportPolling(reportId) {
+    if (_reportPoller) { clearInterval(_reportPoller); _reportPoller = null; }
+    let attempts = 0;
+    const MAX = 100; // 100 × 3s = 300s (5 minutes)
+    _reportPoller = setInterval(async () => {
+        attempts++;
+        try {
+            const resp = await fetch(
+                '/api/data/v9.2/alex_mcsimprovementplans(' + reportId + ')?$select=alex_status,alex_reportcontent,alex_errormessage',
+                { headers: { 'OData-Version': '4.0', 'Accept': 'application/json' } }
+            );
+            if (!resp.ok) return;
+            const rec = await resp.json();
+            if (rec.alex_status === REPORT_STATUS.COMPLETED) {
+                clearInterval(_reportPoller); _reportPoller = null;
+                _showReportResult(rec.alex_reportcontent || '');
+                return;
+            }
+            if (rec.alex_status === REPORT_STATUS.FAILED) {
+                clearInterval(_reportPoller); _reportPoller = null;
+                // Mark record as failed so next click creates a fresh one
+                _reportRecordId = null;
+                _showReportError(rec.alex_errormessage || L('ReviewSession_Phase5_Report_Error', 'Generation failed.'));
+                return;
+            }
+            // Still pending/processing — continue polling
+        } catch (e) { /* ignore transient poll errors */ }
+        if (attempts >= MAX) {
+            clearInterval(_reportPoller); _reportPoller = null;
+            // Timeout: the record is still in progress — show a resume button, not an error.
+            // _reportRecordId is intentionally preserved so "Check Again" resumes the same record.
+            _showReportTimeout();
+        }
+    }, 3000);
+}
+
+function _showReportSpinner() {
+    const body = document.getElementById('improvementPlanBody');
+    if (body) body.innerHTML =
+        '<div style="display:flex;align-items:center;gap:8px;margin-block-end:10px;">' +
+            COPILOT_BOUNCE +
+            '<span style="font-size:13px;font-weight:500;color:var(--c-text)">' +
+                escapeHtml(L('ReviewSession_Phase5_Report_Generating', 'Generating improvement plan…')) +
+            '</span>' +
+        '</div>' +
+        '<p style="margin:0 0 14px;font-size:12px;color:var(--c-text-3);">' +
+            escapeHtml(L('ReviewSession_Phase5_Report_GeneratingNote', 'Generating the improvement plan may take up to 5 minutes.')) +
+        '</p>' +
+        '<div class="notif-panel">' +
+            '<div class="notif-panel-title">' +
+                escapeHtml(L('ReviewSession_Phase5_Report_NotifyTitle', 'Notification options (during plan generation)')) +
+            '</div>' +
+            '<label class="notif-option">' +
+                '<input type="checkbox" id="notifyTeamsChk" onchange="toggleReportNotification(\'teams\', this.checked)"' + (_notifyByTeams ? ' checked' : '') + ' />' +
+                '<img class="notif-logo" src="' + TEAMS_LOGO_URL + '" alt="Microsoft Teams" />' +
+                '<span>' + escapeHtml(L('ReviewSession_Phase5_Report_NotifyTeams', 'Notify me via Microsoft Teams when the plan is ready')) + '</span>' +
+            '</label>' +
+            '<label class="notif-option">' +
+                '<input type="checkbox" id="notifyEmailChk" onchange="toggleReportNotification(\'email\', this.checked)"' + (_notifyByEmail ? ' checked' : '') + ' />' +
+                '<img class="notif-logo" src="' + OUTLOOK_LOGO_URL + '" alt="Microsoft Outlook" />' +
+                '<span>' + escapeHtml(L('ReviewSession_Phase5_Report_NotifyEmail', 'Send the improvement plan to me by email when it is ready')) + '</span>' +
+            '</label>' +
+        '</div>';
+    const reportEl = document.getElementById('improvementPlanReport');
+    if (reportEl) { reportEl.style.display = 'none'; reportEl.innerHTML = ''; }
+}
+
+async function toggleReportNotification(type, checked) {
+    if (type === 'teams') _notifyByTeams = checked;
+    else if (type === 'email') _notifyByEmail = checked;
+    if (!_reportRecordId) return; // preference stored in-memory; applied to POST body when record is created
+    try {
+        const patch = type === 'teams' ? { alex_notify_by_teams: checked } : { alex_notify_by_email: checked };
+        await fetch('/api/data/v9.2/alex_mcsimprovementplans(' + _reportRecordId + ')', {
+            method: 'PATCH',
+            headers: { 'OData-Version': '4.0', 'Content-Type': 'application/json' },
+            body: JSON.stringify(patch)
+        });
+    } catch (e) { console.warn('toggleReportNotification PATCH failed:', e); }
+}
+
+function _showReportResult(markdown) {
+    const body = document.getElementById('improvementPlanBody');
+    const reportEl = document.getElementById('improvementPlanReport');
+    if (body) body.innerHTML =
+        '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-raised);border:1px solid var(--c-border);border-radius:var(--radius-m);margin-block-end:12px;">' +
+            COPILOT_ICON +
+            '<span style="font-size:13px;font-weight:600;color:var(--c-text)">' +
+                escapeHtml(L('ReviewSession_Phase5_Report_GeneratedBy', 'This improvement plan was generated using Copilot')) +
+            '</span>' +
+            '<span style="margin-inline-start:auto;display:flex;gap:8px;">' +
+                '<button class="btn btn-s" onclick="generateImprovementPlan()">' + escapeHtml(L('ReviewSession_Phase5_Report_Regenerate', '↺ Regenerate')) + '</button>' +
+                '<button class="btn btn-s" onclick="printReport()">' + escapeHtml(L('ReviewSession_Phase5_Report_Print', '🖨 Print')) + '</button>' +
+            '</span>' +
+        '</div>';
+    if (reportEl) { reportEl.innerHTML = renderMarkdown(markdown); reportEl.style.display = 'block'; }
+}
+
+function _showReportTimeout() {
+    const body = document.getElementById('improvementPlanBody');
+    if (body) body.innerHTML =
+        '<span style="color:var(--c-text-2)">⏳ ' + escapeHtml(L('ReviewSession_Phase5_Report_Timeout', 'Still generating — this is taking longer than expected.')) + '</span>' +
+        '<button class="btn btn-s" style="margin-inline-start:12px" onclick="generateImprovementPlan()">' +
+        escapeHtml(L('ReviewSession_Phase5_Report_CheckAgain', '↺ Check Again')) + '</button>';
+}
+
+function _showReportError(message) {
+    const body = document.getElementById('improvementPlanBody');
+    if (body) body.innerHTML =
+        '<span style="color:var(--c-error,#ef4444)">⚠ ' + escapeHtml(message) + '</span>' +
+        '<button class="btn btn-s" style="margin-inline-start:12px" onclick="generateImprovementPlan()">' +
+        escapeHtml(L('ReviewSession_Phase5_Report_Retry', '↺ Retry')) + '</button>';
+    const reportEl = document.getElementById('improvementPlanReport');
+    if (reportEl) reportEl.style.display = 'none';
+}
+
+function printReport() { window.print(); }
+
+function buildMockReportMarkdown() {
+    return '# 🤖 Agent Improvement Plan\n\n' +
+        '**Agent:** ' + (agent ? agent.name : 'Demo Agent') + '  \n' +
+        '**Period:** ' + (selectedPeriod ? selectedPeriod.from + ' → ' + selectedPeriod.to : '') + '\n\n---\n\n' +
+        '## 📊 Performance Summary\n\n' +
+        '| Category | Avg Score | Status |\n|---|---|---|\n| Overall | 72 | ⚠️ Below Target |\n\n' +
+        '## ✅ What the Agent Does Well\n\n' +
+        '- Consistently strong **greeting and opening** across most evaluations.\n' +
+        '- High **issue comprehension** — customers rarely need to repeat themselves.\n\n' +
+        '## ⚠️ Identified Performance Gaps\n\n' +
+        '### Gap 1: Low Empathy Scores\n' +
+        '- Empathy dimension averages only **45%** across evaluations.\n' +
+        '- Focus needed on acknowledgement phrases and personalisation.\n\n' +
+        '## 🎓 Actionable Training Plan\n\n' +
+        '### Step 1: Empathy Workshop *(Week 1)*\n' +
+        '- **Action:** Enroll in empathy training module.\n' +
+        '- **Training Type:** Workshop with role-play scenarios.\n\n' +
+        '## 🎯 SMART Goals\n\n' +
+        '| # | Goal | Target | Timeline |\n|---|---|---|---|\n| 1 | Improve empathy score | ≥ 70% | 30 days |\n\n' +
+        '> **Note:** This is a mock preview. In live mode, the plan is generated by AI based on real evaluation data.';
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -3652,8 +4825,19 @@ async function saveSession() {
 function fillComplete() {
     if (!lastSavedSession) return;
     const p = lastSavedSession.payload;
+    const isDraft = !!lastSavedSession.isDraft;
+
+    // Hero — title and draft badge
+    const titleEl = document.getElementById('completeTitle');
+    const badgeEl = document.getElementById('completeDraftBadge');
+    if (titleEl) titleEl.textContent = isDraft
+        ? L('ReviewSession_Phase5_Draft_Title', 'Session Saved as Draft')
+        : L('ReviewSession_Phase5_Complete_Title', 'Review Session Complete');
+    if (badgeEl) badgeEl.style.display = isDraft ? 'block' : 'none';
+
     document.getElementById('completeSubtitle').textContent =
         agent.name + ' · ' + p.DateFrom + ' → ' + p.DateTo;
+
     const recap = document.getElementById('completeRecap');
     const catsCovered = (p.Questionnaires || []).length;
     recap.innerHTML =
@@ -3667,16 +4851,149 @@ function fillComplete() {
             '<div class="recap-value num">' + (p.ActionItems || []).length + '</div></div>' +
         '<div class="recap-item"><div class="recap-label">' + escapeHtml(L('ReviewSession_Phase5_Recap_SavedAt','Saved At')) + '</div>' +
             '<div class="recap-value" style="font-size:13px">' + escapeHtml(formatDateTime(lastSavedSession.savedAt)) + '</div></div>';
+
     const actionsCard = document.getElementById('completeActionsCard');
     const actionsHost = document.getElementById('completeActions');
     if ((p.ActionItems || []).length) {
         actionsCard.style.display = 'block';
-        actionsHost.innerHTML = p.ActionItems.map((a, i) =>
-            '<div class="action-pill"><div class="action-pill-num">' + (i+1) + '</div><div>' + escapeHtml(a) + '</div></div>'
-        ).join('');
+        actionsHost.innerHTML = p.ActionItems.map((a, i) => {
+            const desc = (typeof a === 'object') ? (a.Description || '') : a;
+            return '<div class="action-pill"><div class="action-pill-num">' + (i+1) + '</div><div>' + escapeHtml(desc) + '</div></div>';
+        }).join('');
     } else {
         actionsCard.style.display = 'none';
     }
+
+    // Show the improvement plan card — only reset if no report has been generated yet
+    const planCard = document.getElementById('improvementPlanCard');
+    if (planCard) planCard.style.display = 'block';
+    if (!_reportRecordId) {
+        const planBody = document.getElementById('improvementPlanBody');
+        if (planBody) planBody.innerHTML =
+            '<button class="btn btn-ok" id="generateReportBtn" onclick="generateImprovementPlan()">' +
+            '<img class="copilot-icon" src="' + COPILOT_LOGO_URL + '" alt="Copilot" style="vertical-align:-4px;margin-inline-end:6px;" />' +
+            '<span>' + escapeHtml(L('ReviewSession_Phase5_Report_Generate', 'Ask Copilot to generate an Improvement Plan')) + '</span></button>';
+        const planReport = document.getElementById('improvementPlanReport');
+        if (planReport) { planReport.innerHTML = ''; planReport.style.display = 'none'; }
+    } else {
+        // Button was preserved from a previous visit — ensure its icon src is set
+        const iconEl = document.getElementById('generateReportBtnIcon');
+        if (iconEl && !iconEl.src) iconEl.src = COPILOT_LOGO_URL;
+    }
+
+    // Dynamic buttons
+    const btns = document.getElementById('completeButtons');
+    if (isDraft) {
+        // Expiry date + Abandon section — injected after action items card
+        let draftMgmt = document.getElementById('completeDraftMgmt');
+        if (!draftMgmt) {
+            draftMgmt = document.createElement('div');
+            draftMgmt.id = 'completeDraftMgmt';
+            const actionsCard = document.getElementById('completeActionsCard');
+            actionsCard.parentNode.insertBefore(draftMgmt, actionsCard.nextSibling);
+        }
+        const today = new Date().toISOString().slice(0, 10);
+        draftMgmt.style.display = 'block';
+        draftMgmt.innerHTML =
+            '<div class="card" style="border:1px solid var(--c-warn,#f59e0b)">' +
+                '<div class="card-head">' +
+                    '<div>' +
+                        '<div class="card-title">⏱ ' + escapeHtml(L('ReviewSession_Phase5_DraftMgmt_Title','Draft Management')) + '</div>' +
+                        '<div class="card-desc">' + escapeHtml(L('ReviewSession_Phase5_DraftMgmt_Desc','Set an expiry date or abandon this session if it is no longer needed.')) + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="field" style="max-width:360px">' +
+                    '<label class="field-lbl">' + escapeHtml(L('ReviewSession_Phase5_DraftMgmt_ExpiryLabel','Expiry Date')) + '</label>' +
+                    '<div style="display:flex;gap:8px;align-items:center">' +
+                        '<input type="date" id="draftExpiryDate" class="field-inp" style="flex:1" min="' + today + '" />' +
+                        '<button class="btn btn-s" style="font-size:13px" onclick="saveExpiryDate()">' +
+                            escapeHtml(L('ReviewSession_Phase5_DraftMgmt_SaveExpiry','Save')) + '</button>' +
+                    '</div>' +
+                    '<div id="expiryFeedback" style="font-size:12px;margin-block-start:4px;min-height:16px;"></div>' +
+                '</div>' +
+                '<hr style="border:none;border-top:1px solid var(--c-border);margin:12px 0">' +
+                '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">' +
+                    '<div style="flex:1;font-size:13px;color:var(--c-text-2)">' +
+                        escapeHtml(L('ReviewSession_Phase5_DraftMgmt_AbandonDesc','If this session will not be completed, you can mark it as abandoned. It will be excluded from future queries.')) +
+                    '</div>' +
+                    '<button class="btn btn-s" style="color:var(--c-error,#ef4444);border-color:var(--c-error,#ef4444);flex-shrink:0" onclick="abandonReview()">' +
+                        '🗑 ' + escapeHtml(L('ReviewSession_Phase5_DraftMgmt_Abandon','Abandon This Session')) + '</button>' +
+                '</div>' +
+            '</div>';
+        btns.innerHTML =
+            '<button class="btn btn-s" onclick="finishSession()" data-l10n="ReviewSession_Phase5_Button_LeaveAsDraft">' +
+                L('ReviewSession_Phase5_Button_LeaveAsDraft','Leave as Draft') + '</button>' +
+            '<button class="btn btn-s" onclick="viewCompletedReview()" data-l10n="ReviewSession_Phase5_Button_ViewReview">' +
+                L('ReviewSession_Phase5_Button_ViewReview','📄 View This Review') + '</button>' +
+            '<button class="btn btn-ok" onclick="closeEvaluation()" data-l10n="ReviewSession_Phase5_Button_CloseEvaluation">' +
+                L('ReviewSession_Phase5_Button_CloseEvaluation','✅ Close Evaluation') + '</button>';
+    } else {
+        // Hide draft mgmt card if switching from draft → completed
+        const draftMgmt = document.getElementById('completeDraftMgmt');
+        if (draftMgmt) draftMgmt.style.display = 'none';
+        btns.innerHTML =
+            '<button class="btn btn-s" onclick="viewCompletedReview()" data-l10n="ReviewSession_Phase5_Button_ViewReview">' +
+                L('ReviewSession_Phase5_Button_ViewReview','📄 View This Review') + '</button>' +
+            '<button class="btn btn-s" onclick="finishSession()" data-l10n="ReviewSession_Phase5_Button_Done">' +
+                L('ReviewSession_Phase5_Button_Done','Done') + '</button>';
+    }
+}
+
+async function saveExpiryDate() {
+    const inp = document.getElementById('draftExpiryDate');
+    const feedbackEl = document.getElementById('expiryFeedback');
+    if (!inp || !inp.value) {
+        if (feedbackEl) { feedbackEl.textContent = '⚠️ ' + L('ReviewSession_Phase5_DraftMgmt_ExpiryRequired','Please select a date.'); feedbackEl.style.color = 'var(--c-warn,#f59e0b)'; }
+        return;
+    }
+    if (!draftReviewId || !API.isLive) { if (feedbackEl) { feedbackEl.textContent = '✅ ' + L('ReviewSession_Phase5_DraftMgmt_ExpirySaved','Saved.'); feedbackEl.style.color = 'var(--c-success,#10b981)'; } return; }
+    try {
+        await fetch('/api/data/v9.2/alex_managereviews(' + draftReviewId + ')', {
+            method: 'PATCH',
+            headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 'alex_expiration_date': inp.value })
+        });
+        if (feedbackEl) { feedbackEl.textContent = '✅ ' + L('ReviewSession_Phase5_DraftMgmt_ExpirySaved','Expiry date saved.'); feedbackEl.style.color = 'var(--c-success,#10b981)'; }
+        setTimeout(() => { if (feedbackEl) feedbackEl.textContent = ''; }, 3000);
+    } catch (e) {
+        if (feedbackEl) { feedbackEl.textContent = '❌ ' + (e.message || 'Failed to save.'); feedbackEl.style.color = 'var(--c-error,#ef4444)'; }
+    }
+}
+
+function abandonReview() {
+    // Styled inline confirmation — no native browser dialog
+    const card = document.getElementById('completeDraftMgmt');
+    if (!card) return;
+    const confirmEl = document.createElement('div');
+    confirmEl.style.cssText = 'margin-block-start:12px;padding:12px 16px;background:var(--bg-accent-soft,#fef2f2);border:1px solid var(--c-error,#ef4444);border-radius:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;';
+    confirmEl.innerHTML =
+        '<div style="flex:1;font-size:13px;color:var(--c-error,#ef4444);font-weight:500;">' +
+            '⚠️ ' + escapeHtml(L('ReviewSession_Phase5_DraftMgmt_AbandonConfirm','This session will be marked as Cancelled. Are you sure?')) +
+        '</div>' +
+        '<div style="display:flex;gap:8px;flex-shrink:0;">' +
+            '<button class="btn btn-s" onclick="this.closest(\'[data-abandon-confirm]\').remove()">' +
+                escapeHtml(L('Common_Cancel','Cancel')) + '</button>' +
+            '<button class="btn btn-s" style="color:var(--c-error,#ef4444);border-color:var(--c-error,#ef4444)" onclick="confirmAbandonReview(this)">' +
+                escapeHtml(L('ReviewSession_Phase5_DraftMgmt_AbandonConfirmYes','Yes, Abandon')) + '</button>' +
+        '</div>';
+    confirmEl.setAttribute('data-abandon-confirm', '1');
+    // Remove any existing confirm panel before adding a new one
+    card.querySelectorAll('[data-abandon-confirm]').forEach(el => el.remove());
+    card.appendChild(confirmEl);
+}
+
+async function confirmAbandonReview(btn) {
+    if (btn) { btn.disabled = true; btn.textContent = L('ReviewSession_Phase4_Button_Saving','Saving…'); }
+    if (draftReviewId && API.isLive) {
+        try {
+            await fetch('/api/data/v9.2/alex_managereviews(' + draftReviewId + ')', {
+                method: 'PATCH',
+                headers: { 'OData-Version': '4.0', 'OData-MaxVersion': '4.0', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 'alex_status': 100000004 })  // 100000004 = Cancelled
+            });
+        } catch (e) { console.warn('Failed to abandon review:', e); }
+    }
+    finishSession();
 }
 
 function viewCompletedReview() {
@@ -3691,8 +5008,9 @@ function renderReviewViewer(payload, savedAt) {
     document.getElementById('rvSubtitle').textContent =
         agent.name + ' · ' + payload.DateFrom + ' → ' + payload.DateTo;
     const status = document.getElementById('rvStatusBadge');
-    status.textContent = 'Completed';
-    status.className = 'badge badge-live';
+    const isDraft = lastSavedSession && lastSavedSession.isDraft;
+    status.textContent = isDraft ? L('ReviewSession_Phase6_StatusDraft','Draft') : L('ReviewSession_Phase6_StatusCompleted','Completed');
+    status.className = isDraft ? 'badge badge-warn' : 'badge badge-live';
 
     let html = '';
     // Metadata
@@ -3730,7 +5048,8 @@ function renderReviewViewer(payload, savedAt) {
         '<div class="rv-section-title">' + escapeHtml(Lf('ReviewSession_Phase6_ActionItemsTemplate','Action Items ({0})', (payload.ActionItems||[]).length)) + '</div>';
     if ((payload.ActionItems || []).length) {
         payload.ActionItems.forEach((a, i) => {
-            html += '<div class="rv-action"><div class="rv-action-n">' + (i+1) + '</div><div><div class="rv-action-desc">' + escapeHtml(a) + '</div></div></div>';
+            const desc = (typeof a === 'object') ? (a.Description || '') : a;
+            html += '<div class="rv-action"><div class="rv-action-n">' + (i+1) + '</div><div><div class="rv-action-desc">' + escapeHtml(desc) + '</div></div></div>';
         });
     } else {
         html += '<div class="rv-field-value empty">' + escapeHtml(L('ReviewSession_Phase6_NoActionItems','No action items recorded.')) + '</div>';
@@ -3780,10 +5099,22 @@ function finishSession() {
     agent = null; eval_ = null; consolidatedData = null; selectedPeriod = null;
     draftReviewId = null; coachingInsightId = null;
     sessionWeights = {}; lastSavedSession = null; actCount = 0;
+    if (_reportPoller) { clearInterval(_reportPoller); _reportPoller = null; }
+    _reportRecordId = null;
+    _notifyByTeams = false; _notifyByEmail = false;
     stopAllInsightPollers();
     document.getElementById('dateRangeCard').style.display = 'none';
     document.getElementById('consolidatedCard').style.display = 'none';
     document.getElementById('ph0Next').style.display = 'none';
+    // Clear the draft banner and restore the Continue button label
+    const banner = document.getElementById('consolDraftBanner');
+    if (banner) { banner.style.display = 'none'; banner.innerHTML = ''; }
+    const ph0Btn = document.getElementById('ph0NextBtn');
+    if (ph0Btn) {
+        ph0Btn.textContent = L('ReviewSession_Phase0_Button_ContinueToPrep', 'Continue to Preparation →');
+        ph0Btn.classList.remove('btn-ok');
+        ph0Btn.classList.add('btn-p');
+    }
     document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('periodSelected').style.display = 'none';
     document.getElementById('periodCustom').style.display = 'none';
@@ -3808,12 +5139,30 @@ function toggleTheme() {
 // ═══════════════════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════════════════
-(function init() {
-    // 1. RTL + localisation
-    applyDirectionality();
+(async function init() {
+    // 1. RTL direction applied immediately so there's no LTR flash for Hebrew/Arabic users
+    const { lcid } = applyDirectionality();
+
+    // Capture the user's UI language as a human-readable display name (e.g. "Hebrew").
+    // Stored in _userLanguageDisplay and written to alex_userlanguage on every new insight record
+    // so MCS knows which language to generate responses in.
+    try {
+        const bcp47 = mapLcidToLang(lcid);
+        _userLanguageDisplay = new Intl.DisplayNames(['en'], { type: 'language' }).of(bcp47) || bcp47;
+    } catch (e) {
+        _userLanguageDisplay = mapLcidToLang(lcid); // fallback: BCP-47 tag
+    }
+
+    // 2. Fetch localized strings from Dataverse before rendering any labels.
+    //    In live mode only — no Web API in mock/dev. Falls back to English if RESX not found.
+    if (API.isLive) {
+        await loadResxStrings(lcid);
+    }
+
+    // 3. Apply localized labels to all static data-l10n-* elements now that strings are loaded
     applyStaticLabels(document);
 
-    // 2. Mode badge
+    // 4. Mode badge
     const badge = document.getElementById('modeBadge');
     if (API.isLive) {
         badge.textContent = L('ReviewSession_Mode_Live','LIVE');
@@ -3823,7 +5172,7 @@ function toggleTheme() {
         badge.classList.add('mode-mock');
     }
 
-    // 3. Theme persistence
+    // 5. Theme persistence
     try {
         const t = localStorage.getItem('rsTheme');
         if (t === 'dark') {
@@ -3832,19 +5181,19 @@ function toggleTheme() {
         }
     } catch (e) {}
 
-    // 4. Keyboard shortcuts
+    // 6. Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && document.getElementById('sidePanel').classList.contains('open')) {
             closeSidePanel();
         }
     });
 
-    // 5. Preload criteria cache for mock mode
+    // 7. Preload criteria cache for mock mode
     if (!API.isLive && CRITERIA_CACHE && CRITERIA_CACHE.CriteriaId) {
         CRITERIA_MAP[String(CRITERIA_CACHE.CriteriaId).toLowerCase()] = CRITERIA_CACHE;
     }
 
-    // 6. Load agents
+    // 8. Load agents
     loadAgents();
 })();
 

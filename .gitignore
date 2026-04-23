@@ -1,0 +1,70 @@
+############################
+# Visual Studio / IDE
+############################
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Visual Studio caches / indexes
+*.vsidx
+*.dtbcache.v2
+*.VC.db
+*.VC.db-wal
+*.VC.db-shm
+DocumentLayout.json
+DocumentLayout.backup.json
+
+############################
+# Build outputs (VERY IMPORTANT)
+############################
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# NuGet (optional - depends if you want to commit packages)
+packages/
+*.nupkg
+
+############################
+# .NET artifacts
+############################
+*.dll
+*.pdb
+*.cache
+*.tmp
+
+############################
+# Node / front-end (only if exists)
+############################
+node_modules/
+
+############################
+# OS junk
+############################
+Thumbs.db
+.DS_Store
+
+############################
+# Dataverse / D365 WebResources
+# (keep your source files; ignore generated/exported zips if any)
+############################
+*.zip
+
+############################
+# Project-specific exclusions
+############################
+# Personal AutoHotKey scripts
+1.Chat.ahk
+# Scratch/test files
+testcaht.html
+# Local working files not part of the solution
+files/
+# Old web resource version
+webresources/oldV

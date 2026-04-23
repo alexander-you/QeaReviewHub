@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Agent Review Session — English (en-US / LCID 1033) resource file.
+    Web Resource logical name (solution): alex_ReviewSession_Strings.1033.resx
+    Accessed from JavaScript via:
+      Xrm.Utility.getResourceString("alex_ReviewSession_Strings", "KeyName")
+
+    Key naming convention: [Module]_[Section]_[Purpose]
+      - Common_*                : cross-screen atoms (buttons, labels, states)
+      - ReviewSession_Header_*  : top banner
+      - ReviewSession_Stepper_* : horizontal stepper labels
+      - ReviewSession_PhaseN_*  : screen-specific strings (N = 0..5)
+      - ReviewSession_SidePanel_* : off-canvas drill-down panel
+      - ReviewSession_RecordType_* : conversation / case / email badges
+      - ReviewSession_Error_*   : user-facing error messages
+
+    Placeholder tokens use the .NET / String.Format style: {0}, {1}, {2}.
+    Client-side helper `Lf(key, fallback, ...args)` performs the substitution.
+
+    DO NOT rename existing keys after ship — JS has hard-coded references.
+    Add new keys at the bottom; never recycle retired keys.
+  -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- COMMON                                                           -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="Common_Loading" xml:space="preserve"><value>טוען…</value></data>
+  <data name="Common_Back" xml:space="preserve"><value>חזרה</value></data>
+  <data name="Common_Close" xml:space="preserve"><value>סגור</value></data>
+  <data name="Common_Save" xml:space="preserve"><value>שמור</value></data>
+  <data name="Common_Cancel" xml:space="preserve"><value>ביטול</value></data>
+  <data name="Common_Continue" xml:space="preserve"><value>המשך</value></data>
+  <data name="Common_Done" xml:space="preserve"><value>סיום</value></data>
+  <data name="Common_Print" xml:space="preserve"><value>הדפסה</value></data>
+  <data name="Common_Unknown" xml:space="preserve"><value>לא ידוע</value></data>
+  <data name="Common_None" xml:space="preserve"><value>ללא</value></data>
+  <data name="Common_NotRecorded" xml:space="preserve"><value>לא תועד</value></data>
+  <data name="Common_Retry" xml:space="preserve"><value>נסה שוב</value></data>
+  <data name="Common_Of" xml:space="preserve"><value>מתוך</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- HEADER / STEPPER                                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Header_Title" xml:space="preserve"><value>מפגש הערכת נציג</value></data>
+  <data name="ReviewSession_Header_Subtitle" xml:space="preserve"><value>כלי משוב להערכת איכות</value></data>
+  <data name="ReviewSession_Mode_Live" xml:space="preserve"><value>חי</value></data>
+  <data name="ReviewSession_Mode_Mock" xml:space="preserve"><value>סימולציה</value></data>
+  <data name="ReviewSession_Theme_Toggle" xml:space="preserve"><value>החלף מצב בהיר / כהה</value></data>
+
+  <data name="ReviewSession_Stepper_SelectAgent" xml:space="preserve"><value>בחירת נציג</value></data>
+  <data name="ReviewSession_Stepper_Preparation" xml:space="preserve"><value>הכנה</value></data>
+  <data name="ReviewSession_Stepper_Opening" xml:space="preserve"><value>פתיחה</value></data>
+  <data name="ReviewSession_Stepper_CategoryReview" xml:space="preserve"><value>סקירת קטגוריות</value></data>
+  <data name="ReviewSession_Stepper_Summary" xml:space="preserve"><value>סיכום</value></data>
+  <data name="ReviewSession_Stepper_Complete" xml:space="preserve"><value>סיום</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 0 — AGENT SELECTION + CONSOLIDATED DASHBOARD               -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase0_SelectAgentTitle" xml:space="preserve"><value>בחירת נציג</value></data>
+  <data name="ReviewSession_Phase0_SelectAgentDesc" xml:space="preserve"><value>בחר את הנציג למפגש הערכה זה</value></data>
+  <data name="ReviewSession_Phase0_AgentSearchPlaceholder" xml:space="preserve"><value>חיפוש לפי שם, תפקיד או תור…</value></data>
+  <data name="ReviewSession_Phase0_NoAgentsFound" xml:space="preserve"><value>לא נמצאו נציגים.</value></data>
+  <data name="ReviewSession_Phase0_Loading_Agents" xml:space="preserve"><value>טוען את הצוות שלך…</value></data>
+  <data name="ReviewSession_Phase0_Error_LoadAgents" xml:space="preserve"><value>טעינת הנציגים נכשלה: {0}</value></data>
+
+  <data name="ReviewSession_Phase0_PeriodTitle" xml:space="preserve"><value>תקופת הערכה</value></data>
+  <data name="ReviewSession_Phase0_PeriodDesc_Default" xml:space="preserve"><value>בחר את תקופת ההערכה לסקירה</value></data>
+  <data name="ReviewSession_Phase0_PeriodDesc_ForAgent" xml:space="preserve"><value>בחר את תקופת ההערכה עבור {0}</value></data>
+  <data name="ReviewSession_Phase0_Period_ThisMonth" xml:space="preserve"><value>החודש</value></data>
+  <data name="ReviewSession_Phase0_Period_LastMonth" xml:space="preserve"><value>החודש הקודם</value></data>
+  <data name="ReviewSession_Phase0_Period_ThisQuarter" xml:space="preserve"><value>הרבעון הנוכחי</value></data>
+  <data name="ReviewSession_Phase0_Period_LastQuarter" xml:space="preserve"><value>הרבעון הקודם</value></data>
+  <data name="ReviewSession_Phase0_Period_Last6Months" xml:space="preserve"><value>6 החודשים האחרונים</value></data>
+  <data name="ReviewSession_Phase0_Period_Custom" xml:space="preserve"><value>טווח מותאם אישית</value></data>
+  <data name="ReviewSession_Phase0_Period_CustomLabel" xml:space="preserve"><value>מותאם אישית</value></data>
+  <data name="ReviewSession_Phase0_Field_From" xml:space="preserve"><value>מ־</value></data>
+  <data name="ReviewSession_Phase0_Field_To" xml:space="preserve"><value>עד</value></data>
+  <data name="ReviewSession_Phase0_PeriodLabelTemplate" xml:space="preserve"><value>{0}: {1} → {2}</value></data>
+
+  <data name="ReviewSession_Phase0_Button_LoadEvaluations" xml:space="preserve"><value>טען הערכות</value></data>
+  <data name="ReviewSession_Phase0_Button_LoadingEvaluations" xml:space="preserve"><value>טוען…</value></data>
+  <data name="ReviewSession_Phase0_Loading_Evaluations" xml:space="preserve"><value>טוען הערכות…</value></data>
+  <data name="ReviewSession_Phase0_Error_LoadEvaluations" xml:space="preserve"><value>טעינת ההערכות נכשלה: {0}</value></data>
+
+  <data name="ReviewSession_Phase0_OverviewTitle" xml:space="preserve"><value>סקירת הערכות</value></data>
+  <data name="ReviewSession_Phase0_OverviewTitleForAgent" xml:space="preserve"><value>סקירת הערכות — {0}</value></data>
+  <data name="ReviewSession_Phase0_OverviewDescDefault" xml:space="preserve"><value>תוצאות מאוחדות מכל השאלונים עבור התקופה שנבחרה</value></data>
+  <data name="ReviewSession_Phase0_NoEvaluations" xml:space="preserve"><value>לא נמצאו הערכות בתקופה זו.</value></data>
+
+  <data name="ReviewSession_Phase0_Hero_WeightedOverall" xml:space="preserve"><value>ציון כולל משוקלל</value></data>
+  <data name="ReviewSession_Phase0_Hero_Evaluations" xml:space="preserve"><value>הערכות</value></data>
+  <data name="ReviewSession_Phase0_Hero_Questionnaires" xml:space="preserve"><value>שאלונים</value></data>
+  <data name="ReviewSession_Phase0_Hero_PeriodFrom" xml:space="preserve"><value>מ־</value></data>
+  <data name="ReviewSession_Phase0_Hero_PeriodTo" xml:space="preserve"><value>עד</value></data>
+
+  <data name="ReviewSession_Phase0_Table_Questionnaire" xml:space="preserve"><value>שאלון</value></data>
+  <data name="ReviewSession_Phase0_Table_Evaluations" xml:space="preserve"><value>הערכות</value></data>
+  <data name="ReviewSession_Phase0_Table_AvgScore" xml:space="preserve"><value>ציון ממוצע</value></data>
+  <data name="ReviewSession_Phase0_Table_Range" xml:space="preserve"><value>טווח</value></data>
+  <data name="ReviewSession_Phase0_Table_Weight" xml:space="preserve"><value>משקל</value></data>
+  <data name="ReviewSession_Phase0_Table_Source" xml:space="preserve"><value>מקור</value></data>
+  <data name="ReviewSession_Phase0_Table_Actions" xml:space="preserve"><value>פעולות</value></data>
+  <data name="ReviewSession_Phase0_Source_Configured" xml:space="preserve"><value>מוגדר</value></data>
+  <data name="ReviewSession_Phase0_Source_Auto" xml:space="preserve"><value>אוטומטי</value></data>
+  <data name="ReviewSession_Phase0_Button_ViewData" xml:space="preserve"><value>הצג נתונים</value></data>
+
+  <data name="ReviewSession_Phase0_Button_ContinueToPrep" xml:space="preserve"><value>המשך להכנה →</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SIDE PANEL (OFF-CANVAS DRILL-DOWN)                               -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_SidePanel_BackToList" xml:space="preserve"><value>← כל ההערכות</value></data>
+  <data name="ReviewSession_SidePanel_ListTitle" xml:space="preserve"><value>{0}</value></data>
+  <data name="ReviewSession_SidePanel_ListSubtitle" xml:space="preserve"><value>{0} הערכה/ות · ממוצע {1}</value></data>
+  <data name="ReviewSession_SidePanel_NoEvaluations" xml:space="preserve"><value>אין הערכות בשאלון זה.</value></data>
+  <data name="ReviewSession_SidePanel_AiSummary" xml:space="preserve"><value>סיכום AI</value></data>
+  <data name="ReviewSession_SidePanel_RecommendedActions" xml:space="preserve"><value>פעולות מומלצות</value></data>
+  <data name="ReviewSession_SidePanel_QuestionAnswers" xml:space="preserve"><value>פירוט לפי שאלה</value></data>
+  <data name="ReviewSession_SidePanel_CategoryLabel" xml:space="preserve"><value>קטגוריה</value></data>
+  <data name="ReviewSession_SidePanel_AnswerLabel" xml:space="preserve"><value>תשובות שנבחרו</value></data>
+  <data name="ReviewSession_SidePanel_ReasonLabel" xml:space="preserve"><value>נימוק AI</value></data>
+  <data name="ReviewSession_SidePanel_EvaluatorChanged" xml:space="preserve"><value>שינוי על ידי המעריך</value></data>
+  <data name="ReviewSession_SidePanel_OpenEvaluation" xml:space="preserve"><value>פתח הערכה ↗</value></data>
+  <data name="ReviewSession_SidePanel_OpenRecord" xml:space="preserve"><value>פתח את {0} ↗</value></data>
+  <data name="ReviewSession_SidePanel_NoAiData" xml:space="preserve"><value>אין נתוני AI זמינים עבור הערכה זו.</value></data>
+  <data name="ReviewSession_SidePanel_Close" xml:space="preserve"><value>סגור חלונית</value></data>
+  <data name="ReviewSession_SidePanel_SortByScore" xml:space="preserve"><value>מיין לפי ציון</value></data>
+  <data name="ReviewSession_SidePanel_SortByScore_HighFirst" xml:space="preserve"><value>ציון · גבוה לנמוך</value></data>
+  <data name="ReviewSession_SidePanel_SortByScore_LowFirst" xml:space="preserve"><value>ציון · נמוך לגבוה</value></data>
+
+  <!-- Record type badges — keep labels short (≤ 10 chars) for pill rendering -->
+  <data name="ReviewSession_RecordType_Chat" xml:space="preserve"><value>צ'אט</value></data>
+  <data name="ReviewSession_RecordType_Conversation" xml:space="preserve"><value>צ'אט</value></data>
+  <data name="ReviewSession_RecordType_Case" xml:space="preserve"><value>פנייה</value></data>
+  <data name="ReviewSession_RecordType_Email" xml:space="preserve"><value>אימייל</value></data>
+  <data name="ReviewSession_RecordType_Call" xml:space="preserve"><value>שיחה</value></data>
+  <data name="ReviewSession_RecordType_Unknown" xml:space="preserve"><value>רשומה</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 1 — PREPARATION                                            -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase1_Guide_Tag" xml:space="preserve"><value>💡 הנחיית מנהל — הכנה</value></data>
+  <data name="ReviewSession_Phase1_Guide_Body" xml:space="preserve"><value>זהו &lt;strong&gt;שלב ההכנה&lt;/strong&gt; שלך — לפני המפגש עם הנציג.&lt;br&gt;סקור את תוצאות ההערכה המאוחדות מכל השאלונים. התאם משקלים במידת הצורך עבור מפגש זה. זהה דפוסים, חוזקות ותחומים לשיפור.</value></data>
+  <data name="ReviewSession_Phase1_Title" xml:space="preserve"><value>ביצועים מאוחדים</value></data>
+  <data name="ReviewSession_Phase1_Badge_Draft" xml:space="preserve"><value>טיוטה</value></data>
+  <data name="ReviewSession_Phase1_Badge_DraftFailed" xml:space="preserve"><value>⚠️ שמירת הטיוטה נכשלה</value></data>
+  <data name="ReviewSession_Phase1_HeroSubtitleTemplate" xml:space="preserve"><value>{0} — {1}: {2} → {3}</value></data>
+
+  <data name="ReviewSession_Phase1_Weights_Title" xml:space="preserve"><value>משקלי שאלונים</value></data>
+  <data name="ReviewSession_Phase1_Weights_Desc" xml:space="preserve"><value>התאם משקלים למפגש זה. השינויים חלים על המפגש בלבד ואינם משפיעים על תצורת ברירת המחדל.</value></data>
+  <data name="ReviewSession_Phase1_Weights_Reset" xml:space="preserve"><value>איפוס לברירת מחדל</value></data>
+  <data name="ReviewSession_Phase1_Weights_Total" xml:space="preserve"><value>סה״כ</value></data>
+  <data name="ReviewSession_Phase1_Weights_Contribution" xml:space="preserve"><value>תרומה</value></data>
+  <data name="ReviewSession_Phase1_Weight_WarnOver" xml:space="preserve"><value>⚠️ סך המשקלים עולה על 100% (כרגע {0}%). הציון מנורמל אוטומטית.</value></data>
+  <data name="ReviewSession_Phase1_Weight_WarnUnder" xml:space="preserve"><value>⚠️ סך המשקלים נמוך מ־100% (כרגע {0}%). הציון מנורמל אוטומטית.</value></data>
+  <data name="ReviewSession_Phase1_Weight_Normalize" xml:space="preserve"><value>נרמל ל־100%</value></data>
+
+  <data name="ReviewSession_Phase1_PrivateNotes_Title" xml:space="preserve"><value>🔒 הערות פרטיות</value></data>
+  <data name="ReviewSession_Phase1_PrivateNotes_Desc" xml:space="preserve"><value>הצעות אימון שנוצרו על ידי AI — אפשר לערוך בחופשיות ולהתאים אותן אליך</value></data>
+  <data name="ReviewSession_Phase1_CoachingSpinner" xml:space="preserve"><value>Copilot יוצר הצעות אימון…</value></data>
+  <data name="ReviewSession_Phase1_CoachingFailed" xml:space="preserve"><value>⚠️ יצירת תוכנית האימון נכשלה.</value></data>
+  <data name="ReviewSession_Phase1_CoachingTimeout" xml:space="preserve"><value>⚠️ הזמן ליצירת תוכנית האימון הסתיים.</value></data>
+  <data name="ReviewSession_Phase1_AiTag" xml:space="preserve"><value>הוצע על ידי AI</value></data>
+
+  <!-- Consolidated AI insight (alex_mcsaiinsight) states -->
+  <data name="ReviewSession_Insight_ConsolidatedSummary" xml:space="preserve"><value>סיכום AI מאוחד</value></data>
+  <data name="ReviewSession_Insight_Generating" xml:space="preserve"><value>Copilot יוצר סיכום מאוחד…</value></data>
+  <data name="ReviewSession_Insight_Failed" xml:space="preserve"><value>יצירת סיכום AI נכשלה.</value></data>
+  <data name="ReviewSession_Insight_Timeout" xml:space="preserve"><value>הזמן ליצירת סיכום AI הסתיים.</value></data>
+
+  <data name="ReviewSession_Phase1_Strengths_Label" xml:space="preserve"><value>חוזקות שזוהו</value></data>
+  <data name="ReviewSession_Phase1_Strengths_Placeholder" xml:space="preserve"><value>מה הנציג עשה היטב? ציין דוגמאות ספציפיות מתוך ההערכות…</value></data>
+  <data name="ReviewSession_Phase1_Improvements_Label" xml:space="preserve"><value>תחומים לשיפור</value></data>
+  <data name="ReviewSession_Phase1_Improvements_Placeholder" xml:space="preserve"><value>אילו תחומים דורשים תשומת לב? ציין דפוסים שזיהית…</value></data>
+  <data name="ReviewSession_Phase1_TalkingPoints_Label" xml:space="preserve"><value>נקודות לשיחה</value></data>
+  <data name="ReviewSession_Phase1_TalkingPoints_Placeholder" xml:space="preserve"><value>נושאים מרכזיים להעלות במהלך המפגש…</value></data>
+
+  <data name="ReviewSession_Phase1_Button_StartSession" xml:space="preserve"><value>התחל מפגש עם הנציג →</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 2 — OPENING                                                -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase2_Guide_Tag" xml:space="preserve"><value>💡 הנחיית מנהל — פתיחה</value></data>
+  <data name="ReviewSession_Phase2_Guide_Body" xml:space="preserve"><value>פתח את השיחה באופן חיובי. שתף את &lt;strong&gt;הציון הכולל המשוקלל&lt;/strong&gt; והדגש תחילה את תוצאות השאלונים החזקות ביותר.&lt;br&gt;&lt;strong&gt;דוגמה:&lt;/strong&gt; &lt;em&gt;"תודה שהצטרפת. רציתי לעבור איתך על ההערכות שלך מהתקופה הזו. היו לך תוצאות חזקות מאוד ב־[התחום המוביל]…"&lt;/em&gt;</value></data>
+  <data name="ReviewSession_Phase2_Title" xml:space="preserve"><value>נקודות בולטות בביצועים</value></data>
+  <data name="ReviewSession_Phase2_TitleForAgent" xml:space="preserve"><value>{0} — נקודות בולטות בביצועים</value></data>
+  <data name="ReviewSession_Phase2_Desc" xml:space="preserve"><value>שתף את הנקודות הללו עם הנציג</value></data>
+  <data name="ReviewSession_Phase2_Badge_InSession" xml:space="preserve"><value>במפגש</value></data>
+  <data name="ReviewSession_Phase2_AgentResponse_Title" xml:space="preserve"><value>תגובת הנציג</value></data>
+  <data name="ReviewSession_Phase2_AgentResponse_Desc" xml:space="preserve"><value>תעד את התגובה הראשונית של הנציג</value></data>
+  <data name="ReviewSession_Phase2_AgentResponse_Placeholder" xml:space="preserve"><value>כיצד הגיב הנציג לסקירה הראשונית?</value></data>
+  <data name="ReviewSession_Phase2_Button_Continue" xml:space="preserve"><value>המשך לסקירת שאלונים →</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 3 — QUESTIONNAIRE REVIEW                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase3_Guide_Tag" xml:space="preserve"><value>💡 הנחיית מנהל — סקירה מפורטת</value></data>
+  <data name="ReviewSession_Phase3_Guide_Body" xml:space="preserve"><value>סקור כל שאלון יחד עם הנציג. דון בהערכת ה־AI, עבור על קטגוריות שסומנו, ותעד את נקודת המבט של הנציג.</value></data>
+  <data name="ReviewSession_Phase3_Notes_Title" xml:space="preserve"><value>הערות לשאלון</value></data>
+  <data name="ReviewSession_Phase3_AgentPerspective_Label" xml:space="preserve"><value>נקודת המבט של הנציג</value></data>
+  <data name="ReviewSession_Phase3_AgentPerspective_Placeholder" xml:space="preserve"><value>מה חושב הנציג על הביצועים שלו ב־{0}?</value></data>
+  <data name="ReviewSession_Phase3_ManagerAssessment_Label" xml:space="preserve"><value>הערכת מנהל</value></data>
+  <data name="ReviewSession_Phase3_ManagerAssessment_Placeholder" xml:space="preserve"><value>ההערכה הכוללת שלך עבור שאלון זה…</value></data>
+  <data name="ReviewSession_Phase3_Meta_Evaluations" xml:space="preserve"><value>{0} הערכות</value></data>
+  <data name="ReviewSession_Phase3_Meta_ScoreRange" xml:space="preserve"><value>טווח ציונים: {0}–{1}</value></data>
+  <data name="ReviewSession_Phase3_Meta_Weight" xml:space="preserve"><value>משקל: {0}%</value></data>
+  <data name="ReviewSession_Phase3_Category_AvgScore" xml:space="preserve"><value>ציון ממוצע</value></data>
+  <data name="ReviewSession_Phase3_Category_FlagsEmpty" xml:space="preserve"><value>אין תשובות הערכה זמינות עבור קטגוריה זו.</value></data>
+  <data name="ReviewSession_Phase3_Category_OnTrackTemplate" xml:space="preserve"><value>{0}/{1} תקין</value></data>
+  <data name="ReviewSession_Phase3_Category_FlaggedIn" xml:space="preserve"><value>סומן ב: {0}</value></data>
+  <data name="ReviewSession_Phase3_Category_PercentOfEvals" xml:space="preserve"><value>({0}% מההערכות)</value></data>
+  <data name="ReviewSession_Phase3_Button_Continue" xml:space="preserve"><value>המשך לסיכום →</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 4 — SUMMARY & ACTION ITEMS                                 -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase4_Guide_Tag" xml:space="preserve"><value>💡 הנחיית מנהל — סגירה</value></data>
+  <data name="ReviewSession_Phase4_Guide_Body" xml:space="preserve"><value>הגדירו יחד עם הנציג &lt;strong&gt;משימות פעולה קונקרטיות ומדידות&lt;/strong&gt;. שאל כיצד הוא מרגיש לגבי ההערכה.</value></data>
+  <data name="ReviewSession_Phase4_ActionItems_Title" xml:space="preserve"><value>משימות פעולה מוסכמות</value></data>
+  <data name="ReviewSession_Phase4_ActionItems_Desc" xml:space="preserve"><value>יעדים ופעולות שסוכמו עם הנציג</value></data>
+  <data name="ReviewSession_Phase4_ActionItems_Placeholder" xml:space="preserve"><value>פעולה / יעד לשיפור…</value></data>
+  <data name="ReviewSession_Phase4_ActionItems_Loading" xml:space="preserve"><value>טוען משימות פעולה…</value></data>
+  <data name="ReviewSession_Phase4_Button_AddAction" xml:space="preserve"><value>+ הוסף פעולה</value></data>
+  <data name="ReviewSession_Phase4_Button_RemoveAction" xml:space="preserve"><value>הסר</value></data>
+  <data name="ReviewSession_Phase4_AgentComments_Title" xml:space="preserve"><value>הערות הנציג</value></data>
+  <data name="ReviewSession_Phase4_AgentComments_Desc" xml:space="preserve"><value>המשוב הכללי של הנציג על ההערכה</value></data>
+  <data name="ReviewSession_Phase4_AgentComments_Placeholder" xml:space="preserve"><value>איך הנציג מרגיש לגבי ההערכה? הערות נוספות…</value></data>
+  <data name="ReviewSession_Phase4_ManagerSummary_Title" xml:space="preserve"><value>סיכום מנהל</value></data>
+  <data name="ReviewSession_Phase4_ManagerSummary_Desc" xml:space="preserve"><value>ההערכה הכוללת שלך והמלצותיך</value></data>
+  <data name="ReviewSession_Phase4_ManagerSummary_Placeholder" xml:space="preserve"><value>סיכום כולל של ההערכה, תובנות מרכזיות והמלצות…</value></data>
+  <data name="ReviewSession_Phase4_Button_Save" xml:space="preserve"><value>💾 שמור מפגש הערכה</value></data>
+  <data name="ReviewSession_Phase4_Button_Saving" xml:space="preserve"><value>שומר…</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 5 — COMPLETE                                               -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase5_Complete_Title" xml:space="preserve"><value>מפגש ההערכה הושלם</value></data>
+  <data name="ReviewSession_Phase5_Recap_Title" xml:space="preserve"><value>סיכום המפגש</value></data>
+  <data name="ReviewSession_Phase5_Recap_Desc" xml:space="preserve"><value>תמונת מצב של מה שתיעדת במהלך המפגש</value></data>
+  <data name="ReviewSession_Phase5_Recap_Agent" xml:space="preserve"><value>נציג</value></data>
+  <data name="ReviewSession_Phase5_Recap_Evaluation" xml:space="preserve"><value>הערכה</value></data>
+  <data name="ReviewSession_Phase5_Recap_OverallScore" xml:space="preserve"><value>ציון כולל</value></data>
+  <data name="ReviewSession_Phase5_Recap_CategoriesCovered" xml:space="preserve"><value>קטגוריות שנסקרו</value></data>
+  <data name="ReviewSession_Phase5_Recap_ActionItems" xml:space="preserve"><value>משימות פעולה</value></data>
+  <data name="ReviewSession_Phase5_Recap_SavedAt" xml:space="preserve"><value>נשמר בתאריך</value></data>
+  <data name="ReviewSession_Phase5_Actions_Title" xml:space="preserve"><value>משימות פעולה</value></data>
+  <data name="ReviewSession_Phase5_Actions_Desc" xml:space="preserve"><value>התחייבויות שסוכמו עם הנציג</value></data>
+  <data name="ReviewSession_Phase5_Button_ViewReview" xml:space="preserve"><value>📄 הצג הערכה זו</value></data>
+  <data name="ReviewSession_Phase5_Button_Done" xml:space="preserve"><value>סיום</value></data>
+  <data name="ReviewSession_Phase5_Report_Title" xml:space="preserve"><value>📄 תוכנית שיפור לנציג</value></data>
+  <data name="ReviewSession_Phase5_Report_Desc" xml:space="preserve"><value>תוכנית שיפור אישית שנוצרה על ידי בינה מלאכותית על בסיס כל ההערכות</value></data>
+  <data name="ReviewSession_Phase5_Report_Generate" xml:space="preserve"><value>בקש מ-Copilot ליצור תוכנית שיפור</value></data>
+  <data name="ReviewSession_Phase5_Report_Generating" xml:space="preserve"><value>מייצר תוכנית שיפור…</value></data>
+  <data name="ReviewSession_Phase5_Report_Regenerate" xml:space="preserve"><value>↺ צור מחדש</value></data>
+  <data name="ReviewSession_Phase5_Report_Print" xml:space="preserve"><value>🖨 הדפס</value></data>
+  <data name="ReviewSession_Phase5_Report_Retry" xml:space="preserve"><value>↺ נסה שוב</value></data>
+  <data name="ReviewSession_Phase5_Report_Error" xml:space="preserve"><value>לא ניתן להתחיל את תוכנית השיפור. אנא נסה שוב.</value></data>
+  <data name="ReviewSession_Phase5_Report_Timeout" xml:space="preserve"><value>עדיין מייצר — התהליך לוקח יותר זמן מהצפוי.</value></data>
+  <data name="ReviewSession_Phase5_Report_CheckAgain" xml:space="preserve"><value>↺ בדוק שוב</value></data>
+  <data name="ReviewSession_Phase5_Report_GeneratedBy" xml:space="preserve"><value>תוכנית שיפור זו נוצרה באמצעות Copilot</value></data>
+  <data name="ReviewSession_Phase5_Report_GeneratingNote" xml:space="preserve"><value>יצירת תוכנית השיפור עשויה לקחת עד 5 דקות.</value></data>
+  <data name="ReviewSession_Phase5_Report_NotifyTitle" xml:space="preserve"><value>אפשרויות התראה (במהלך יצירת התוכנית)</value></data>
+  <data name="ReviewSession_Phase5_Report_NotifyTeams" xml:space="preserve"><value>הודע לי ב-Microsoft Teams כשהתוכנית מוכנה</value></data>
+  <data name="ReviewSession_Phase5_Report_NotifyEmail" xml:space="preserve"><value>שלח לי את תוכנית השיפור באימייל כשהיא מוכנה</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PHASE 6 — READ-ONLY VIEWER                                       -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Phase6_Title" xml:space="preserve"><value>סיכום ההערכה</value></data>
+  <data name="ReviewSession_Phase6_SessionMetadata" xml:space="preserve"><value>פרטי המפגש</value></data>
+  <data name="ReviewSession_Phase6_Meta_Agent" xml:space="preserve"><value>נציג</value></data>
+  <data name="ReviewSession_Phase6_Meta_Reviewer" xml:space="preserve"><value>מעריך</value></data>
+  <data name="ReviewSession_Phase6_Meta_Evaluation" xml:space="preserve"><value>הערכה</value></data>
+  <data name="ReviewSession_Phase6_Meta_OverallScore" xml:space="preserve"><value>ציון כולל</value></data>
+  <data name="ReviewSession_Phase6_Meta_SessionDate" xml:space="preserve"><value>תאריך המפגש</value></data>
+  <data name="ReviewSession_Phase6_Meta_LastModified" xml:space="preserve"><value>שונה לאחרונה</value></data>
+  <data name="ReviewSession_Phase6_PrivateNotes" xml:space="preserve"><value>🔒 הערות הכנה פרטיות (למנהל בלבד)</value></data>
+  <data name="ReviewSession_Phase6_Opening" xml:space="preserve"><value>פתיחה — התגובה הראשונית של הנציג</value></data>
+  <data name="ReviewSession_Phase6_CategoryReview" xml:space="preserve"><value>סקירת קטגוריות</value></data>
+  <data name="ReviewSession_Phase6_ActionItemsTemplate" xml:space="preserve"><value>משימות פעולה ({0})</value></data>
+  <data name="ReviewSession_Phase6_Closing" xml:space="preserve"><value>סגירה</value></data>
+  <data name="ReviewSession_Phase6_NoCategoryFeedback" xml:space="preserve"><value>לא תועד משוב על קטגוריות.</value></data>
+  <data name="ReviewSession_Phase6_NoActionItems" xml:space="preserve"><value>לא תועדו משימות פעולה.</value></data>
+  <data name="ReviewSession_Phase6_DueDateTemplate" xml:space="preserve"><value>יעד עד {0}</value></data>
+  <data name="ReviewSession_Phase6_Layer_AI" xml:space="preserve"><value>AI</value></data>
+  <data name="ReviewSession_Phase6_Layer_Evaluator" xml:space="preserve"><value>מעריך</value></data>
+  <data name="ReviewSession_Phase6_Layer_Changed" xml:space="preserve"><value>שונה</value></data>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- ERRORS                                                           -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <data name="ReviewSession_Error_Generic" xml:space="preserve"><value>משהו השתבש. נא לנסות שוב.</value></data>
+  <data name="ReviewSession_Error_SaveFailed" xml:space="preserve"><value>❌ השמירה נכשלה: {0}</value></data>
+  <data name="ReviewSession_Error_SummaryFailed" xml:space="preserve"><value>יצירת הסיכום נכשלה.</value></data>
+  <data name="ReviewSession_Error_SummaryTimeout" xml:space="preserve"><value>הזמן ליצירת הסיכום הסתיים.</value></data>
+  <data name="ReviewSession_Error_CriteriaUnavailable" xml:space="preserve"><value>פרטי הקטגוריה אינם זמינים — לא ניתן היה לטעון את הקריטריונים עבור שאלון זה.</value></data>
+
+  <!-- ═══ Phase 0 — Draft banner (added) ═══ -->
+  <data name="ReviewSession_Phase0_DraftBanner_Title" xml:space="preserve"><value>נמצאה טיוטה קיימת</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_Desc" xml:space="preserve"><value>טיוטה זו נשמרה ממפגש קודם. ההערות והמשקלים שלך נטענו מראש.</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_NewEvalsNote" xml:space="preserve"><value>הערה: נתוני ההערכה המוצגים לעיל נטענים תמיד מחדש וכוללים כל הערכה חדשה שנוספה מאז יצירת הטיוטה.</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_Continue" xml:space="preserve"><value>המשך עם הטיוטה →</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_StartFresh" xml:space="preserve"><value>↺ התחל מחדש</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_Discarding" xml:space="preserve"><value>מבטל את הטיוטה…</value></data>
+  <data name="ReviewSession_Phase0_Hero_WeightNormalized" xml:space="preserve"><value>סך המשקלים {0}% — הציון נורמל</value></data>
+
+  <!-- ═══ Phase 1 — Score distribution + misc ═══ -->
+  <data name="ReviewSession_Phase1_ScoreDist" xml:space="preserve"><value>התפלגות ציונים</value></data>
+  <data name="ReviewSession_Phase1_Dist_Hi" xml:space="preserve"><value>גבוה ≥ 80</value></data>
+  <data name="ReviewSession_Phase1_Dist_Md" xml:space="preserve"><value>בינוני 60–79</value></data>
+  <data name="ReviewSession_Phase1_Dist_Lo" xml:space="preserve"><value>נמוך &lt; 60</value></data>
+  <data name="ReviewSession_Phase1_NoEvalData" xml:space="preserve"><value>אין נתוני הערכה זמינים</value></data>
+  <data name="ReviewSession_Phase1_ViewEvals" xml:space="preserve"><value>הצג {0} הערכות</value></data>
+  <data name="ReviewSession_Phase1_Weight_AutoNormWarn" xml:space="preserve"><value>סך המשקלים כרגע הוא {0}%. לחיצה על "התחל מפגש עם הנציג" תנרמל אותם אוטומטית ל־100%.</value></data>
+
+  <!-- ═══ Phase 4 — Action items / save draft═══ -->
+  <data name="ReviewSession_Phase4_ActionItems_AiTag" xml:space="preserve"><value>AI</value></data>
+  <data name="ReviewSession_Phase4_Button_SaveDraft" xml:space="preserve"><value>💾 שמור כטיוטה</value></data>
+
+  <!-- ═══ Phase 5 — Draft lifecycle ═══ -->
+  <data name="ReviewSession_Phase5_Draft_Title" xml:space="preserve"><value>המפגש נשמר כטיוטה</value></data>
+  <data name="ReviewSession_Phase5_Button_LeaveAsDraft" xml:space="preserve"><value>השאר כטיוטה</value></data>
+  <data name="ReviewSession_Phase5_Button_CloseEvaluation" xml:space="preserve"><value>✅ סגור הערכה</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_Title" xml:space="preserve"><value>ניהול טיוטה</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_Desc" xml:space="preserve"><value>הגדר תאריך תפוגה או בטל את המפגש אם אין בו עוד צורך.</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_ExpiryLabel" xml:space="preserve"><value>תאריך תפוגה</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_ExpiryRequired" xml:space="preserve"><value>נא לבחור תאריך.</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_ExpirySaved" xml:space="preserve"><value>נשמר.</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_SaveExpiry" xml:space="preserve"><value>שמור</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_Abandon" xml:space="preserve"><value>בטל מפגש זה</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_AbandonDesc" xml:space="preserve"><value>אם המפגש הזה לא יושלם, ניתן לסמן אותו כמבוטל. הוא לא ייכלל בשאילתות עתידיות.</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_AbandonConfirm" xml:space="preserve"><value>המפגש יסומן כמבוטל. האם להמשיך?</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_AbandonConfirmYes" xml:space="preserve"><value>כן, בטל</value></data>
+
+  <!-- ═══ Phase 6 — Status labels ═══ -->
+  <data name="ReviewSession_Phase6_StatusCompleted" xml:space="preserve"><value>הושלם</value></data>
+  <data name="ReviewSession_Phase6_StatusDraft" xml:space="preserve"><value>טיוטה</value></data>
+
+  <!-- ═══ Side panel — Q&A + open record ═══ -->
+  <data name="ReviewSession_SidePanel_QA" xml:space="preserve"><value>שאלות ותשובות</value></data>
+  <data name="ReviewSession_SidePanel_QALoading" xml:space="preserve"><value>טוען פרטי שאלות…</value></data>
+  <data name="ReviewSession_SidePanel_NoResponses" xml:space="preserve"><value>לא תועדו תשובות לשאלות בודדות עבור הערכה זו.</value></data>
+  <data name="ReviewSession_SidePanel_OpenInD365" xml:space="preserve"><value>פתח הערכה ב־D365 ↗</value></data>
+
+<!-- ═══ Side panel — View Record button═══ -->
+<data name="ReviewSession_SidePanel_ViewRecord" xml:space="preserve"><value>👁 הצג רשומה</value></data>
+<data name="ReviewSession_SidePanel_ViewRecord_Title" xml:space="preserve"><value>פתח את הרשומה הרלוונטית</value></data>
+
+<!-- ═══ Phase 5 — Draft badge ═══ -->
+<data name="ReviewSession_Phase5_Badge_Draft" xml:space="preserve"><value>טיוטה — טרם הושלם</value></data>
+</root>

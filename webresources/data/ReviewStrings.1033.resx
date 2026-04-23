@@ -209,14 +209,14 @@
 
   <data name="ReviewSession_Phase1_PrivateNotes_Title" xml:space="preserve"><value>🔒 Private Notes</value></data>
   <data name="ReviewSession_Phase1_PrivateNotes_Desc" xml:space="preserve"><value>AI-generated coaching suggestions — edit freely to make them yours</value></data>
-  <data name="ReviewSession_Phase1_CoachingSpinner" xml:space="preserve"><value>Generating coaching suggestions…</value></data>
+  <data name="ReviewSession_Phase1_CoachingSpinner" xml:space="preserve"><value>Copilot is generating coaching suggestions…</value></data>
   <data name="ReviewSession_Phase1_CoachingFailed" xml:space="preserve"><value>⚠️ Coaching plan generation failed.</value></data>
   <data name="ReviewSession_Phase1_CoachingTimeout" xml:space="preserve"><value>⚠️ Coaching plan generation timed out.</value></data>
   <data name="ReviewSession_Phase1_AiTag" xml:space="preserve"><value>AI-suggested</value></data>
 
   <!-- Consolidated AI insight (alex_mcsaiinsight) states -->
   <data name="ReviewSession_Insight_ConsolidatedSummary" xml:space="preserve"><value>Consolidated AI Summary</value></data>
-  <data name="ReviewSession_Insight_Generating" xml:space="preserve"><value>Generating consolidated summary…</value></data>
+  <data name="ReviewSession_Insight_Generating" xml:space="preserve"><value>Copilot is generating a consolidated summary…</value></data>
   <data name="ReviewSession_Insight_Failed" xml:space="preserve"><value>AI summary generation failed.</value></data>
   <data name="ReviewSession_Insight_Timeout" xml:space="preserve"><value>AI summary generation timed out.</value></data>
 
@@ -299,6 +299,21 @@
   <data name="ReviewSession_Phase5_Actions_Desc" xml:space="preserve"><value>Commitments agreed with the agent</value></data>
   <data name="ReviewSession_Phase5_Button_ViewReview" xml:space="preserve"><value>📄 View This Review</value></data>
   <data name="ReviewSession_Phase5_Button_Done" xml:space="preserve"><value>Done</value></data>
+  <data name="ReviewSession_Phase5_Report_Title" xml:space="preserve"><value>📄 Agent Improvement Plan</value></data>
+  <data name="ReviewSession_Phase5_Report_Desc" xml:space="preserve"><value>AI-generated personalised improvement plan based on all evaluations</value></data>
+  <data name="ReviewSession_Phase5_Report_Generate" xml:space="preserve"><value>Ask Copilot to generate an Improvement Plan</value></data>
+  <data name="ReviewSession_Phase5_Report_Generating" xml:space="preserve"><value>Generating improvement plan…</value></data>
+  <data name="ReviewSession_Phase5_Report_Regenerate" xml:space="preserve"><value>↺ Regenerate</value></data>
+  <data name="ReviewSession_Phase5_Report_Print" xml:space="preserve"><value>🖨 Print</value></data>
+  <data name="ReviewSession_Phase5_Report_Retry" xml:space="preserve"><value>↺ Retry</value></data>
+  <data name="ReviewSession_Phase5_Report_Error" xml:space="preserve"><value>Failed to start improvement plan. Please try again.</value></data>
+  <data name="ReviewSession_Phase5_Report_Timeout" xml:space="preserve"><value>Still generating — this is taking longer than expected.</value></data>
+  <data name="ReviewSession_Phase5_Report_CheckAgain" xml:space="preserve"><value>↺ Check Again</value></data>
+  <data name="ReviewSession_Phase5_Report_GeneratedBy" xml:space="preserve"><value>This improvement plan was generated using Copilot</value></data>
+  <data name="ReviewSession_Phase5_Report_GeneratingNote" xml:space="preserve"><value>Generating the improvement plan may take up to 5 minutes.</value></data>
+  <data name="ReviewSession_Phase5_Report_NotifyTitle" xml:space="preserve"><value>Notification options (during plan generation)</value></data>
+  <data name="ReviewSession_Phase5_Report_NotifyTeams" xml:space="preserve"><value>Notify me via Microsoft Teams when the plan is ready</value></data>
+  <data name="ReviewSession_Phase5_Report_NotifyEmail" xml:space="preserve"><value>Send the improvement plan to me by email when it is ready</value></data>
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <!-- PHASE 6 — READ-ONLY VIEWER                                       -->
@@ -331,4 +346,58 @@
   <data name="ReviewSession_Error_SummaryFailed" xml:space="preserve"><value>Summary generation failed.</value></data>
   <data name="ReviewSession_Error_SummaryTimeout" xml:space="preserve"><value>Summary generation timed out.</value></data>
   <data name="ReviewSession_Error_CriteriaUnavailable" xml:space="preserve"><value>Category details not available — criteria could not be loaded for this questionnaire.</value></data>
+
+  <!-- ═══ Phase 0 — Draft banner ═══ -->
+  <data name="ReviewSession_Phase0_DraftBanner_Title" xml:space="preserve"><value>Existing draft found</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_Desc" xml:space="preserve"><value>This draft was saved from a previous session. Your notes and weights have been pre-loaded.</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_NewEvalsNote" xml:space="preserve"><value>Note: the evaluation data shown above is always freshly fetched and includes any new evaluations added since the draft was created.</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_Continue" xml:space="preserve"><value>Continue with Draft →</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_StartFresh" xml:space="preserve"><value>↺ Start Fresh</value></data>
+  <data name="ReviewSession_Phase0_DraftBanner_Discarding" xml:space="preserve"><value>Discarding draft…</value></data>
+  <data name="ReviewSession_Phase0_Hero_WeightNormalized" xml:space="preserve"><value>Weights total {0}% — score normalized</value></data>
+
+  <!-- ═══ Phase 1 — Score distribution + misc ═══ -->
+  <data name="ReviewSession_Phase1_ScoreDist" xml:space="preserve"><value>Score Distribution</value></data>
+  <data name="ReviewSession_Phase1_Dist_Hi" xml:space="preserve"><value>High ≥ 80</value></data>
+  <data name="ReviewSession_Phase1_Dist_Md" xml:space="preserve"><value>Mid 60–79</value></data>
+  <data name="ReviewSession_Phase1_Dist_Lo" xml:space="preserve"><value>Low &lt; 60</value></data>
+  <data name="ReviewSession_Phase1_NoEvalData" xml:space="preserve"><value>No evaluation data available</value></data>
+  <data name="ReviewSession_Phase1_ViewEvals" xml:space="preserve"><value>View {0} Evaluations</value></data>
+  <data name="ReviewSession_Phase1_Weight_AutoNormWarn" xml:space="preserve"><value>Weights currently total {0}%. Clicking "Start Session with Agent" will automatically normalize them to 100%.</value></data>
+
+  <!-- ═══ Phase 4 — Action items / save draft ═══ -->
+  <data name="ReviewSession_Phase4_ActionItems_AiTag" xml:space="preserve"><value>AI</value></data>
+  <data name="ReviewSession_Phase4_Button_SaveDraft" xml:space="preserve"><value>💾 Save as Draft</value></data>
+
+  <!-- ═══ Phase 5 — Draft lifecycle ═══ -->
+  <data name="ReviewSession_Phase5_Draft_Title" xml:space="preserve"><value>Session Saved as Draft</value></data>
+  <data name="ReviewSession_Phase5_Button_LeaveAsDraft" xml:space="preserve"><value>Leave as Draft</value></data>
+  <data name="ReviewSession_Phase5_Button_CloseEvaluation" xml:space="preserve"><value>✅ Close Evaluation</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_Title" xml:space="preserve"><value>Draft Management</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_Desc" xml:space="preserve"><value>Set an expiry date or abandon this session if it is no longer needed.</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_ExpiryLabel" xml:space="preserve"><value>Expiry Date</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_ExpiryRequired" xml:space="preserve"><value>Please select a date.</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_ExpirySaved" xml:space="preserve"><value>Saved.</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_SaveExpiry" xml:space="preserve"><value>Save</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_Abandon" xml:space="preserve"><value>Abandon This Session</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_AbandonDesc" xml:space="preserve"><value>If this session will not be completed, you can mark it as abandoned. It will be excluded from future queries.</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_AbandonConfirm" xml:space="preserve"><value>This session will be marked as Cancelled. Are you sure?</value></data>
+  <data name="ReviewSession_Phase5_DraftMgmt_AbandonConfirmYes" xml:space="preserve"><value>Yes, Abandon</value></data>
+
+  <!-- ═══ Phase 6 — Status labels ═══ -->
+  <data name="ReviewSession_Phase6_StatusCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="ReviewSession_Phase6_StatusDraft" xml:space="preserve"><value>Draft</value></data>
+
+  <!-- ═══ Side panel — Q&A + open record ═══ -->
+  <data name="ReviewSession_SidePanel_QA" xml:space="preserve"><value>Questions &amp; Answers</value></data>
+  <data name="ReviewSession_SidePanel_QALoading" xml:space="preserve"><value>Loading question details…</value></data>
+  <data name="ReviewSession_SidePanel_NoResponses" xml:space="preserve"><value>No individual question responses recorded for this evaluation.</value></data>
+  <data name="ReviewSession_SidePanel_OpenInD365" xml:space="preserve"><value>Open evaluation in D365 ↗</value></data>
+
+  <!-- ═══ Side panel — View Record button ═══ -->
+  <data name="ReviewSession_SidePanel_ViewRecord" xml:space="preserve"><value>👁 View Record</value></data>
+  <data name="ReviewSession_SidePanel_ViewRecord_Title" xml:space="preserve"><value>Open the related record</value></data>
+
+  <!-- ═══ Phase 5 — Draft badge═══ -->
+  <data name="ReviewSession_Phase5_Badge_Draft" xml:space="preserve"><value>Draft — not yet finalised</value></data>
 </root>
